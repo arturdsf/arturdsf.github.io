@@ -1,0 +1,262 @@
+:root {
+    --background-color: #EED5AE;
+    --background-alt: #FEEFD7;
+    --primary-color: #70A288;
+    --text-color: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    width: 100%;
+    height: 100%;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0px;
+    background-color: var(--background-alt);
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    height: 500px;
+    /* Mantido, mas ajustado em mobile */
+}
+
+header>menu {
+    position: fixed;
+    top: 0;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    z-index: 6;
+}
+
+menu>li {
+    display: inline;
+    margin: 0 15px;
+    /* Ajustado em mobile para evitar apertos */
+    cursor: pointer;
+}
+
+menu>li:hover {
+    font-weight: bold;
+}
+
+header>div {
+    padding: 40px;
+    /* Ajustado em mobile */
+}
+
+h1,
+h2,
+h3 {
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 36px;
+    /* Ajustado em mobile */
+    color: #006403;
+}
+
+h3 {
+    font-size: 24px;
+    /* Ajustado em mobile */
+}
+
+section,
+p {
+    margin-bottom: 30px;
+}
+
+main p,
+header p {
+    text-align: justify;
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main>section {
+    padding: 40px 120px;
+    /* Ajustado em mobile */
+}
+
+#game-section {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    /* Permite que jogos quebrem linha em telas menores */
+}
+
+.game-entry {
+    border: 4px solid var(--background-alt);
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    width: 120px;
+    /* Ajustado para % em mobile */
+    height: 180px;
+    /* Ajustado para auto em mobile */
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 10px;
+    /* Adicionado para espaçamento em mobile */
+}
+
+.game-entry:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#game-1 {
+    background-color: #fff;
+}
+
+#game-2 {
+    background-color: #fff;
+}
+
+#game-3 {
+    background-color: #fff;
+}
+
+#game-4 {
+    background-color: #fff;
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: var(--background-alt);
+    border-top: 1px solid #ddd;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
+
+
+/* MEDIA QUERIES PARA RESPONSIVIDADE */
+
+
+/* Para tablets e telas médias (768px a 1024px) */
+
+@media (max-width: 1024px) {
+    header>menu {
+        display: none;
+        position: relative;
+    }
+
+    main>section {
+        padding: 40px 60px;
+        /* Reduz padding lateral */
+    }
+
+    #game-section {
+        justify-content: center;
+        /* Centraliza jogos */
+    }
+
+    .game-entry {
+        width: 150px;
+        /* Aumenta ligeiramente para tablets */
+        height: 200px;
+    }
+
+    h2 {
+        font-size: 32px;
+        /* Reduz tamanho da fonte */
+    }
+
+    h3 {
+        font-size: 22px;
+    }
+}
+
+
+/* Para smartphones (até 768px) */
+
+@media (max-width: 768px) {
+    header {
+        height: auto;
+        /* Remove altura fixa para se ajustar ao conteúdo */
+        padding: 10px 0;
+        /* Reduz padding */
+    }
+
+    header>menu {
+        padding: 5px 0;
+        /* Reduz padding do menu */
+    }
+
+    menu>li {
+        display: block;
+        /* Empilha links verticalmente para facilitar toque */
+        margin: 5px 0;
+        /* Ajusta margem */
+        font-size: 14px;
+        /* Reduz fonte para caber melhor */
+    }
+
+    header>div {
+        padding: 20px;
+        /* Reduz padding interno */
+    }
+
+    h1 {
+        font-size: 24px;
+        /* Reduz títulos para mobile */
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    main>section {
+        padding: 20px 20px;
+        /* Reduz drasticamente padding para telas pequenas */
+    }
+
+    #game-section {
+        flex-direction: column;
+        /* Empilha jogos verticalmente */
+        align-items: center;
+        /* Centraliza */
+    }
+
+    .game-entry {
+        width: 80%;
+        /* Usa % da largura da tela para se ajustar */
+        max-width: 200px;
+        /* Limita largura máxima */
+        height: auto;
+        /* Altura automática para manter proporção */
+        margin: 15px 0;
+        /* Espaçamento vertical */
+    }
+
+    footer {
+        padding: 5px 0;
+        /* Reduz padding do footer */
+    }
+}

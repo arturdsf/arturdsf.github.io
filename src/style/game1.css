@@ -1,0 +1,61 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #000;
+    color: #0f0;
+    line-height: 1.6;
+    width: 100%;
+    height: 100%;
+    padding: 100px 140px;
+}
+
+main {
+    display: flex;
+    background-color: #48b400;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    height: 100vh;
+    border-radius: 20px;
+    border: 6px solid #fff;
+}
+
+article {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+}
+
+.back-face {
+    display: inline-block;
+    width: 200px;
+    height: 160px;
+    border-radius: 30px;
+}
+
+.front-face {
+    display: none;
+    width: 200px;
+    height: 160px;
+    border-radius: 30px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.card.flipped .front-face {
+    display: inline-block;
+}
+
+.card.flipped .back-face {
+    display: none;
+}

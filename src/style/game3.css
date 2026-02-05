@@ -1,0 +1,99 @@
+/* Game - estilos (variáveis para fácil tema) */
+
+:root {
+    --color-primary: #0ff;
+    --color-danger: #f00;
+    --color-success: #0f0;
+    --color-bg: #000;
+    --color-bg-gradient-start: #001122;
+    --color-bg-gradient-end: #000011;
+    --shadow-glow: 0 0 20px var(--color-primary);
+    --font-ui: clamp(20px, 3vw, 28px);
+    --font-modal: clamp(36px, 6vw, 64px);
+    --z-ui: 10;
+    --z-modal: 20;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--color-bg);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom, var(--color-bg-gradient-start), var(--color-bg-gradient-end));
+    box-shadow: var(--shadow-glow);
+}
+
+.ui {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: var(--color-primary);
+    font-size: var(--font-ui);
+    text-shadow: 0 0 5px var(--color-primary);
+    z-index: var(--z-ui);
+    font-weight: bold;
+}
+
+.game-over,
+.level-complete {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-danger);
+    font-size: var(--font-modal);
+    text-align: center;
+    text-shadow: 0 0 10px var(--color-danger);
+    display: none;
+    z-index: var(--z-modal);
+}
+
+.level-complete {
+    color: var(--color-success);
+    text-shadow: 0 0 10px var(--color-success);
+}
+
+.restart-btn,
+.next-btn {
+    background: var(--color-primary);
+    color: #000;
+    border: none;
+    padding: 15px 40px;
+    font-size: clamp(20px, 4vw, 28px);
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 20px;
+    box-shadow: var(--shadow-glow);
+    font-weight: bold;
+}
+
+.restart-btn:hover,
+.next-btn:hover {
+    background: #fff;
+    box-shadow: 0 0 30px #fff;
+}
+
+.controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    color: var(--color-primary);
+    font-size: 16px;
+    text-shadow: 0 0 3px var(--color-primary);
+    z-index: var(--z-ui);
+}

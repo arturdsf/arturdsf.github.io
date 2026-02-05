@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+#game-board {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: 100vw;
+  height: 100vh;
+  gap: 2px;
+}
+
+.piece {
+  background: #70A288;
+  border: 1px solid #333;
+  width: 100%;
+  height: 100%;
+}
+
+.piece.player {
+  background-image: url("../assets/player.png");
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
