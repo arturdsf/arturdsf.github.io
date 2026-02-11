@@ -1,7 +1,7 @@
 const tiles = document.querySelectorAll(".piece")
 
-const ROWS = 9
-const COLS = 20
+const ROWS = 9 // Linhas
+const COLS = 20 // Colunas
 
 const map = []
 
@@ -12,27 +12,89 @@ for (let y = 0; y < ROWS; y++) {
   }
 }
 
-let player = {
-  x: 6,
-  y: 7
+// se quiser alterar o mapa (recomendo, esse foi só pra fazer funcionar as mecânicas por enquanto), modifica apenas esse function abaixo, a colisão vai obedecer sozinha.
+
+function mapPaint() {
+  for (let x = 4; x <= 14; x++) {
+    map[1][x].classList.add("grass")
+  }
+
+  for (let x = 2; x <= 15; x++) {
+    map[2][x].classList.add("light-grass")
+  }
+
+  for (let x = 16; x <= 16; x++) {
+    map[2][x].classList.add("wood")
+  }
+
+  for (let x = 17; x <= 17; x++) {
+    map[2][x].classList.add("light-wood")
+  }
+
+  for (let x = 18; x <= 18; x++) {
+    map[2][x].classList.add("wood")
+  }
+
+  for (let x = 2; x <= 16; x++) {
+    map[3][x].classList.add("grass")
+  }
+
+  for (let x = 3; x <= 17; x++) {
+    map[4][x].classList.add("light-grass")
+  }
+
+  for (let x = 3; x <= 17; x++) {
+    map[5][x].classList.add("grass")
+  }
+
+  for (let x = 4; x <= 15; x++) {
+    map[6][x].classList.add("light-grass")
+  }
+
+  for (let x = 6; x <= 12; x++) {
+    map[7][x].classList.add("grass")
+  }
 }
+
+mapPaint()
+
+let player = {
+  x: 11,
+  y: 3,
+  hp: 3
+}
+
+const playerSpr = document.getElementById("player")
 
 function renderPlayer() {
-  document.querySelectorAll(".piece").forEach(t => t.classList.remove("player"))
-  map[player.y][player.x].classList.add("player")
-  console.log(`Player position: (${player.x}, ${player.y})`)
+  const tileWidth = 100 / COLS
+  const tileHeight = 100 / ROWS
+
+  playerSpr.style.left = `${player.x * tileWidth}%`
+  playerSpr.style.top = `${player.y * tileHeight}%`
+
+  playerSpr.classList.remove("face-left", "face-right")
+  playerSpr.classList.add(
+    facing === "left" ? "face-left" : "face-right"
+  )
 }
 
-renderPlayer()
+let facing = "right"
 
 document.addEventListener("keydown", e => {
   let newX = player.x
   let newY = player.y
 
-  if (e.key === "ArrowUp") newY--
-  if (e.key === "ArrowDown") newY++
-  if (e.key === "ArrowLeft") newX--
-  if (e.key === "ArrowRight") newX++
+  if (e.key === "ArrowUp" || e.key === "w") newY--
+  if (e.key === "ArrowDown" || e.key === "s") newY++
+  if (e.key === "ArrowLeft" || e.key ===  "a") {
+    newX--
+    facing = "right"
+  }
+  if (e.key === "ArrowRight" || e.key ===  "d") {
+    newX++
+    facing = "left"
+  }
 
   if (canMove(newX, newY)) {
     player.x = newX
@@ -41,12 +103,37 @@ document.addEventListener("keydown", e => {
   }
 })
 
+function isWalkable(tile) {
+  return tile.classList.contains("grass") || 
+    tile.classList.contains("light-grass") || 
+    tile.classList.contains("wood") || 
+    tile.classList.contains("light-wood")
+}
+
 function canMove(x, y) {
   if (x < 0 || x >= COLS) return false
   if (y < 0 || y >= ROWS) return false
-  return true
+
+  return isWalkable(map[y][x])
 }
 
+/* Canvas */
+
+/* Configuração de alguns menus */
+
+// O primeiro menu do jogo
+function startGame() {
+  const menu = document.querySelector('#main-menu')
+  menu.style.display = 'none'
+  playerSpr.style.display = 'block'
+  renderPlayer() // Adicionar quando concluir
+}
+
+function backToIndex() {
+  window.location.href = 'index.html'
+}
+
+// O Menu de Pausa
 
 /* 
 

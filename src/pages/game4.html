@@ -3,19 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jogo em Grid</title>
+  <title>O Grande Encontro</title>
   <link rel="stylesheet" href="../style/game4.css">
 </head>
 <body>
   <main id="game-board">
     <!-- 9 linhas × 20 colunas -->
+
+    <canvas id="gamecanvas"></canvas>
+
     <script>
       for(let i = 0; i < 180; i++){
         document.write('<div class="piece"></div>')
       }
     </script>
+    
+    <div id="player"></div>
   </main>
 
+  <!-- Daqui para baixo são elementos de UI ou menus -->
+
+  <div id="main-menu">
+    <div><h1>O Grande Encontro</h1></div>
+    <div>O mapa não é o modelo final (é temporário), está em processo de desenvolvimento das funções, como o desenvolvimento do canvas.<br><br>Os WASD ou Setas: Andar
+    </div>
+    <div>
+      <button type="button" id="back-btn" onclick="backToIndex()">&lt;</button>
+      <button onclick="startGame()">Iniciar</button>
+    </div>
+  </div>
+
+  <div id="ui">
+    <div>Vidas: <span id="hearts">3</span>.</div>
+    <div>Amigos encontrados: <span id="prog">0/10</span></div>
+    <div>|| <!-- Isso era pra ser um menu de pausa, fiz assim porque era mais rápido até achar uma forma melhor --></div>
+  </div>
+
+  <div id="pause-menu">
+    <div><h1>Jogo Pausado!</h1></div>
+    <div>
+      <button>Continuar jogando</button>
+      <button>Ir para a página principal</button>
+    </div>
+  </div>
+
+  <!-- Resolvi deixar o fim de jogo aqui, se realmente for necessário retirar, só apagar, não fiz JavaScript pra ele ainda -->
+  <div id="game-over">
+      <div>Você perdeu!</div>
+      <div id="game-over-desc">As suas vidas acabaram!</div>
+      <div>Animais reunidos: <span id="score">0</span>.</div>
+      <button id="restart-btn" onclick="restartGame()">Tentar novamente</button>
+  </div>
+
+  <div id="game-complete"></div>
+
+  <!-- Área para scripts -->
   <script src="../scripts/game4.js"></script>
 </body>
 </html>
