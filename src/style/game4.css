@@ -1,0 +1,177 @@
+@charset "UTF-8";
+
+:root {
+  /* root */
+  --primary-font-family: Arial, sans-serif;
+  --grass: #468d34;
+  --light-grass:  #63b44f;;
+  --water: #6db2f3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--primary-font-family);
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+#game-board {
+  display: grid;
+  position: relative;
+  outline: 1px solid #333;
+  outline-offset: -1px;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: 100vw;
+  height: 100vh;
+  gap: 1px;
+}
+
+#gamecanvas {
+  position: absolute;
+}
+
+.piece {
+  background-color: var(--water);
+  width: 100%;
+  height: 100%;
+}
+
+.piece.grass {
+  background-color: var(--grass);
+}
+
+.piece.light-grass {
+  background-color: var(--light-grass);
+}
+
+.piece.wood {
+  background-color: rgb(104, 66, 66);
+}
+
+.piece.light-wood {
+  background-color: rgb(126, 83, 83);
+}
+
+  /* Decidi usar id no player pra evitar que o grid afundasse (quando modificar essa parte, cuida pra ele não afundar na coluna 11, ao andar pra direita, mas acredito que já esteja funcionando corretamente */
+
+#player {
+  position: absolute;
+  width: calc(100vw / 20);
+  height: calc(100vh / 9);
+  background-image: url("../assets/player.png");
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  display: none;
+}
+
+#player.face-left {
+  transform: scaleX(-1);
+}
+
+/* Menus */
+
+#main-menu, #ui, #game-over {
+  display: flex;
+}
+
+#main-menu {
+  background-color: rgba(0, 0, 0, 0.473);
+  color: #fff;
+
+  height: 500px;
+  width: 700px;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  border-radius: 20px;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  /* Remover quando terminar o projeto
+  display: none;*/
+}
+
+#main-menu > h1 {
+  text-align: center;
+}
+
+#main-menu > div > button {
+  display: inline;
+  width: 350px;
+  height: 75px;
+  border: none;
+  border-radius: 10px;
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+#main-menu > div > button:hover {
+  background-color: rgb(136, 193, 212);
+  transition-duration: .2s;
+}
+
+#main-menu > div > button#back-btn {
+  width: 50px;
+  border-radius: 10px;
+  background-color: rgb(136, 193, 212);
+}
+
+#main-menu > div > button#back-btn:hover {
+  background-color: rgb(111, 172, 192);
+  transition-duration: .2s;
+}
+
+#ui {
+  display: flex;
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  justify-content: space-between;
+}
+
+/* MAPA (temporário) */
+
+/* Media Queries */
+
+/* Apenas de um dos menus, se quiser manter, eu otimizo e termino eles quando pegar o projeto de volta, senão, pode retirar ou fazer por você mesmo.
+
+@media screen and (max-width: 992px) {
+  #main-menu {
+    max-width: 650px;
+    margin: 0px 30px;
+    transition: ease .2s;
+  }
+}
+
+@media screen and (max-width: 768px) { 
+  #main-menu {
+    height: 700px;
+    min-width: 200px;
+    max-width: 600px;
+    margin: 0px;
+    transition: ease .2s;
+  }
+
+  #main-menu > p > button {
+    width: 250px;
+  }
+
+  #main-menu > p > button#back-btn {
+    width: 60px;
+  }
+}*/
