@@ -376,6 +376,29 @@ function interact() {
   }
 }
 
+/* DIALOGOS */
+
+const DialogSystem = {
+  show(name, text, portraitPath) {
+    pauseGame = true
+    const system = document.getElementById('dialog-system')
+    const interactName = document.getElementById('dialog-name')
+    const textCont = document.getElementById('dialog-text')
+    const imgCont = document.getElementById('dialog-ft')
+
+    interactName.innerText = name
+    textCont.innerText = text
+    imgCont.src = portraitPath
+
+    system.style.display = 'block'
+  },
+
+  hide() {
+    document.getElementById('dialog-system').style.display = 'none'
+    pauseGame = false
+  }
+}
+
 /* MINIJOGOS */
 
 function playFishing(x, y, charArray) {
@@ -542,35 +565,163 @@ function playCatch(x, y, charArray) {
 }
 
 function playPuzzle(x, y, charArray) {
-  document.getElementById('mg-title').innerText = "Quebra-cabeça"
-  document.getElementById('mg-desc').innerText = "Em construção..."
+  document.getElementById('mg-title').innerText = "O Grande Encontro"
+  document.getElementById('mg-desc').innerText = "Encaixe as peças redondinhas nos lugares certos!"
+
+  const box = document.getElementById('minigame-box')
+  box.style.maxWidth = "850px"
   
   const content = document.getElementById('mg-content')
-  const header = document.getElementById('mg-header')
-  const heartsBox = document.querySelector('.hearts-box')
-  const closeBtn = document.getElementById('mg-close');
+  content.style.position = "relative"
+  content.style.width = "800px" 
+  content.style.height = "500px"
+  content.style.backgroundColor = "rgba(0,0,0,0.05)"
+  content.style.borderRadius = "10px"
+  content.style.overflow = "hidden"
+  content.innerHTML = ""
 
-  closeBtn.style.background = '#2ecc71'; // Verde
-  closeBtn.innerText = 'Resgatar Amigo (Pular)';
+  const GRID = 3
+  const PIECE_W = 120
+  const PIECE_H = 125
+  const BOARD_W = PIECE_W * GRID
+  const BOARD_H = PIECE_H * GRID
+  const IMG_URL = "../assets/game4-assets/chegada_do_pai.png"
 
-  closeBtn.onclick = () => {
-    winMinigame(x, y, charArray);
-    closeBtn.style.background = 'rgb(167, 8, 8)';
-    closeBtn.innerText = 'Fugir';
-    closeBtn.onclick = closeMinigame;
-  };
+  // NOVO MOLD: Curvas redondas como quebra-cabeça real
+  // O segredo das "saídas" é desenhar curvas que saem e entram no limite da div
+  const MOLD = "path('M30,0 C45,20 75,20 90,0 L120,0 L120,35 C100,50 100,75 120,90 L120,125 L85,125 C70,105 45,105 30,125 L0,125 L0,90 C20,75 20,50 0,35 L0,0 Z')"
+
+  let placedCount = 0
+
+  const board = document.createElement('div')
+  board.id = 'puzzle-board-target'
+  board.style.width = `${BOARD_W}px`
+  board.style.height = `${BOARD_H}px`
+  board.style.backgroundImage = `url(${IMG_URL})`
+  board.style.backgroundSize = `${BOARD_W}px ${BOARD_H}px`
+  content.appendChild(board)
+
+  content.ondragover = (e) => e.preventDefault()
+  content.ondrop = (e) => {
+    e.preventDefault()
+    const pieceId = e.dataTransfer.getData("text/plain")
+    const pieceEl = document.getElementById(pieceId)
+    
+    if (!pieceEl || pieceEl.classList.contains('placed')) return
+
+    const offsetX = parseInt(e.dataTransfer.getData("offsetX"))
+    const offsetY = parseInt(e.dataTransfer.getData("offsetY"))
+
+    const rect = content.getBoundingClientRect()
+    let newLeft = e.clientX - rect.left - offsetX
+    let newTop = e.clientY - rect.top - offsetY
+
+    newLeft = Math.max(0, Math.min(newLeft, content.offsetWidth - PIECE_W))
+    newTop = Math.max(0, Math.min(newTop, content.offsetHeight - PIECE_H))
+
+    pieceEl.style.left = `${newLeft}px`
+    pieceEl.style.top = `${newTop}px`
+    pieceEl.style.transform = "rotate(0deg)"
+  }
+
+  for(let r = 0; r < GRID; r++) {
+    for(let c = 0; c < GRID; c++) {
+      const id = `p-${r}-${c}`
+
+      const slot = document.createElement('div')
+      slot.className = 'puzzle-slot'
+      slot.style.width = `${PIECE_W}px`
+      slot.style.height = `${PIECE_H}px`
+      slot.style.left = `${c * PIECE_W}px`
+      slot.style.top = `${r * PIECE_H}px`
+      slot.dataset.id = id
+
+      slot.ondragover = (e) => e.preventDefault()
+      slot.ondrop = (e) => {
+        const pieceId = e.dataTransfer.getData("text/plain")
+        
+        if (pieceId === slot.dataset.id) {
+          e.preventDefault()
+          e.stopPropagation()
+          
+          const pieceEl = document.getElementById(pieceId)
+          pieceEl.style.position = "absolute"
+          pieceEl.style.left = "0"
+          pieceEl.style.top = "0"
+          pieceEl.style.transform = "rotate(0deg)"
+          pieceEl.draggable = false
+          pieceEl.classList.add('placed')
+          
+          slot.appendChild(pieceEl)
+          
+          placedCount++
+          if (placedCount === GRID * GRID) {
+            board.style.borderColor = "#2ecc71"
+            setTimeout(() => winMinigame(x, y, charArray), 1000)
+          }
+        }
+      }
+      board.appendChild(slot)
+
+      const piece = document.createElement('div')
+      piece.id = id
+      piece.className = 'puzzle-piece-drag'
+      piece.draggable = true
+      piece.style.width = `${PIECE_W}px`
+      piece.style.height = `${PIECE_H}px`
+      
+      piece.style.backgroundImage = `url(${IMG_URL})`
+      piece.style.backgroundSize = `${BOARD_W}px ${BOARD_H}px`
+      piece.style.backgroundPosition = `-${c * PIECE_W}px -${r * PIECE_H}px`
+
+      piece.style.clipPath = MOLD
+      piece.style.webkitClipPath = MOLD
+
+      const spawnSide = Math.random() > 0.5
+      let randX
+      if (spawnSide) {
+          randX = Math.random() * ( (content.offsetWidth / 2) - BOARD_W / 2 - PIECE_W )
+      } else {
+          randX = (content.offsetWidth / 2) + (BOARD_W / 2) + Math.random() * ( (content.offsetWidth / 2) - BOARD_W / 2 - PIECE_W )
+      }
+      
+      const randY = Math.random() * (content.offsetHeight - PIECE_H)
+      const randomRot = (Math.random() - 0.5) * 40
+
+      piece.style.left = `${randX}px`
+      piece.style.top = `${randY}px`
+      piece.style.transform = `rotate(${randomRot}deg)`
+
+      piece.ondragstart = (e) => {
+        e.dataTransfer.setData("text/plain", piece.id)
+        const rect = piece.getBoundingClientRect()
+        e.dataTransfer.setData("offsetX", e.clientX - rect.left)
+        e.dataTransfer.setData("offsetY", e.clientY - rect.top)
+        setTimeout(() => piece.classList.add('dragging'), 0)
+      }
+      
+      piece.ondragend = () => piece.classList.remove('dragging')
+      content.appendChild(piece)
+    }
+  }
 }
 
-
-// ATUALIZE sua função closeMinigame para isso:
 function closeMinigame() {
     const container = document.getElementById('minigame-container')
+    const box = document.getElementById('minigame-box')
+    const content = document.getElementById('mg-content')
     const timePanel = document.getElementById('counter')
 
-    // Para o cronômetro se ele estiver rodando (evita perder vida após fechar)
     if (activeInterval) {
         clearInterval(activeInterval)
         activeInterval = null
+    }
+
+    if (box) box.style.maxWidth = "600px"
+    if (content) {
+        content.style.width = "auto"
+        content.style.height = "auto"
+        content.style.backgroundColor = "transparent"
     }
 
     if (timePanel) timePanel.style.display = 'none'

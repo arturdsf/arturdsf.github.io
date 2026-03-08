@@ -38,7 +38,7 @@
     ];
 
     const npcDefs = [
-        {id:'pai',   envX:0,envY:1, localX:200, localY:200, dialog:['Sou o pai quero-quer.']},
+        {id:'pai',   envX:0,envY:1, localX:300, localY:150, dialog:['Sou o pai quero-quer.']},
         {id:'filhote',envX:0,envY:1, localX:240, localY:200, dialog:['Sou o filhote quero-quer.']},
         {id:'capivara',envX:0,envY:1, localX:400, localY:300, dialog:['Eu sou a capivara.']},
         {id:'cavalo',envX:0,envY:0, localX:300, localY:400, dialog:['Relincho.']} ,
@@ -48,6 +48,7 @@
         {id:'carcara',envX:1,envY:1, localX:500, localY:250, dialog:['Sou o carcará.']},
         {id:'filhote_final',envX:1,envY:1, localX:550, localY:350, dialog:['Encontrei o filhote!']}
     ];
+    let facing = "right"
 
     const npcs = [];
     let currentDialogNpc = null;
@@ -115,8 +116,14 @@
         let dx=0, dy=0;
         if(keys['ArrowUp']||keys['KeyW']) dy -= player.speed*dt;
         if(keys['ArrowDown']||keys['KeyS']) dy += player.speed*dt;
-        if(keys['ArrowLeft']||keys['KeyA']) dx -= player.speed*dt;
-        if(keys['ArrowRight']||keys['KeyD']) dx += player.speed*dt;
+        if(keys['ArrowLeft']||keys['KeyA']) {
+            dx -= player.speed*dt;
+            facing = "left";
+        }
+        if(keys['ArrowRight']||keys['KeyD']) {
+            dx += player.speed*dt;
+            facing = "right";
+        }
         if(dx===0 && dy===0) return;
         attemptMove(dx,dy);
         trail.unshift({x:player.worldX,y:player.worldY});
@@ -293,8 +300,13 @@
             updateContainer();
         }
         updateNPCElements();
-        player.el.style.left = player.worldX + 'px';
-        player.el.style.top  = player.worldY + 'px';
+
+
+        if(player.el){
+            player.el.style.left = player.worldX + 'px';
+            player.el.style.top  = player.worldY + 'px';
+            player.el.dataset.facing = facing;
+        }
         requestAnimationFrame(loop);
     }
 

@@ -1,4 +1,3 @@
-/* Styles for new game1 (2x2 world) */
 *{
     margin:0;
     padding:0;
@@ -9,7 +8,7 @@ html,body{
     height:100vh;
     overflow:hidden;
     font-family:Arial, sans-serif;
-    background:#87CEEB; /* light sky */
+    background:#87CEEB;
 }
 #map-container{
     position:relative;
@@ -22,41 +21,55 @@ html,body{
     width:100vw;
     height:100vh;
 }
-/* placeholder backgrounds for each biome */
-.env.biome-0{background:#88c070;} /* campo aberto */
-.env.biome-1{background:#c0e0ff;} /* gelado */
-.env.biome-2{background:#7fbf7f;} /* floresta leve */
-.env.biome-3{background:#a08040;} /* matagal */
+.env.biome-0{background:#88c070;}
+.env.biome-1{background:#c0e0ff;}
+.env.biome-2{background:#7fbf7f;}
+.env.biome-3{background:#a08040;}
 
 .player{
     position:absolute;
-    width:40px;
-    height:40px;
+    width:50px;
+    height:50px;
     background: url("../assets/player.png") center/contain no-repeat;
-    /* fall back color if image missing */
-    background-color:#fff;
-    border:2px solid #000;
-    border-radius:50%;
     pointer-events:none;
     transition:left 0.1s, top 0.1s;
 }
 
+.player[data-facing="left"] {
+    transform: scaleX(-1);
+}
+
 .npc{
     position:absolute;
-    width:32px;
-    height:32px;
-    background-color:#f0f;
-    border:2px solid #000;
-    border-radius:50%;
+    width:50px;
+    height:50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #1f0;
     pointer-events:none;
 }
 
 .npc.following{background-color:#ff0;}
 
-.obstacle{
-    position:absolute;
-    background:rgba(0,0,0,0.3);
-    border:1px solid #000;
+/* NPCs */
+
+#pai {background-image: url(../assets/paiqueroquero_static.png);}
+#filhote {background-image: url(../assets/filhotes_static.png);}
+#capivara {background-image: url(../assets/capivara_static.png);}
+#cavalo {background-image: url(../assets/cavalo_static.png);}
+#jacana {background-image: url(../assets/jacana_static.png);}
+#urutau {background-image: url(../assets/urutu_static.png);}
+#graxaim {background-image: url(../assets/graxaim_static.png);}
+#carcara {background-image: url(../assets/carcara_static.png);}
+#filhote_final {background-image: url(../assets/filhoteperdido_scream.png);}
+
+.obstacle {
+    position: absolute;
+    background-color: #5D4037;
+    border: 2px solid #3E2723;
+    z-index: 5; 
+    box-shadow: 0 4px 2px rgba(0,0,0,0.3);
 }
 
 #quest-box{
