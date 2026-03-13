@@ -40,7 +40,6 @@ const TILE_SIZE = 80
 let player = {
   x: 14,
   y: 15,
-  hp: 1,
   friends: 0,
   followers: 0
 }
@@ -50,64 +49,349 @@ let pauseGame = true
 let activeInterval = null
 
 const map = [
-  "AAAAAAAAWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAA",
-  "AAAAAAAAAWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAA",
-  "AAAAAAAAAAWWWWWWWWWWAAAAAAAAAAAAAAAAAAAA",
-  "WA.,.,.,.,.WWWWWWWWAAAAAAAAAAAAAAAAAAAAA",
-  "WW,.,T,.,.WWWWWWWW,.,T,.,.,.o.,.,.,.,.AA",
-  "WWW,.TWWWWWWWWWWW,.,.T.,.,.,.,.,.,.,.,AA",
-  "WWWWWTWWWWWWWWW.,P,.,TTTTTTTTTT.,.,.,.AA",
-  "WWWWWTWWWWWWWW.,.,.,.,.,.,.,.,T,.,.,.,AA",
-  "WWWW,T,.,.p.,.,.,.,.,.,.,.,.,.T.,.,.,.AA",
-  "WW.,.T.,.,.,.,.,.,q,.,.,.,.,.,T,.,.,.,AA",
-  "WA,.,T,.,.,.,.,.,.,.,.,.,.,.,.T.,.,.,.AA",
-  "WA.,.TT,.,.,.,.,.,.,.,.,.,.,.,T,.,.,.,AA",
-  "AA,.,.TTTTTTTTTTTTTTTTTTTTTTTTT.,.,.,.AA",
-  "AA.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,AA",
-  "AA,.,.,.,C,.,.,.,.,.,.,.,.,.,.,.,.,.,.AA",
-  "AA.,.M.,.,.,.,.,.,.,.TTTT,.,.,.,.,.,.,AA",
-  "AA,.,.,.,.,.,.,.,.,.,T,.T.,.m.,.,.,.,.AA",
-  "AA.,.,.,.,.,.,.,.,.,.T.,T,.,.,.,.,.,.,AA",
-  "AA,.,.,.,.,.,.,.,.,.,T,.T.,.,.,.,.,.,.AA",
-  "AA.,.,.,.O.,.,.,.,.,.T.,T,.,.,.,c,.,AAAA",
-  "AA,.,.,.,.,.,.,.,.,.,T,.T.,.,.,.,.,AAAAA",
-  "AA.,.,.,.,.,.,.,.,.,.T.,Q,.,.,.AAAAAAAAA",
-  "AAAAAAAAAA,.,.,.,.,.,.,.,.,AAAAAAAAAAAAA",
-  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "WWWWWWWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAA",
+  "WWWWWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAA",
+  "WWWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAAAA",
+  "WWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAAAAA",
+  "WWWWWWWWWWWWWWWWWWWaataaaaaaaaaaaaaaaaAA",
+  "WWWWWWWWWWWWWWWWW,.,.T.,.,.,.,.,.,.,.aAA",
+  "WWWWWWWWWWWWWWW.,P,.,TTTTTTTTTT.,.,.,aAA",
+  "WWWWWWWWWWWWWW.,.,.,.,.,.,.,.,T,.,o,.aAA",
+  "WWWWTTT.,.p.,.,.,.,.,.,.,.,.,.T.,.,.,aAA",
+  "WW.,.T.,.,.,.,.,.,q,.,.,.,.,.,T,.,.,.aAA",
+  "WAa.,T,.,.,.,.,.,.,.,.,.,.,.,.T.,.,.,aAA",
+  "WAa,.TT,.,.,.,.,.,.,.,.,.,.,.,T,.,.,.aAA",
+  "AAa.,.TTTTTTTTTTTTTTTTTTTTTTTTT.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.aAA",
+  "AAa.,.,.,C,.,.,.,.,.,.,.,.,.,.,.,.,.,aAA",
+  "AAa,.M.,.,.,.,.,.,.,.TTTT,.,.,.,.,.,.aAA",
+  "AAa.,.,.,.,.,.,.,.,.,T,.T.,.m.,.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.,.,.T.,T,.,.,.,.,.,.aAA",
+  "AAa.,.,.,.,.,.,.,.,.,T,.T.,.,.,.,.,.,aAA",
+  "AAa,.,.,.O.,.,.,.,.,.T.,T,.,.,.,c,.,aaAA",
+  "AAaaa.,.,.,.,.,.,.,.,T,.T.,.,.,.,.aaaAAA",
+  "AAAaaaaaa,.,.,.,.,.,.T.,Q,.,aaaaaaAAAAAA",
+  "AAAAAaaaaaaaaaaaaaaaataaaaaaaaAAAAAAAAAA",
+  "AAAAAAAAAaaaaaaaaaaaataaaaaAAAAAAAAAAAAA",
   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 ]
 
 const moldes = {
   'W': createMold('water'),
   'A': createMold('tree'),
+  'a': createMold('grass-tree'),
   '.': createMold('grass'),
   ',': createMold('grass2'),
   'T': createMold('dirt'),
-  'P': createMold('sprite-P'),
-  'p': createMold('sprite-p'),
-  'M': createMold('sprite-M'),
-  'm': createMold('sprite-m'),
-  'O': createMold('sprite-O'),
-  'o': createMold('sprite-o'),
-  'C': createMold('sprite-C'),
-  'c': createMold('sprite-c'),
-  'Q': createMold('sprite-Q'),
-  'q': createMold('sprite-q')
+  't': createMold('dirt-block'),
+
+  'P': createMold('grass sprite-P'), 
+  'p': createMold('grass sprite-p'),
+  'M': createMold('grass sprite-M'),
+  'm': createMold('grass sprite-m'),
+  'O': createMold('grass sprite-O'),
+  'o': createMold('grass sprite-o'),
+  'C': createMold('grass sprite-C'),
+  'c': createMold('grass sprite-c'),
+  'Q': createMold('grass sprite-Q'),
+  'q': createMold('grass sprite-q')
 }
 
-/*
-  Sprites:
-  P = Pesca (Cavalo)
-  p = Pesca (Bem-te-vi)
-  M = Jogo da Memória (Jaçanã)
-  m = Jogo da Memória (Capivara)
-  C = Caça (Graxaim)
-  c = Caça (Filhote)
-  O = Colheita (Mamãe Quero-quero)
-  o = Colheita (Urutu)
-  Q = Quebra-cabeça (Os três primeiros)
-  q = Quebra-cabeça (Carcará)
-*/
+const characterData = {
+  'O': { name: "Mamãe Quero-Quero", action: "Fale com a " },
+  'Q': { name: "Filhotes", action: "Fale com os " },
+  'm': { name: "Capivara", action: "Fale com a " },
+  'P': { name: "Cavalo", action: "Fale com o " },
+  'M': { name: "Jaçanã", action: "Fale com a " },
+  'o': { name: "Urutu", action: "Fale com o " },
+  'C': { name: "Graxaim", action: "Fale com o " },
+  'p': { name: "Bem-te-vi", action: "Fale com o" },
+  'q': { name: "Carcará", action: "Fale com o " },
+  'c': { name: "Filhote", action: "Resgate o " }
+}
+
+const storyOrder = ['O', 'Q', 'm', 'P', 'M', 'o', 'C', 'p', 'q', 'c']
+let currentStep = 0
+
+const minigameConfig = {
+  // Jogo da Memória
+  'P': { title: "Memória do Cavalo", desc: "Ache os pares.", assets: ['🐴','🐴','🍎','🍎','🥕','🥕'] },
+  'p': { title: "Memória do Bem-te-vi", desc: "Ache os pares.", assets: ['🐦','🐦','🐛','🐛','🍒','🍒'] },
+  'M': { title: "Memória da Jaçanã", desc: "Ache os pares.!", assets: ['🦆','🦆','🐟','🐟','🐸','🐸'] },
+  'm': { title: "Memória da Capivara", desc: "Ache os pares.", assets: ['🦦','🦦','🍉','🍉','🌿','🌿'] },
+  
+  // Pega-pega
+  'C': { title: "Cadê o Graxaim?", desc: "Clique no Graxaim antes do tempo acabar.", target: "🦊" },
+  'c': { title: "Vem, Filhote!", desc: "Encontre o filhote perdido!", target: "🐶" },
+  
+  // Quebra-cabeça
+  'O': {
+    title: "A Mamãe Quero-Quero",
+    desc: "Monte o Quebra-cabeça!",
+    img: "../assets/game4-assets/mae_e_filhote.png",
+    bookPage: "Página 29"
+  },
+  'o': {
+    title: "O ataque do Urutu!",
+    desc: "Monte o Quebra-cabeça!",
+    img: "../assets/game4-assets/urutu_attack.png",
+    bookPage: "Página 15"
+  },
+  'Q': {
+    title: "O papai chegou",
+    desc: "Monte o Quebra-cabeça!",
+    img: "../assets/game4-assets/chegada_do_pai.png",
+    bookPage: "Página 6"
+  },
+  'q': {
+    title: "Deixe-o observar...",
+    desc: "Monte o Quebra-cabeça!",
+    img: "../assets/game4-assets/carcara_watching.png",
+    bookPage: "Página 41 \"Fim\""
+  }
+}
+
+const GameDialogues = {
+  // Diálogos de interação
+  'O': [
+    {
+      name: "Mamãe Quero-Quero",
+      text: "Quero-Quero meu filhinho, apareça ligeirinho!",
+      portrait: "../assets/maequeroquero_scream.png"
+    }
+  ],
+  
+  'Q': [
+    {
+      name: "Filhotes",
+      text: "Papai, cadê o nosso maninho?",
+      portrait: "../assets/filhotes_static.png"
+    }
+  ],
+
+  'm': [
+    {
+      name: "Pai Quero-Quero",
+      text: "Olá Capivara, minha amiga.",
+      portrait: "../assets/paiqueroquero_static.png"
+    },
+    {
+      name: "Pai Quero-Quero",
+      text: "O meu filhote desapareceu, não consigo encontrar ele.",
+      portrait: "../assets/paiqueroquero_static.png"
+    }
+  ],
+
+  'P': [
+    {
+      name: "Capivara",
+      text: "Meu amigo Cavalo",
+      portrait: "../assets/capivara_walking.png"
+    },
+    {
+      name: "Capivara",
+      text: "Um filhote de Quero-Quero sumiu esta manhã, você viu ele?",
+      portrait: "../assets/capivara_static.png"
+    }
+  ],
+
+  'M': [
+    {
+      name: "Jaçanã",
+      text: "Eu irei junto e o encontraremos já!",
+      portrait: "../assets/jacana_static.png"
+    }
+  ],
+
+  'o': [
+    {
+      name: "Urutu",
+      text: "shhhh",
+      portrait: "../assets/urutu_walking.png"
+    },
+    {
+      name: "Jaçanã",
+      text: "Calma aí!\nNão queremos te machucar!",
+      portrait: "../assets/jacana_static.png"
+    },
+    {
+      name: "Urutu",
+      text: "Claro que não era para vocês. Mas, o que causa os tanto alvoroço?",
+      portrait: "../assets/urutu_static.png"
+    }
+  ],
+
+  'C': [
+    {
+      name: "Pai Quero-Quero",
+      text: "Graxaim, você viu um filhote de Quero-Quero passar por aqui?",
+      portrait: "../assets/paiqueroquero_flying_inv.png"
+    }
+  ],
+
+  'p': [
+    {
+      name: "Urutu",
+      text: "Lembro de ter ouvido um Carcará passar por aqui esta noite.",
+      portrait: "../assets/urutu_walking.png"
+    },
+    {
+      name: "Urutu",
+      text: "Acho que o Bem-te-vi pode ter visto alguma coisa.\nQuem sabe o Carcará não contribua?",
+      portrait: "../assets/urutu_static.png"
+    }
+  ],
+
+  'q': [
+    {
+      name: "Capivara",
+      text: "Carcará!\nAqui venho lhe explicar.",
+      portrait: "../assets/capivara_walking.png"
+    },
+    {
+      name: "Capivara",
+      text: "Estes pobres Quero-Queros estão procurando seu filhote perdido\nVocê pode nos ajudar a encontrar o coitadinho?",
+      portrait: "../assets/capivara_static.png"
+    }
+  ],
+
+  // Diálogos de vitória
+  'O_win': [
+    {
+      name: "Mamãe Quero-Quero",
+      text: "Eu não tenho forças para caminhar, o nosso filhote você precisa encontrar!",
+      portrait: "../assets/maequeroquero_scream.png" }
+  ],
+
+  'Q_win': [
+    {
+      name: "Pai Quero-Quero",
+      text: "Vamos procurar eles.",
+      portrait: "../assets/paiqueroquero_static.png"
+    }
+  ],
+
+  'm_win': [
+    {
+      name: "Capivara",
+      text: "Eu vou ajudar.",
+      portrait: "../assets/capivara_static.png"
+    },
+    {
+      name: "Capivara",
+      text: "Mamãe Quero-Quero, pode esperar, logo logo o seu filhote irá voltar.",
+      portrait: "../assets/capivara_static.png"
+    }
+  ],
+
+  'P_win': [
+    {
+      name: "Cavalo",
+      text: "Eu não vi nada, não.\nMas, que tal perguntar para a Jaçanã?",
+      portrait: "../assets/capivara_static.png"
+    }
+  ],
+
+  'o_win': [
+    {
+      name: "Capivara",
+      text: "Você viu um filhote de Quero-Quero passar por aí?",
+      portrait: "../assets/capivara_static.png"
+    },
+    {
+      name: "Urutu",
+      text: "Não vi nada não...\nMas vou com vocês ajudar.",
+      portrait: "../assets/urutu_static.png"
+    }
+  ],
+
+  'C_win': [
+    {
+      name: "Graxaim",
+      text: "(Eles vão achar que a fui eu...)",
+      portrait: "../assets/graxaim_static.png"
+    },
+    {
+      name: "Graxaim",
+      text: "Claro que eu ajudo\nAntes da noite este filhote estará no seu ninho",
+      portrait: "../assets/graxaim_walking.png"
+    }
+  ],
+
+  'p_win': [
+    {
+      name: "Bem-te-vi",
+      text: "Eu acho que posso indicar\nLembro que vi um ninho naquele pé de umbu antes do sol começar a despencar.",
+      portrait: "../assets/bemtevi_flying.png"
+    }
+  ],
+
+  'q_win': [
+    {
+      name: "Carcará",
+      text: "Que coincidência, minha amiga!\nUm filhote de Quero-Quero chegou aqui e me viu\nEle estava perdido, com medo e com frio.",
+      portrait: "../assets/carcara_static.png"
+    },
+    {
+      name: "Carcará",
+      text: "Venha, suba e pegue teu filhote, tudo que eu falei era verdade, então me mantenha longe dos holofotes!",
+      portrait: "../assets/carcara_static.png"
+    },
+    {
+      name: "Carcará",
+      text: "Estou preocupado com os meus, então vocês aí embaixo, tomem conta dos seus!",
+      portrait: "../assets/carcara_static.png"
+    }
+  ],
+
+  // Eventos aleatórios
+  'intro_game': [
+    {
+      name: "",
+      text: "Estava uma família de Quero-Quero em um vai e vem em desespero.",
+    },
+    {
+      name: "",
+      text: "Pois o filhote Quero-Quero acabara de aprender a voar e agora está sem paradeiro."
+    }
+  ],
+  
+  'not_ts_time_honey': [
+    {
+      name: "",
+      text: `Eu não estou vendo nada por aqui...`,
+      portrait: "../assets/player.png"
+    },
+    {
+      name: "",
+      text: `Eu devo estar imaginando coisas.`,
+      portrait: "../assets/player.png"
+    }
+  ],
+
+  'win_game': [
+    {
+      name: "",
+      text: "E então a família pode se reencontrar."
+    },
+    {
+      name: "",
+      text: "A Mamãe Quero-Quero enfim parou de gritar."
+    },
+    {
+      name: "",
+      text: "Mas, em outros campos por aí, quando o dia começa a clarear...\nUm Quero-Quero voa desesperado, sem saber onde está"
+    },
+    {
+      name: "",
+      text: "E a mamãe grita:\n\"Cadê meu Quero-Quero, que tanto espero?\""
+    }
+  ],
+};
+
+Object.entries(characterData).forEach(([key, info]) => {
+  GameDialogues[`${key}_hint`] = [{ text: `${info.action} ${info.name}!` }];
+});
 
 function createMold(classe) {
   const div = document.createElement('div')
@@ -117,9 +401,13 @@ function createMold(classe) {
 
 function renderMap() {
   const board = document.getElementById('game-board')
+  const playerDiv = document.getElementById('player')
+  const foreground = document.getElementById('foreground-layer')
   if (!board) return
+
+  const oldPieces = board.querySelectorAll('.piece')
+  oldPieces.forEach(p => p.remove())
   
-  board.innerHTML = ""
   board.style.gridTemplateColumns = `repeat(${COLS}, ${TILE_SIZE}px)`
   board.style.gridTemplateRows = `repeat(${ROWS}, ${TILE_SIZE}px)`
 
@@ -132,28 +420,28 @@ function renderMap() {
       if(!moldes[char]) continue
 
       const clone = moldes[char].cloneNode(true)
-
-      if (!allCharacters.includes(char)) {
-        clone.style.opacity = "0"
-      } else {
-        clone.style.opacity = "1"
-      }
+      clone.style.opacity = "1" 
+      clone.id = `tile-${x}-${y}`
 
       frag.appendChild(clone)
     }
   }
+  
   board.appendChild(frag)
+
+  if (playerDiv) board.appendChild(playerDiv)
+  if (foreground) board.appendChild(foreground)
+
   updateCamera()
   
   const uiHearts = document.getElementById('ui-hearts')
   const heartsEl = document.getElementById('mg-hearts')
-  if (uiHearts) uiHearts.innerText = player.hp
-  if (heartsEl) heartsEl.innerText = player.hp
 }
 
 function updateCamera(isResizing = false) {
   const board = document.getElementById('game-board')
   const playerDiv = document.getElementById('player')
+  
   if (!board || !playerDiv) return
 
   if (isResizing) board.classList.remove('smooth-move')
@@ -187,11 +475,8 @@ function updateCamera(isResizing = false) {
 
   board.style.transform = `translate(${offX}px, ${offY}px)`
 
-  const screenX = playerWorldX + offX
-  const screenY = playerWorldY + offY
   const scale = (facing === "left") ? -1 : 1
-
-  playerDiv.style.transform = `translate(${screenX}px, ${screenY}px) translate(-50%, -50%) scaleX(${scale})`
+  playerDiv.style.transform = `translate(${playerWorldX}px, ${playerWorldY}px) translate(-50%, -50%) scaleX(${scale})`
 }
 
 document.addEventListener("keydown", (e) => {
@@ -212,12 +497,11 @@ function handleMove(dx, dy, newFacing) {
   const newX = player.x + dx
   const newY = player.y + dy
 
-  // Atualiza a direção do olhar primeiro
   if (newFacing) facing = newFacing;
 
   if (newY >= 0 && newY < ROWS && newX >= 0 && newX < COLS) {
     const tile = map[newY][newX]
-    const blockers = ['W', 'A', 'P', 'p', 'M', 'm', 'O', 'o', 'C', 'c', 'Q', 'q']
+    const blockers = ['W', 'A', 'a', 't', 'P', 'p', 'M', 'm', 'O', 'o', 'C', 'c', 'Q', 'q']
 
     if (!blockers.includes(tile)) {
       player.x = newX
@@ -228,8 +512,9 @@ function handleMove(dx, dy, newFacing) {
       }
     }
   }
-  // Chama a câmera apenas UMA vez ao final de todo o cálculo
+
   updateCamera()
+  updateProximity()
 }
 
 /* LÓGICA DOS MINIJOGOS */
@@ -242,63 +527,21 @@ function openMinigame(type, x, y, charArray) {
   if (container) container.style.display = 'flex'
   if (content) content.innerHTML = ""
 
-  if (type === 'P' || type === 'p') {
-    playFishing(x, y, charArray)
-  } else if (type === 'M' || type === 'm') {
-    playMemory(x, y, charArray)
-  } else if (type === 'O' || type === 'o') {
-    playDnD(x, y, charArray)
+  if (type === 'P' || type === 'p' || type === 'M' || type === 'm') {
+    playMemory(type, x, y, charArray)
+  } else if (type === 'O' || type === 'o' || type === 'Q' || type === 'q') {
+    playPuzzle(type, x, y, charArray)
   } else if (type === 'C' || type === 'c') {
-    playCatch(x, y, charArray)
-  } else if (type === 'Q' || type === 'q') {
-    playPuzzle(x, y, charArray)
-  }
-}
-
-function closeMinigame() {
-  const container = document.getElementById('minigame-container')
-  if (container) container.style.display = 'none'
-  pauseGame = false
-}
-
-function restart() {
-  player.hp--
-  const uihp = document.getElementById('hp')
-  const uiHearts = document.getElementById('ui-hearts')
-  const heartsEl = document.getElementById('mg-hearts')
-  if (uiHearts) {
-    setTimeout(() => {
-      uiHearts.innerText = player.hp
-    }, 3000)
-    uiHearts.innerText = 'Você perdeu 1 ponto'
-  }
-  
-  if (heartsEl) {
-    setTimeout(() => {
-      heartsEl.innerText = player.hp
-    }, 2000)
-    heartsEl.innerText = 'Você perdeu 1 ponto'
-  }
-
-  if (player.hp <= 0) {
-    closeMinigame()
-    pauseGame = true
-    //document.getElementById('game-over').style.display = 'flex'
-    uiHearts.innerText = ''
-    uihp.innerText = 'Você perdeu! 😭'
-    uihp.style.background = 'rgba(238, 238, 238, 0.9)'
-    uihp.style.color = 'rgba(100, 100, 100, 0.9)'
-
-    setTimeout(() => {
-      restartGame()
-    }, 3000)
+    playCatch(type, x, y, charArray)
   }
 }
 
 function winMinigame(x, y, charArray) {
-  console.log(`Você resgatou um amigo! Amigos resgatados: ${player.friends}`)
+  const tile = map[y][x];
   player.friends++
-  const progEl = document.getElementById('prog')
+  currentStep++
+
+  const progEl = document.getElementById('prog');
   if (progEl) progEl.innerText = `${player.friends}/10`
 
   const correctGrass = ((x + y) % 2 === 0) ? ',' : '.'
@@ -307,26 +550,32 @@ function winMinigame(x, y, charArray) {
   charArray[x] = correctGrass
   map[y] = charArray.join('')
 
-  const index = y * COLS + x
-  const board = document.getElementById('game-board')
-  if (board && board.children[index]) {
-    board.children[index].className = `piece ${grassClass}`
-    board.children[index].innerText = ""
-  }
-  
+  const tileElement = document.getElementById(`tile-${x}-${y}`)
+
   closeMinigame()
 
-  if (player.friends >= 10) {
-    winGame()
-  }
+  const winKey = tile + '_win'
+  dialogSystem.show(winKey, () => {
+    if (tileElement) {
+      tileElement.classList.remove(`sprite-${tile}`)
+      tileElement.classList.add('collected')
+    }
+    pauseGame = false
+    updateHintUI()
+  })
+
+  if (player.friends >= 10) winGame()
 }
 
 function winGame() {
-  window.alert('Parabéns, você encontrou todos os 10 amigos! O jogo agora será reiniciado.')
-  restartGame()
+  const winMenu = document.getElementById('game-complete')
+
+  dialogSystem.show('win_game')
+  pauseGame = true
+  winMenu.style.display = 'flex'
 }
 
-/* Celulares */
+/* Celulares e Interação */
 
 function setupMobileButtons() {
     const btns = {
@@ -368,151 +617,137 @@ function interact() {
     if (ny >= 0 && ny < ROWS && nx >= 0 && nx < COLS) {
       const tile = map[ny][nx]
       if(['P', 'p', 'M', 'm', 'O', 'o', 'C','c', 'Q', 'q'].includes(tile)) {
-        const charArray = map[ny].split('')
-        openMinigame(tile, nx, ny, charArray)
+        if (tile === storyOrder[currentStep]) {
+          const charArray = map[ny].split('')
+          dialogSystem.show(tile, () => {
+            openMinigame(tile, nx, ny, charArray);
+          });
+        } else {
+          dialogSystem.show('not_ts_time_honey')
+        }
         return
       }
     }
   }
 }
 
-/* DIALOGOS */
+function updateProximity() {
+  const bubble = document.getElementById('interaction-bubble')
+  if (!bubble || pauseGame) return
 
-const DialogSystem = {
-  show(name, text, portraitPath) {
+  const checkDirs = [
+    {dx: 0, dy: -1}, {dx: 0, dy: 1},
+    {dx: -1, dy: 0}, {dx: 1, dy: 0},
+    {dx: -1, dy: -1}, {dx: 1, dy: -1},
+    {dx: -1, dy: 1}, {dx: 1, dy: 1}
+  ]
+
+  let targetFound = false
+
+  for (let dir of checkDirs) {
+    let nx = player.x + dir.dx
+    let ny = player.y + dir.dy
+
+    if (ny >= 0 && ny < ROWS && nx >= 0 && nx < COLS) {
+      const tile = map[ny][nx] 
+
+      if(tile === storyOrder[currentStep]) {
+        showBubble(nx, ny)
+        targetFound = true
+        break
+      }
+    }
+  }
+
+  if (!targetFound) {
+    bubble.style.display = 'none'
+  }
+}
+
+function showBubble(tx, ty) {
+  const bubble = document.getElementById('interaction-bubble')
+  const worldX = (tx * TILE_SIZE) + (TILE_SIZE / 2)
+  const worldY = (ty * TILE_SIZE)
+
+  bubble.style.display = 'block'
+  bubble.style.left = `${worldX}px`
+  bubble.style.top = `${worldY}px`
+}
+
+/* Dialogos e Dicas */
+
+const dialogSystem = {
+  currentSequence: [],
+  currentIndex: 0,
+  callback: null,
+
+  show(key, onComplete = null) {
+    if (!GameDialogues[key]) {
+      if (onComplete) onComplete()
+      return
+    }
+
+    this.currentSequence = GameDialogues[key]
+    this.currentIndex = 0
+    this.callback = onComplete
     pauseGame = true
-    const system = document.getElementById('dialog-system')
-    const interactName = document.getElementById('dialog-name')
-    const textCont = document.getElementById('dialog-text')
-    const imgCont = document.getElementById('dialog-ft')
 
-    interactName.innerText = name
-    textCont.innerText = text
-    imgCont.src = portraitPath
-
-    system.style.display = 'block'
+    document.getElementById('dialog-system').style.display = 'block'
+    this.render()
   },
 
-  hide() {
+  render() {
+    const line = this.currentSequence[this.currentIndex]
+    document.getElementById('dialog-name').innerText = line.name || "";
+    document.getElementById('dialog-text').innerText = line.text;
+    const portraitImg = document.getElementById('dialog-ft')
+
+    if (line.portrait) {
+      portraitImg.src = line.portrait;
+      portraitImg.style.display = 'block';
+    } else {
+      portraitImg.src = "";
+      portraitImg.style.display = 'none';
+    }
+  },
+
+  next() {
+    this.currentIndex++
+    if (this.currentIndex < this.currentSequence.length) {
+      this.render()
+    } else {
+      this.close()
+    }
+  },
+
+  close() {
     document.getElementById('dialog-system').style.display = 'none'
-    pauseGame = false
+    const tempCallback = this.callback;
+    this.callback = null;
+
+    if (tempCallback) {
+      tempCallback();
+    } else {
+      pauseGame = false;
+    }
+  }
+}
+
+function updateHintUI() {
+  const nextChar = storyOrder[currentStep];
+  const hint = document.getElementById('ui-hint-text');
+  
+  if (nextChar && GameDialogues[`${nextChar}_hint`]) {
+    hint.innerText = GameDialogues[`${nextChar}_hint`][0].text;
   }
 }
 
 /* MINIJOGOS */
 
-function playFishing(x, y, charArray) {
-  document.getElementById('mg-title').innerText = "Pesca do Cavalo"
-  document.getElementById('mg-desc').innerHTML = "Para pescar, clique quando ficar <strong>VERDE</strong>!"
-  const content = document.getElementById('mg-content')
-  const btn = document.createElement('button')
-  
-  btn.innerText = "Procurando peixe..."
-  btn.style.padding = "20px"
-  btn.style.background = "#e74c3c"
-  btn.style.color = "#fff"
-  btn.style.borderRadius = "10px"
-  btn.style.cursor = "pointer"
-  btn.style.userSelect = "none"
-
-  let catched = false
-  let timeout = setTimeout(() => {
-    btn.innerText = "PESCAR AGORA!!"
-    btn.style.background = "#2ecc71"
-    catched = true
-  }, Math.random() * 2000 + 1000)
-
-  btn.onclick = () => {
-    if (catched) winMinigame(x, y, charArray)
-    else {
-      clearTimeout(timeout)
-      closeMinigame()
-    }
-  }
-  content.appendChild(btn)
-}
-
-function playMemory(x, y, charArray) {
-  document.getElementById('mg-title').innerText = "Jogo da Memória"
-  document.getElementById('mg-desc').innerText = "Ache os pares!"
-  const content = document.getElementById('mg-content')
-
-  let cards = ['🐿️', '🐿️', '🦝', '🦝', '🦌', '🦌']
-  cards.sort(() => Math.random() - 0.5)
-
-  let firstCard = null
-  let canClick = true // Trava para evitar bugs de cliques rápidos
-  let pairs = 0
-  let errors = 0
-
-  cards.forEach(emoji => {
-    const card = document.createElement('div')
-    card.className = 'mg-card'
-    card.innerText = '❓'
-    card.style.background = '#8b8b8b'
-    card.style.borderRadius = '5px'
-    card.style.userSelect = 'none'
-    card.onclick = () => {
-      if (!canClick || card.innerText !== '❓' || firstCard === card) return
-      card.innerText = emoji
-      card.style.background = '#b9b9b9'
-
-      if (!firstCard) {
-        firstCard = card
-      } else {
-        if (firstCard.innerText === emoji) {
-          pairs++
-          firstCard = null
-          if (pairs === 3) setTimeout(() => winMinigame(x, y, charArray), 500)
-        } else {
-          canClick = false
-          let prev = firstCard
-          firstCard = null
-          setTimeout(() => {
-            card.innerText = '❓'
-            prev.innerText = '❓'
-            canClick = true
-          }, 700)
-        }
-      }
-    }
-    content.appendChild(card)
-  })
-}
-
-function playDnD(x, y, charArray) {
-  document.getElementById('mg-title').innerText = "Colheita de Pinhão"
-  document.getElementById('mg-desc').innerText = "Clique no pinhão e depois no cesto!"
-  const content = document.getElementById('mg-content')
-  const p = document.createElement('div')
-  const c = document.createElement('div')
-  p.innerText = "🌰"
-  p.style.fontSize = "50px"
-  p.style.cursor = "pointer"
-  p.style.userSelect = "none"
-  c.innerText = "🧺"
-  c.style.fontSize = "50px"
-  c.style.cursor = "pointer"
-  c.style.userSelect = "none"
-
-  let selected = false
-  p.onclick = () => { 
-    selected = true
-    p.style.transform = "scale(1.2)"
-    p.style.opacity = "0.5"
-  }
-  c.onclick = () => {
-    if (selected) winMinigame(x, y, charArray)
-    else {
-      closeMinigame()
-    }
-  }
-  content.append(p, c)
-}
-
-function playCatch(x, y, charArray) {
-    document.getElementById('mg-title').innerText = "Pega o Graxaim!"
-    document.getElementById('mg-desc').innerText = "Clique nele antes do tempo acabar!"
+function playCatch(type, x, y, charArray) {
+    const config = minigameConfig[type]
+    document.getElementById('mg-title').innerText = config.title
+    document.getElementById('mg-desc').innerText = config.desc
     
     const content = document.getElementById('mg-content')
     const timePanel = document.getElementById('counter')
@@ -527,7 +762,7 @@ function playCatch(x, y, charArray) {
 
     const animal = document.createElement('div')
     animal.className = 'mg-target'
-    animal.innerText = "🦝"
+    animal.innerText = config.target
     animal.style.fontSize = "50px"
     animal.style.display = "flex"
     animal.style.alignItems = "center"
@@ -564,9 +799,57 @@ function playCatch(x, y, charArray) {
     content.appendChild(animal)
 }
 
-function playPuzzle(x, y, charArray) {
-  document.getElementById('mg-title').innerText = "O Grande Encontro"
-  document.getElementById('mg-desc').innerText = "Encaixe as peças redondinhas nos lugares certos!"
+function playMemory(type, x, y, charArray) {
+  const config = minigameConfig[type]
+  document.getElementById('mg-title').innerText = config.title
+  document.getElementById('mg-desc').innerText = config.desc
+  const content = document.getElementById('mg-content')
+
+  let cards = [...config.assets]
+  cards.sort(() => Math.random() - 0.5)
+
+  let firstCard = null
+  let canClick = true
+  let pairs = 0
+
+  cards.forEach(emoji => {
+    const card = document.createElement('div')
+    card.className = 'mg-card'
+    card.innerText = '❓'
+    card.style.background = '#afafaf'
+    card.style.borderRadius = '5px'
+    card.style.userSelect = 'none'
+    card.onclick = () => {
+      if (!canClick || card.innerText !== '❓' || firstCard === card) return
+      card.innerText = emoji
+      if (!firstCard) {
+        firstCard = card
+      } else {
+        if (firstCard.innerText === emoji) {
+          pairs++
+          firstCard = null
+          if (pairs === 3) setTimeout(() => winMinigame(x, y, charArray), 500)
+        } else {
+          canClick = false
+          let prev = firstCard
+          firstCard = null
+          setTimeout(() => {
+            card.innerText = '❓'
+            prev.innerText = '❓'
+            canClick = true
+          }, 700)
+        }
+      }
+    }
+    content.appendChild(card)
+  })
+}
+
+function playPuzzle(type, x, y, charArray) {
+  const config = minigameConfig[type] 
+  
+  document.getElementById('mg-title').innerText = config.title
+  document.getElementById('mg-desc').innerText = config.desc
 
   const box = document.getElementById('minigame-box')
   box.style.maxWidth = "850px"
@@ -575,20 +858,30 @@ function playPuzzle(x, y, charArray) {
   content.style.position = "relative"
   content.style.width = "800px" 
   content.style.height = "500px"
-  content.style.backgroundColor = "rgba(0,0,0,0.05)"
+  content.style.backgroundColor = "rgba(0,0,0,0.09)"
   content.style.borderRadius = "10px"
   content.style.overflow = "hidden"
   content.innerHTML = ""
+
+  const pageRef = document.createElement('div')
+  pageRef.id = "puzzle-page-ref"
+  pageRef.innerText = config.bookPage
+  pageRef.style.marginTop = "10px"
+  pageRef.style.fontWeight = "bold"
+  pageRef.style.color = "#5b704c"
+  pageRef.style.userSelect = "none"
+  pageRef.onmousedown = (e) => e.preventDefault() 
+
+  content.after(pageRef)
 
   const GRID = 3
   const PIECE_W = 120
   const PIECE_H = 125
   const BOARD_W = PIECE_W * GRID
   const BOARD_H = PIECE_H * GRID
-  const IMG_URL = "../assets/game4-assets/chegada_do_pai.png"
+  
+  const IMG_URL = config.img
 
-  // NOVO MOLD: Curvas redondas como quebra-cabeça real
-  // O segredo das "saídas" é desenhar curvas que saem e entram no limite da div
   const MOLD = "path('M30,0 C45,20 75,20 90,0 L120,0 L120,35 C100,50 100,75 120,90 L120,125 L85,125 C70,105 45,105 30,125 L0,125 L0,90 C20,75 20,50 0,35 L0,0 Z')"
 
   let placedCount = 0
@@ -601,12 +894,10 @@ function playPuzzle(x, y, charArray) {
   board.style.backgroundSize = `${BOARD_W}px ${BOARD_H}px`
   content.appendChild(board)
 
-  content.ondragover = (e) => e.preventDefault()
-  content.ondrop = (e) => {
+  const handleDrop = (e) => {
     e.preventDefault()
     const pieceId = e.dataTransfer.getData("text/plain")
     const pieceEl = document.getElementById(pieceId)
-    
     if (!pieceEl || pieceEl.classList.contains('placed')) return
 
     const offsetX = parseInt(e.dataTransfer.getData("offsetX"))
@@ -624,10 +915,15 @@ function playPuzzle(x, y, charArray) {
     pieceEl.style.transform = "rotate(0deg)"
   }
 
+  content.ondragover = (e) => e.preventDefault()
+  content.ondrop = handleDrop
+
+  box.ondragover = (e) => e.preventDefault()
+  box.ondrop = handleDrop
+
   for(let r = 0; r < GRID; r++) {
     for(let c = 0; c < GRID; c++) {
       const id = `p-${r}-${c}`
-
       const slot = document.createElement('div')
       slot.className = 'puzzle-slot'
       slot.style.width = `${PIECE_W}px`
@@ -639,11 +935,9 @@ function playPuzzle(x, y, charArray) {
       slot.ondragover = (e) => e.preventDefault()
       slot.ondrop = (e) => {
         const pieceId = e.dataTransfer.getData("text/plain")
-        
         if (pieceId === slot.dataset.id) {
           e.preventDefault()
           e.stopPropagation()
-          
           const pieceEl = document.getElementById(pieceId)
           pieceEl.style.position = "absolute"
           pieceEl.style.left = "0"
@@ -651,9 +945,7 @@ function playPuzzle(x, y, charArray) {
           pieceEl.style.transform = "rotate(0deg)"
           pieceEl.draggable = false
           pieceEl.classList.add('placed')
-          
           slot.appendChild(pieceEl)
-          
           placedCount++
           if (placedCount === GRID * GRID) {
             board.style.borderColor = "#2ecc71"
@@ -669,22 +961,14 @@ function playPuzzle(x, y, charArray) {
       piece.draggable = true
       piece.style.width = `${PIECE_W}px`
       piece.style.height = `${PIECE_H}px`
-      
       piece.style.backgroundImage = `url(${IMG_URL})`
       piece.style.backgroundSize = `${BOARD_W}px ${BOARD_H}px`
       piece.style.backgroundPosition = `-${c * PIECE_W}px -${r * PIECE_H}px`
-
       piece.style.clipPath = MOLD
       piece.style.webkitClipPath = MOLD
 
       const spawnSide = Math.random() > 0.5
-      let randX
-      if (spawnSide) {
-          randX = Math.random() * ( (content.offsetWidth / 2) - BOARD_W / 2 - PIECE_W )
-      } else {
-          randX = (content.offsetWidth / 2) + (BOARD_W / 2) + Math.random() * ( (content.offsetWidth / 2) - BOARD_W / 2 - PIECE_W )
-      }
-      
+      let randX = spawnSide ? Math.random() * 150 : 600 + Math.random() * 50
       const randY = Math.random() * (content.offsetHeight - PIECE_H)
       const randomRot = (Math.random() - 0.5) * 40
 
@@ -693,13 +977,15 @@ function playPuzzle(x, y, charArray) {
       piece.style.transform = `rotate(${randomRot}deg)`
 
       piece.ondragstart = (e) => {
+        // EXTERMINADOR DE SELEÇÃO: Limpa qualquer texto fantasma antes de arrastar
+        window.getSelection().removeAllRanges()
+        
         e.dataTransfer.setData("text/plain", piece.id)
         const rect = piece.getBoundingClientRect()
         e.dataTransfer.setData("offsetX", e.clientX - rect.left)
         e.dataTransfer.setData("offsetY", e.clientY - rect.top)
         setTimeout(() => piece.classList.add('dragging'), 0)
       }
-      
       piece.ondragend = () => piece.classList.remove('dragging')
       content.appendChild(piece)
     }
@@ -707,83 +993,100 @@ function playPuzzle(x, y, charArray) {
 }
 
 function closeMinigame() {
-    const container = document.getElementById('minigame-container')
-    const box = document.getElementById('minigame-box')
-    const content = document.getElementById('mg-content')
-    const timePanel = document.getElementById('counter')
+  const container = document.getElementById('minigame-container')
+  const box = document.getElementById('minigame-box')
+  const content = document.getElementById('mg-content')
+  const timePanel = document.getElementById('counter')
+  const pageRef = document.getElementById('puzzle-page-ref')
+  const interactBubble = document.getElementById('interaction-bubble')
 
-    if (activeInterval) {
-        clearInterval(activeInterval)
-        activeInterval = null
-    }
+  if (pageRef) pageRef.remove()
+  
+  if (activeInterval) {
+    clearInterval(activeInterval)
+    activeInterval = null
+  }
 
-    if (box) box.style.maxWidth = "600px"
-    if (content) {
-        content.style.width = "auto"
-        content.style.height = "auto"
-        content.style.backgroundColor = "transparent"
-    }
+  if (box) box.style.maxWidth = "600px"
+  if (content) {
+    content.style.width = "auto"
+    content.style.height = "auto"
+    content.style.backgroundColor = "transparent"
+  }
 
-    if (timePanel) timePanel.style.display = 'none'
-    if (container) container.style.display = 'none'
-    
-    pauseGame = false
+  if (timePanel) timePanel.style.display = 'none'
+  if (container) container.style.display = 'none'
+  if (interactBubble) interactBubble.style.display = 'none'
+  
+  pauseGame = false
 }
 
 /* FUNÇÕES DOS MENUS */
 
 document.addEventListener("keydown", (e) => {
-    const key = e.key
-    const mainMenu = document.getElementById('main-menu')
-    const pauseMenu = document.getElementById('pause-menu')
-    const gameOverMenu = document.getElementById('game-over')
+  const key = e.key
+  const mainMenu = document.getElementById('main-menu')
+  const pauseMenu = document.getElementById('pause-menu')
+  const gameOverMenu = document.getElementById('game-over')
 
-    // Verifica se a tecla pressionada foi Espaço
-    if (key === " " || key === "Spacebar") {
-        e.preventDefault()
+  // Verifica se a tecla pressionada foi Espaço
+  if (key === " " || key === "Spacebar") {
+    e.preventDefault()
 
-        if (window.getComputedStyle(mainMenu).display !== 'none') {
-            startGame()
-            return
-        }
-
-        if (gameOverMenu && window.getComputedStyle(gameOverMenu).display === 'flex') {
-            restartGame()
-            return
-        }
-
-        const mgContainer = document.getElementById('minigame-container')
-        if (mgContainer && mgContainer.style.display === 'flex') return
-
-        if (!pauseGame) {
-            pause()
-        } else if (window.getComputedStyle(pauseMenu).display !== 'none') {
-            play()
-        }
+    if (window.getComputedStyle(mainMenu).display !== 'none') {
+      startGame()
+      return
     }
-    
-    if (key === "Escape") {
-        if (!pauseGame) pause()
-        else if (pauseMenu.style.display === 'flex') play()
+
+    const mgContainer = document.getElementById('minigame-container')
+    if (mgContainer && mgContainer.style.display === 'flex') return
+
+    if (!pauseGame) {
+      pause()
+    } else if (window.getComputedStyle(pauseMenu).display !== 'none') {
+      play()
     }
+
+    const dialogBox = document.getElementById('dialog-system')
+    if (dialogBox && dialogBox.style.display === 'block') {
+      dialogSystem.next()
+      return
+    }
+  }
+  
+  if (key === "Escape") {
+    if (!pauseGame) pause()
+    else if (pauseMenu.style.display === 'flex') play()
+  }
 })
 
 function startGame() {
+  const ui = document.getElementById('ui')
   document.getElementById('main-menu').style.display = 'none'
   document.getElementById('player').style.display = 'block'
-  pauseGame = false
+  ui.style.display = 'flex'
+
   renderMap()
+  updateHintUI()
+
+  dialogSystem.show('intro_game')
 }
 
 function pause() {
   const pauseMenu = document.getElementById('pause-menu')
+  const ui = document.getElementById('ui')
+
   pauseMenu.style.display = 'flex'
+  ui.style.display = 'none'
   pauseGame = true
 }
 
 function play() {
   const pauseMenu = document.getElementById('pause-menu')
+  const ui = document.getElementById('ui')
+
   pauseMenu.style.display = 'none'
+  ui.style.display = 'flex'
   pauseGame = false
 }
 

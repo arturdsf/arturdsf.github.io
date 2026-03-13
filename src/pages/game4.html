@@ -9,8 +9,13 @@
 </head>
 <body>
     <div id="viewport">
-      <main id="game-board"></main>
-      <div id="player"></div>
+      <main id="game-board">
+        <div id="player"></div>
+        <div id="foreground-layer"></div>
+        <div id="interaction-bubble" class="interaction-bubble" style="display: none;">Aperte "E"</div>
+      </main>
+
+      <!-- CONTROLES MOBILE-->
       <div id="mobile-controls">
         <div id="btn-up" class="touch-btn" style="grid-area: up">▲</div>
         <div id="btn-left" class="touch-btn" style="grid-area: left">◀</div>
@@ -25,8 +30,6 @@
           <h2 id="mg-title">Minijogo</h2>
           <div class="hearts-box">
             <span id="counter">05</span>
-            <span id="mg-hearts">3 </span>
-            <span id="mg-heart-icon"> &#10084;</span>
           </div>
         </div>
         <p id="mg-desc">Instruções</p>
@@ -37,10 +40,15 @@
 
     <div id="dialog-system" style="display: none;">
       <div id="dialog-box">
-        <img id="dialog-ft" src="" alt="Imagem do Animal">
+        <img id="dialog-ft" src="" alt="Animal">
+
         <div id="dialog-text-container">
           <h3 id="dialog-name">Nome</h3>
-          <p id="dialog-text">Texto...</p>
+          <div id="dialog-text">Texto do diálogo...</div>
+        </div>
+
+        <div id="dialog-next-zone" onclick="dialogSystem.next()">
+          <span>Continuar ▼</span>
         </div>
       </div>
     </div>
@@ -48,10 +56,12 @@
   <!-- Daqui para baixo são elementos de UI ou menus -->
    
   <div id="ui">
-    <div>Amigos <span id="prog">0/10</span></div>
-    <div id="hp">
-      <span id="ui-heart-icon">💔</span>
+    <div id="friends-counter">Amigos <span id="prog">0/10</span></div>
+
+    <div id="hint">
+      <span id="ui-hint-text">Dica</span>
     </div>
+
     <div onclick="togglePause()" id="pause-btn">| |</div>
   </div>
 
@@ -66,7 +76,7 @@
       <p><strong>E:</strong> Interagir</p>
     </div>
     <div>
-      <button type="button" id="back-btn" onclick="backToIndex()">&lt;</button>
+      <button type="button" id="back-btn" onclick="backToIndex()">◀</button>
       <button onclick="startGame()">Iniciar</button>
     </div>
   </div>
@@ -82,7 +92,7 @@
       <p><strong>E:</strong> Interagir</p>
     </div>
     <div class="pause-options">
-      <div onclick="backToIndex()">&lt;</div>
+      <div onclick="backToIndex()">◀</div>
       <div onclick="play()">&#9654;</div>
     </div>
   </div>

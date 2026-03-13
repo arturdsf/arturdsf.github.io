@@ -6,8 +6,6 @@
         METERS_PER_FRAME: 95,
         SPAWN_DISTANCE_MIN: 8,
         OBSTACLE_MAX: 10,
-        BOMBER_TARGET_UPDATE_MS: 400,
-        BOMBER_SPEED: 2.2,
         OBSTACLE_SPAWN_BASE: 90,
         OBSTACLE_SPAWN_MIN: 50,
         LETTER_OFFSCREEN: 150,
@@ -45,10 +43,9 @@
         tronco: document.getElementById('tronco'),
         ventania: document.getElementById('ventania'),
         buraco: document.getElementById('buraco'),
-        poca: document.getElementById('poca'),
-        gaviao: document.getElementById('gaviao')
+        poca: document.getElementById('poca')
     };
-    const typeToSpriteId = { normal: 'tronco', fast: 'ventania', boss: 'buraco', kamikaze: 'ventania', shooter: 'poca', bomber: 'gaviao' };
+    const typeToSpriteId = { normal: 'tronco', fast: 'ventania', boss: 'buraco', kamikaze: 'ventania', shooter: 'poca' };
     const bgFundo = document.getElementById('fundo');
 
     let imagesLoaded = 0;
@@ -117,13 +114,9 @@
     let particles = [];
     const particlePool = [];
     let stars = [];
-    let bomberTimer = 0;
-    let nextBomberTime = 1200;
-    let targetMarkers = [];
     let letters = [];
     const letterPool = [];
     const enemyPool = [];
-    let nextBomberId = 0;
 
     function initStars() {
         stars = [];
@@ -224,12 +217,7 @@
 
     function spawnEnemyAtDistance(distance) {
         if (distance - gameState.lastEnemySpawnDistance < CONFIG.SPAWN_DISTANCE_MIN) return;
-        // avoid creating temporary arrays to count non-bomber enemies
-        let nonBomberCount = 0;
-        for (let i = 0; i < enemies.length && nonBomberCount < CONFIG.OBSTACLE_MAX; i++) {
-            if (enemies[i].type !== 'bomber') nonBomberCount++;
-        }
-        if (nonBomberCount >= CONFIG.OBSTACLE_MAX) return;
+        if (enemies.length >= CONFIG.OBSTACLE_MAX) return;
 
         const rand = Math.random();
         const def = ENEMY_TYPES.find(d => rand < d.chance) || ENEMY_TYPES[ENEMY_TYPES.length - 1];
@@ -249,41 +237,8 @@
         enemy.spawnDistance = distance;
         enemy.vx = 0;
         enemy.vy = 0;
-        // bombers get an id in spawnBomberAtDistance; non-bombers should not have marker id
-        enemy.id = enemy.id || undefined;
-        enemy.markerId = -1;
         enemies.push(enemy);
         gameState.lastEnemySpawnDistance = distance;
-    }
-
-    function spawnBomberAtDistance(distance) {
-        const targetX = player.x + player.width / 2;
-        const targetY = player.y + player.height / 2;
-
-        const bomberId = nextBomberId++;
-        let bomber = enemyPool.pop();
-        if (!bomber) bomber = {};
-        bomber.id = bomberId;
-        bomber.x = distance * 10 + canvasWidth + 500;
-        bomber.y = 80 + Math.random() * (canvasHeight * 0.5);
-        bomber.width = 110;
-        bomber.height = 110;
-        bomber.hp = 1;
-        bomber.maxHp = 1;
-        bomber.type = 'bomber';
-        bomber.spawnDistance = distance;
-        bomber.targetX = targetX;
-        bomber.targetY = targetY;
-        bomber.phase = 'warning';
-        bomber.phaseTimer = 0;
-        bomber.targetUpdateTimer = 0;
-        bomber.markerId = -1;
-        bomber.vx = 0;
-        bomber.vy = 0;
-        enemies.push(bomber);
-        createTargetMarker(bomber.targetX - 15, bomber.targetY - 15, bomberId);
-        bomber.markerId = targetMarkers.length - 1;
-        return bomber;
     }
 
     function createExplosion(x, y, color = '#ffaa00') {
@@ -301,16 +256,6 @@
             p.size = Math.random() * 4 + 2;
             particles.push(p);
         }
-    }
-
-    function createTargetMarker(x, y, enemyId) {
-        targetMarkers.push({
-            x: x,
-            y: y,
-            enemyId: enemyId,
-            pulse: 0,
-            size: 30
-        });
     }
 
     window.restartGame = function () {
@@ -340,9 +285,6 @@
         while (particles.length) particlePool.push(particles.pop());
         while (letters.length) letterPool.push(letters.pop());
         enemies = [];
-        targetMarkers = [];
-        bomberTimer = 0;
-        nextBomberTime = 1200;
         initLevelWord();
         initStars();
         gameOverEl.style.display = 'none';
@@ -362,11 +304,8 @@
         gameState.lastEnemySpawnDistance = -500;
         gameState.enemySpawnTimer = 0;
     enemies = [];
-    targetMarkers = [];
     while (particles.length) particlePool.push(particles.pop());
     while (letters.length) letterPool.push(letters.pop());
-        bomberTimer = 0;
-        nextBomberTime = 1200;
         spawnNextLetter();
         player.invulnerable = 60;
         levelCompleteEl.style.display = 'none';
@@ -426,50 +365,13 @@
             gameState.enemySpawnTimer = 0;
         }
 
-        bomberTimer += deltaTime * gameState.gameSpeed * 0.7;
-        if (bomberTimer >= nextBomberTime && enemies.length < 5) {
-            spawnBomberAtDistance(gameState.totalDistance);
-            bomberTimer = 0;
-            nextBomberTime = 1100 + Math.random() * 300;
-        }
-
         enemies.forEach(enemy => {
-            if (enemy.type === 'bomber') {
-                enemy.phaseTimer += deltaTime;
-                enemy.targetUpdateTimer = (enemy.targetUpdateTimer || 0) + deltaTime;
-
-                if (enemy.phase === 'warning') {
-                    enemy.y += 0.6 * deltaTime * 0.016;
-                    if (enemy.y >= enemy.targetY - enemy.height / 2) {
-                        enemy.y = enemy.targetY - enemy.height / 2;
-                        enemy.phase = 'missile';
-                        enemy.phaseTimer = 0;
-                    }
-                } else if (enemy.phase === 'missile') {
-                    if (enemy.targetUpdateTimer >= CONFIG.BOMBER_TARGET_UPDATE_MS) {
-                        enemy.targetX = player.x + player.width / 2;
-                        enemy.targetY = player.y + player.height / 2;
-                        enemy.targetUpdateTimer = 0;
-                    }
-                    const screenX = worldToScreenX(enemy.x);
-                    const dx = enemy.targetX - screenX;
-                    const dy = enemy.targetY - (enemy.y + enemy.height / 2);
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist > 4) {
-                        const speed = CONFIG.BOMBER_SPEED * (deltaTime / 16.67);
-                        enemy.x -= (dx / dist) * speed;
-                        enemy.y += (dy / dist) * speed;
-                        enemy.y = Math.max(0, Math.min(canvasHeight - enemy.height, enemy.y));
-                    }
-                }
-            } else {
-                enemy.vx = -1.5 * gameState.gameSpeed * deltaTime * 0.016;
-                enemy.x += enemy.vx;
-                if (Math.random() < 0.03) {
-                    enemy.vy = (Math.random() - 0.5) * 0.8 * deltaTime * 0.016;
-                    enemy.y += enemy.vy;
-                    enemy.y = Math.max(0, Math.min(canvasHeight - enemy.height, enemy.y));
-                }
+            enemy.vx = -1.5 * gameState.gameSpeed * deltaTime * 0.016;
+            enemy.x += enemy.vx;
+            if (Math.random() < 0.03) {
+                enemy.vy = (Math.random() - 0.5) * 0.8 * deltaTime * 0.016;
+                enemy.y += enemy.vy;
+                enemy.y = Math.max(0, Math.min(canvasHeight - enemy.height, enemy.y));
             }
         });
 
@@ -486,11 +388,6 @@
             }
             enemies.length = j;
         }
-        // clean target markers referencing missing or dead bombers
-        targetMarkers = targetMarkers.filter(marker => {
-            const enemy = enemies.find(e => e.id === marker.enemyId);
-            return enemy && enemy.hp > 0 && enemy.type === 'bomber';
-        });
     }
 
     function checkCollisions() {
@@ -607,22 +504,6 @@
         });
         ctx.globalAlpha = 1;
 
-        targetMarkers.forEach(marker => {
-            marker.pulse += 0.18;
-            const scale = 1 + Math.sin(marker.pulse * 2) * 0.15;
-            ctx.save();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.font = `bold ${Math.round(42 * scale)}px Arial`;
-            ctx.fillStyle = '#f00';
-            ctx.shadowColor = '#f00';
-            ctx.shadowBlur = 20;
-            ctx.fillText('!', marker.x + 15, marker.y + 15);
-            ctx.shadowBlur = 0;
-            ctx.textAlign = 'left';
-            ctx.restore();
-        });
-
         letters.forEach(letter => {
             const screenX = worldToScreenX(letter.x);
             if (screenX > -50 && screenX < canvasWidth + 50) {
@@ -649,8 +530,6 @@
 
         if (player.invulnerable % 4 < 2 || player.invulnerable === 0) {
             ctx.save();
-            ctx.shadowColor = '#0ff';
-            ctx.shadowBlur = 18;
             if (sprites.player && sprites.player.complete && sprites.player.naturalWidth > 0) {
                 ctx.translate(player.x + player.width, player.y);
                 ctx.scale(-1, 1);
@@ -663,7 +542,6 @@
                 ctx.fillRect(player.x + 20, player.y + 28, 28, 28);
                 ctx.fillRect(player.x + 72, player.y + 44, 20, 20);
             }
-            ctx.shadowBlur = 0;
             ctx.restore();
         }
 
@@ -672,16 +550,13 @@
             fast: '#ff4400',
             normal: '#f00',
             kamikaze: '#ffff00',
-            shooter: '#00ff88',
-            bomber: '#888'
+            shooter: '#00ff88'
         };
 
         enemies.forEach(enemy => {
             const screenX = worldToScreenX(enemy.x);
             if (screenX > -120 && screenX < canvasWidth + 50) {
                 ctx.save();
-                ctx.shadowColor = enemyColors[enemy.type] || '#f00';
-                ctx.shadowBlur = 12;
                 const spriteKey = typeToSpriteId[enemy.type];
                 const sprite = spriteKey ? sprites[spriteKey] : null;
                 if (sprite && sprite.complete && sprite.naturalWidth > 0) {
@@ -689,12 +564,10 @@
                 } else {
                     ctx.fillStyle = enemyColors[enemy.type] || '#f00';
                     ctx.fillRect(screenX, enemy.y, enemy.width, enemy.height);
-                    ctx.shadowBlur = 0;
                     ctx.fillStyle = '#fff';
                     ctx.fillRect(screenX + 6, enemy.y + 6, 10, 10);
                     ctx.fillRect(screenX + enemy.width - 16, enemy.y + 6, 10, 10);
                 }
-                ctx.shadowBlur = 0;
                 ctx.restore();
                 if (enemy.type === 'boss' && enemy.hp < enemy.maxHp) {
                     ctx.fillStyle = 'rgba(0,0,0,0.7)';

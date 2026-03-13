@@ -8,23 +8,19 @@
     <link rel="stylesheet" href="../style/game3.css">
     <!-- Preload críticos para menos flicker (arquivos detectados em assets/) -->
     <link rel="preload" href="../assets/player.png" as="image">
-    <link rel="preload" href="../assets/fundo.png" as="image">
-    <link rel="preload" href="../assets/tronco.png" as="image">
-    <link rel="preload" href="../assets/ventania.png" as="image">
-    <link rel="preload" href="../assets/buraco.png" as="image">
-    <link rel="preload" href="../assets/gaviao.png" as="image">
-    <link rel="preload" href="../assets/poca.png" as="image">
+    <link rel="preload" href="../assets/game3-assets/fundo.png" as="image">
+    <link rel="preload" href="../assets/game3-assets/tronco.png" as="image">
+    <link rel="preload" href="../assets/game3-assets/ventania.png" as="image">
+    <link rel="preload" href="../assets/game3-assets/buraco.png" as="image">
 </head>
 
 <body>
     <!-- Assets: IDs = nome do PNG. Caminho: ./assets/ (mova os PNG para src/assets/) -->
     <img id="player" src="../assets/player.png" style="display: none;" crossorigin>
-    <img id="tronco" src="../assets/tronco.png" style="display: none;" crossorigin>
-    <img id="ventania" src="../assets/ventania.png" style="display: none;" crossorigin>
-    <img id="buraco" src="../assets/buraco.png" style="display: none;" crossorigin>
-    <img id="poca" src="../assets/poca.png" style="display: none;" crossorigin>
-    <img id="gaviao" src="../assets/gaviao.png" style="display: none;" crossorigin>
-    <img id="fundo" src="../assets/fundo.png" style="display: none;" crossorigin>
+    <img id="tronco" src="../assets/game3-assets/tronco.png" style="display: none;" crossorigin>
+    <img id="ventania" src="../assets/game3-assets/ventania.png" style="display: none;" crossorigin>
+    <img id="buraco" src="../assets/game3-assets/buraco.png" style="display: none;" crossorigin>
+    <img id="fundo" src="../assets/game3-assets/fundo.png" style="display: none;" crossorigin>
 
     <div class="ui">
         <div>Distância: <span id="score">0</span>m</div>
@@ -34,10 +30,7 @@
         <div>Palavra: <span id="wordProgress">---</span></div>
     </div>
 
-    <div class="controls">
-        WASD/Setas = Mover | F11 = Tela Cheia
-    </div>
-
+    
     <div id="gameOver" class="game-over">
         <div>GAME OVER</div>
         <div>Distância Final: <span id="finalScore">0</span>m</div>

@@ -13,6 +13,15 @@
   --basalt: #4a3e35;
   --araucaria: #24361e;
   --hydrangea: #6d88b3;
+
+  --menu-bg: rgba(244, 237, 222, 0.95);
+  --menu-bg-2: rgba(241, 241, 224, 0.95);
+  --menu-border: #8b7355;
+  --button-base: #a3c4b6;
+  --button-hover: #7b9c8e;
+  --button-text: #2f3e36;
+  --accent-color: #d99a73;
+  --text-dark: #3a322c;
 }
 
 * {
@@ -35,10 +44,11 @@ html, body {
 }
 
 #game-board {
+  position: relative;
   display: grid;
   width: 3200px;
   height: 2000px;
-  background-image: url(../assets/game4-assets/map.png);
+  /* background-image: url(../assets/game4-assets/map.png); */
   background-repeat: no-repeat;
   background-size: cover;
   
@@ -50,93 +60,114 @@ html, body {
   transition: transform .15s ease-out;
 }
 
+#foreground-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3200px;
+  height: 2000px;
+  
+  background-image: url('../assets/game4-assets/mold_forest.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+  pointer-events: none;
+  z-index: 4 !important;
+}
+
 .piece {
-  background-color: transparent;
   width: var(--tile-size);
   height: var(--tile-size);
-  z-index: 10;
-
+  position: relative;
+  z-index: 1; 
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  font-size: 32px;
-  color: transparent;
-  text-shadow: 2px 2px 0px #000;
+}
+
+.piece::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* Modelos:
  Para ativar a grid desenhada, precisa ativar esses elementos aqui, se quiser
 */
-/*
 .water {
   background-color: var(--fog-bg); 
+  opacity: 1 !important;
 }
 .grass {
-  background-color: var(--cold-pasture);
+  background-image: url('../assets/game4-assets/floor_tile1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  opacity: 1 !important;
 }
 .grass2 {
-  background-color: var(--pasture);
+  background-image: url('../assets/game4-assets/floor_tile1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: scaleX(-1);
+  image-rendering: pixelated;
+  opacity: 1 !important;
 }
 .dirt {
   background-color: var(--basalt);
   border-radius: 5px;
   transform: scale(0.95);
+  opacity: 1 !important;
 }
 .tree {
   background-color: var(--araucaria);
   border-radius: 50% 50% 10% 10%;
   transform: scale(0.8);
+  opacity: 1 !important;
 }
-*/
+
+.grass-tree {
+  background-image: url('../assets/game4-assets/floor_tile1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  opacity: 1 !important;
+}
+
+.dirt-block {
+  background-color: var(--basalt);
+  border-radius: 5px;
+  transform: scale(0.95);
+  opacity: 1 !important;
+}
 
 /* Personagens: */
 
-.sprite-P {
-  background-image: url('../assets/cavalo_static.png');
-}
-.sprite-p {
-  background-image: url('../assets/bemtevi_static.png');
-}
-.sprite-M {
-  background-image: url('../assets/jacana_static.png');
-}
-.sprite-m {
-  background-image: url('../assets/capivara_static.png');
-}
-.sprite-O {
-  background-image: url('../assets/maequeroquero_scream.png');
-}
-.sprite-o {
-  background-image: url('../assets/urutu_static.png');
-}
-.sprite-C {
-  background-image: url('../assets/graxaim_static.png');
-}
-.sprite-c {
-  background-image: url('../assets/filhoteperdido_scream.png');
-}
-.sprite-Q {
-  background-image: url('../assets/filhotes_static.png');
-}
-.sprite-q {
-  background-image: url('../assets/carcara_static.png');
-}
+.sprite-P::after { background-image: url('../assets/cavalo_static.png'); }
+.sprite-p::after { background-image: url('../assets/bemtevi_static.png'); }
+.sprite-M::after { background-image: url('../assets/jacana_static.png'); }
+.sprite-m::after { background-image: url('../assets/capivara_static.png'); }
+.sprite-O::after { background-image: url('../assets/maequeroquero_scream.png'); }
+.sprite-o::after { background-image: url('../assets/urutu_static.png'); }
+.sprite-C::after { background-image: url('../assets/graxaim_static.png'); }
+.sprite-c::after { background-image: url('../assets/filhoteperdido_scream.png'); }
+.sprite-Q::after { background-image: url('../assets/filhotes_static.png'); }
+.sprite-q::after { background-image: url('../assets/carcara_static.png'); }
 
 .sprite-P, .sprite-p, .sprite-M, .sprite-m, .sprite-O, .sprite-o, .sprite-C, .sprite-c, .sprite-Q, .sprite-q {
-  width: 80px;
-  height: 80px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index: 50;
-  animation: npcFloat 2s ease-in-out infinite;
+  z-index: 1; 
 }
 
-@keyframes npcFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+.piece.collected::after {
+  display: none !important;
 }
 
 /* Personagem */
@@ -152,7 +183,7 @@ html, body {
   background-position: center;
   pointer-events: none;
   transition: transform .15s ease-out;
-  z-index: 400 !important;
+  z-index: 2;
   display: none;
 }
 
@@ -164,66 +195,79 @@ html, body {
 /* Puzzle */
 
 #puzzle-board-target {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border: 3px solid #5b704c;
-    background-color: #000;
-    z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid #5b704c;
+  background-color: #000;
+  z-index: 1;
 }
 
 #puzzle-board-target::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: inherit;
-    background-size: inherit;
-    filter: brightness(0.3);
-    z-index: -1;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: inherit;
+  background-size: inherit;
+  filter: brightness(0.3);
+  z-index: -1;
 }
 
 .puzzle-slot {
-    position: absolute;
-    box-sizing: border-box;
-    z-index: 2;
+  position: absolute;
+  box-sizing: border-box;
+  z-index: 2;
 }
 
 .puzzle-piece-drag {
-    position: absolute;
-    cursor: grab;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
-    z-index: 50;
-    transition: transform 0.1s ease, filter 0.3s ease;
+  position: absolute;
+  cursor: grab;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+  z-index: 21;
+  transition: transform 0.1s ease, filter 0.3s ease;
+}
+
+.puzzle-piece-drag, #puzzle-page-ref {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+#puzzle-page-ref {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .puzzle-piece-drag.dragging {
-    opacity: 0.8;
-    z-index: 100;
-    /* Reforça o clip-path no estado de drag */
-    -webkit-clip-path: var(--current-mold) !important;
-    clip-path: var(--current-mold) !important;
+  cursor: grabbing;
+  opacity: 0.8;
+  z-index: 25;
+  /* Reforça o clip-path no estado de drag */
+  -webkit-clip-path: var(--current-mold) !important;
+  clip-path: var(--current-mold) !important;
+  pointer-events: none !important;
 }
 
 .puzzle-piece-drag.placed {
-    position: absolute !important;
-    left: -0.5px !important;
-    top: -0.5px !important;
-    width: 121px !important;
-    height: 126px !important;
-    transform: rotate(0deg) !important;
-    z-index: 10 !important;
+  position: absolute !important;
+  left: -0.5px !important;
+  top: -0.5px !important;
+  width: 121px !important;
+  height: 126px !important;
+  transform: rotate(0deg) !important;
+  z-index: 20 !important;
 
-    filter: none !important; 
-    opacity: 1 !important;
-    -webkit-clip-path: none !important;
-    clip-path: none !important;
-    outline: none !important;
+  filter: none !important; 
+  opacity: 1 !important;
+  -webkit-clip-path: none !important;
+  clip-path: none !important;
+  outline: none !important;
 
-    image-rendering: pixelated;
+  image-rendering: pixelated;
 }
 
 /* Utilitários dos minijogos */
@@ -235,7 +279,7 @@ html, body {
   width: 100%;
   height: 100vh;
   background: rgba(36, 54, 30, 0.9);
-  z-index: 500;
+  z-index: 5;
   display: none;
   justify-content: center;
   align-items: center;
@@ -250,6 +294,11 @@ html, body {
   text-align: center;
   color: #333;
   border: 5px solid var(--basalto);
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #mg-header {
@@ -276,24 +325,15 @@ html, body {
   flex-grow: 1;
 }
 
-.hearts-box {
+#counter {
+  display: none;
+  background: #ccc;
+  color: #000;
+  padding: 7px 15px;
+  border-radius: 8px;
   font-size: 22px;
   font-weight: bold;
-  color: #c0392b;
-  background: #fadbd8;
-  padding: 5px 15px;
-  border-radius: 8px;
-}
-
-#counter {
-    display: none;
-    background: #ccc;
-    color: #000;
-    padding: 7px 15px;
-    border-radius: 8px;
-    font-size: 22px;
-    font-weight: bold;
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 #mg-content {
@@ -354,66 +394,85 @@ html, body {
   background: wheat;
   border: 3px solid black;
   border-radius: 15px;
-  padding: 10px 15px;
+  padding: 8px 12px;
   font-weight: bold;
   font-size: 14px;
-  white-space: nowrap;
-  z-index: 500;
-  filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.2));
+  z-index: 4;
   pointer-events: none;
-  transform: translate(-50%, -120%);
-}
-
-.interaction-bubble::after {
-  content: "";
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 15px 10px 0 10px;
-  border-style: solid;
-  border-color: #000 transparent transparent transparent;
+  transform: translate(-30%, -60%);
+  white-space: nowrap;
 }
 
 #dialog-system {
   position: fixed;
-  bottom: 20px;
-  left: 10vw;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 90vw;
-  height: 200px;
-  z-index: 600;
+  height: 160px; /* Altura fixa da caixa */
+  z-index: 5;
 }
 
 #dialog-box {
   position: relative;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  border: 4px solid #fff;
-  clip-path: polygon(0% 15%, 100% 0%, 100% 85%, 0% 100%);
-  padding: 40px 60px;
-  color: wheat;
+  background: rgba(236, 221, 189, 0.95);
+  color: black;
+  border: 2px solid white;
+  border-radius: 20px;
+  overflow: visible;
 }
 
 #dialog-ft {
   position: absolute;
-  bottom: 0;
-  left: -50px;
-  height: 250px;
-  z-index: 1000;
-  filter: drop-shadow(5px 5px 0px #000);
+  bottom: 0; /* Alinhado à base da caixa */
+  left: 20px;
+  height: 220px;
+  max-width: 200px;
+  object-fit: contain;
+  object-position: bottom left;
+  z-index: 6;
+  filter: drop-shadow(10px 3px 0px rgba(0,0,0,0.5));
+  pointer-events: none;
 }
 
 #dialog-text-container {
-  margin-left: 180px;
+  margin-left: 200px; /* Dá espaço para a foto */
+  padding: 25px;
+  text-align: left;
 }
 
 #dialog-name {
-  margin: 0;
-  color: #ffd700;
-  font-size: 24px;
+  color: #e69010;
   text-transform: uppercase;
   font-style: italic;
+  margin-bottom: 10px;
+  font-size: 22px;
+  display: inline-block;
+  margin-top: 0px;
+}
+
+#dialog-next-zone {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30%; /* Lado direito da caixa */
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 20px;
+  background: transparent;
+  color: #000;
+  font-weight: 600;
+}
+
+#dialog-next-zone > span {
+  font-size: 14px;
+  user-select: none;
+  pointer-events: none;
 }
 
 /* Menus */
@@ -423,8 +482,9 @@ html, body {
 }
 
 #main-menu {
-  background-color: rgba(0, 0, 0, 0.473);
-  color: #fff;
+  background-color: var(--menu-bg);
+  color: #000;
+  border: 3px solid var(--menu-border);
 
   height: 500px;
   width: 700px;
@@ -439,7 +499,7 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100;
+  z-index: 50;
 
   /* Remover quando terminar o projeto 
   display: none; */
@@ -455,41 +515,51 @@ html, body {
   height: 75px;
   border: none;
   border-radius: 10px;
-  background-color: lightblue;
+  background-color: var(--button-base);
+  color: var(--button-text);
+  font-weight: bolder;
+  font-size: medium;
   cursor: pointer;
+  user-select: none;
 }
 
 #main-menu > div > button:hover {
-  background-color: rgb(136, 193, 212);
+  background-color: var(--button-hover);
   transition-duration: .2s;
 }
 
 #main-menu > div > button#back-btn {
   width: 50px;
   border-radius: 10px;
-  background-color: rgb(136, 193, 212);
+  background-color: var(--button-base);
 }
 
 #main-menu > div > button#back-btn:hover {
-  background-color: rgb(111, 172, 192);
+  background-color: var(--button-hover);
   transition-duration: .2s;
 }
 
 #ui {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   position: fixed;
   top: 20px;
   left: 20px;
   right: 20px;
-  z-index: 200;
+  z-index: 3;
   pointer-events: none;
+  display: none;
 }
 
-#ui > div {
+#friends-counter {
+  max-width: 160px;
+}
+
+#friends-counter, 
+#hint, 
+#pause-btn {
   pointer-events: auto;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 12px 20px;
   border-radius: 10px;
@@ -499,13 +569,18 @@ html, body {
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-#ui > div#hp {
+/* HP continua centralizado */
+#hint {
   color: #c0392b;
-  background: rgba(255, 223, 223, 0.9);
+  background: rgba(255, 223, 223, 0.9) !important;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  padding: 15px 15px;
+}
+
+#hint > #ui-hint-img {
+  height: 75px;
+  width: 75px;
 }
 
 #pause-btn {
@@ -532,7 +607,7 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 100;
+  z-index: 50;
   box-sizing: border-box;
   display: none;
 }
@@ -566,10 +641,10 @@ html, body {
 }
 
 #controls {
-  background-color: rgba(255, 255, 255, 0.103);
+  background-color: var(--menu-bg-2);
   padding: 10px 20px;
   width: 90%;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
 .pause-options div:hover {
@@ -584,31 +659,31 @@ html, body {
 /* Celulares */
 
 #mobile-controls {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    display: none;
-    grid-template-areas: 
-        ". up ."
-        "left . right"
-        ". down .";
-    gap: 10px;
-    z-index: 3000;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: none;
+  grid-template-areas: 
+    ". up ."
+    "left . right"
+    ". down .";
+  gap: 10px;
+  z-index: 100;
 }
 
 .touch-btn {
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(5px);
-    border-radius: 10px;
-    border: 2px solid white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Media Queries */
