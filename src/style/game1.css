@@ -10,47 +10,69 @@ html,body{
     font-family:Arial, sans-serif;
     background:#87CEEB;
 }
-#map-container{
-    position:relative;
-    width:200vw;
-    height:200vh;
-    transition:transform 0.5s ease;
+#map-container {
+    position: relative;
+    width: 200vw;
+    height: 200vh;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000;
 }
-.env{
-    position:absolute;
-    width:100vw;
-    height:100vh;
+.env {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
-.env.biome-0{background:#88c070;}
-.env.biome-1{background:#c0e0ff;}
-.env.biome-2{background:#7fbf7f;}
-.env.biome-3{background:#a08040;}
+.env.biome-0{background-image: url('../assets/game1-assets/wallpaper-normal.png');}
+.env.biome-1{background-image: url('../assets/game1-assets/wallpaper-geada.png');}
+.env.biome-2{background-image: url('../assets/game1-assets/wallpaper-geada-lado.png');}
+.env.biome-3{background-image: url('../assets/game1-assets/wallpaper-mato.png');}
 
-.player{
-    position:absolute;
-    width:50px;
-    height:50px;
+.player {
+    position: absolute;
+    width: 50px;
+    height: 50px;
     background: url("../assets/player.png") center/contain no-repeat;
-    pointer-events:none;
-    transition:left 0.1s, top 0.1s;
+    pointer-events: none;
+    will-change: transform;
+    z-index: 10;
 }
 
-.player[data-facing="left"] {
-    transform: scaleX(-1);
-}
-
-.npc{
-    position:absolute;
-    width:50px;
-    height:50px;
+.npc {
+    position: absolute;
+    width: 50px;
+    height: 50px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-color: #1f0;
-    pointer-events:none;
+    pointer-events: none;
+    will-change: transform;
+    z-index: 8;
 }
 
-.npc.following{background-color:#ff0;}
+.npc.following{
+    width: 40px;
+    height: 40px;
+}
+
+.npc.next-target {
+    box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.5);
+    animation: pulsarBrilho 2s infinite ease-in-out;
+    z-index: 10; 
+}
+
+@keyframes pulsarBrilho {
+    0%, 100% {
+        box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 25px 10px rgba(255, 255, 0, 0.7);
+    }
+}
 
 /* NPCs */
 
@@ -66,10 +88,21 @@ html,body{
 
 .obstacle {
     position: absolute;
-    background-color: #5D4037;
-    border: 2px solid #3E2723;
-    z-index: 5; 
-    box-shadow: 0 4px 2px rgba(0,0,0,0.3);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    will-change: transform;
+    z-index: 5;
+}
+
+.obs-pedra {
+    background-image: url('../assets/game1-assets/stone.png');
+}
+.obs-arbusto {
+    background-image: url('../assets/game4-assets/moita.png');
+}
+.obs-graveto {
+    background-image: url('../assets/game1-assets/stick.png');
 }
 
 #quest-box{
@@ -97,6 +130,7 @@ html,body{
     font-size:18px;
     display:none;
     z-index:1000;
+    cursor: pointer;
 }
 
 #dialogue-hint{position:absolute;bottom:8px;right:12px;font-size:12px;opacity:0.6;}
@@ -115,4 +149,50 @@ html,body{
   font-size: 18px;
   z-index: 20;
   text-align: center;
+}
+
+/* Identificador de mapas */
+
+#biome-arrows {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 900;
+}
+
+.arrow {
+    position: absolute;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+}
+
+.arrow-up { top: 70px; left: 50%; transform: translateX(-50%); }
+.arrow-down { bottom: 20px; left: 50%; transform: translateX(-50%); }
+.arrow-left { left: 20px; top: 50%; transform: translateY(-50%); }
+.arrow-right { right: 20px; top: 50%; transform: translateY(-50%); }
+
+.npc.next-target {
+    filter:    
+        drop-shadow(0 0 5px rgba(255, 255, 0,   1)) 
+        drop-shadow(0 0 15px rgba(255, 255, 0, 0.8)) 
+        drop-shadow(0 0 30px rgba(255, 255, 0, 0.4));
+    animation: pulsarBrilhoPNG 2s infinite ease-in-out;
+    box-shadow: none !important;
+    z-index: 100;
+}
+
+@keyframes pulsarBrilhoPNG {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px rgba(255, 255, 0, 0.5));
+    }
+    50% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.9));
+    }
 }

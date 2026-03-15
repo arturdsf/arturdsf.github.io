@@ -20,7 +20,6 @@
     const ENEMY_TYPES = [
         { type: 'boss', chance: 0.04, width: 160, height: 120, hp: 4, yOffset: 100, yRange: -320 },
         { type: 'kamikaze', chance: 0.13, width: 70, height: 70, hp: 1 },
-        { type: 'shooter', chance: 0.22, width: 120, height: 110, hp: 2 },
         { type: 'fast', chance: 0.42, width: 80, height: 100, hp: 1 },
         { type: 'normal', chance: 1, width: 100, height: 100, hp: 1 }
     ];
@@ -42,10 +41,9 @@
         player: document.getElementById('player'),
         tronco: document.getElementById('tronco'),
         ventania: document.getElementById('ventania'),
-        buraco: document.getElementById('buraco'),
-        poca: document.getElementById('poca')
+        buraco: document.getElementById('buraco')
     };
-    const typeToSpriteId = { normal: 'tronco', fast: 'ventania', boss: 'buraco', kamikaze: 'ventania', shooter: 'poca' };
+    const typeToSpriteId = { normal: 'tronco', fast: 'ventania', boss: 'buraco', kamikaze: 'ventania' };
     const bgFundo = document.getElementById('fundo');
 
     let imagesLoaded = 0;
@@ -193,18 +191,6 @@
                     el.addEventListener('load', () => imageLoaded(), { once: true });
                     el.addEventListener('error', () => {
                         console.warn(`Sprite não encontrado: ${key} -> ${el.src}`);
-                        // Try a fallback without accented 'ç' (common filename issue)
-                        try {
-                            const src = el.src || '';
-                            const alt = src.replace(/poça\.png/i, 'poca.png');
-                            if (alt !== src) {
-                                console.info(`Tentando fallback de sprite: ${alt}`);
-                                el.src = alt;
-                                return; // wait for next load/error
-                            }
-                        } catch (e) {
-                            // ignore
-                        }
                         imageLoaded();
                     }, { once: true });
                 }
@@ -221,8 +207,14 @@
 
         const rand = Math.random();
         const def = ENEMY_TYPES.find(d => rand < d.chance) || ENEMY_TYPES[ENEMY_TYPES.length - 1];
-        let y = 60 + Math.random() * Math.min(Math.max(60, canvasHeight - 320), canvasHeight - def.height - 80);
-        if (def.yRange) y = def.yOffset + Math.random() * Math.max(40, canvasHeight + def.yRange);
+        let y;
+        let attempts = 0;
+        do {
+            y = 60 + Math.random() * Math.min(Math.max(60, canvasHeight - 320), canvasHeight - def.height - 80);
+            if (def.yRange) y = def.yOffset + Math.random() * Math.max(40, canvasHeight + def.yRange);
+            attempts++;
+            if (attempts > 10) break; // prevent infinite loop
+        } while (enemies.some(e => hitTestRect(0, e.y, 1, e.height, 0, y, 1, def.height)));
 
         // allocate/reuse enemy object from pool
         let enemy = enemyPool.pop();
@@ -512,7 +504,7 @@
                 ctx.save();
                 ctx.shadowColor = '#0f0';
                 ctx.shadowBlur = 15;
-                ctx.fillStyle = `rgba(0, 255, 136, ${glow})`;
+                ctx.fillStyle = `rgba(50, 205, 50, ${glow})`;
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 2;
                 ctx.fillRect(screenX, letter.y, letter.width, letter.height);
@@ -536,7 +528,7 @@
                 ctx.translate(-player.width, 0);
                 ctx.drawImage(sprites.player, 0, 0, sprites.player.naturalWidth, sprites.player.naturalHeight, 0, 0, player.width, player.height);
             } else {
-                ctx.fillStyle = '#0ff';
+                ctx.fillStyle = '#1E90FF';
                 ctx.fillRect(player.x, player.y, player.width, player.height);
                 ctx.fillStyle = '#fff';
                 ctx.fillRect(player.x + 20, player.y + 28, 28, 28);
@@ -546,11 +538,10 @@
         }
 
         const enemyColors = {
-            boss: '#f0f',
-            fast: '#ff4400',
-            normal: '#f00',
-            kamikaze: '#ffff00',
-            shooter: '#00ff88'
+            boss: '#DDA0DD', // Roxo suave (uvas)
+            fast: '#90EE90', // Verde claro (colinas)
+            normal: '#ADD8E6', // Azul claro (céu)
+            kamikaze: '#FFFFE0' // Amarelo suave (sol)
         };
 
         enemies.forEach(enemy => {

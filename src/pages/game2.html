@@ -4,25 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Interativo - Twine Style</title>
+    <title>Quem Pode Ajudar?</title>
     <link rel="stylesheet" href="../style/game2.css">
 </head>
 
 <body>
-    <div class="stats-panel" id="statsPanel">
-        <div class="stat-item">
-            <span>Personagens:</span>
-            <span class="stat-value" id="charStat">Nenhum</span>
-        </div>
-        <div class="stat-item">
-            <span>Dicas:</span>
-            <span class="stat-value" id="tipsStat">0</span>
-        </div>
-        <div class="stat-item">
-            <span>Caminho:</span>
-            <span class="stat-value" id="pathStat">Neutro</span>
-        </div>
-    </div>
 
     <div class="game-container">
         <div class="art-section">
@@ -42,9 +28,7 @@
         </div>
     </div>
 
-    <button class="restart-btn" onclick="restartGame()" id="restartBtn" style="display: none;">
-        🔄 Reiniciar Jogo
-    </button>
+    <div id="message" class="message" style="display: none;"></div>
 
     <script src="../scripts/game2.js" defer></script>
 </body>

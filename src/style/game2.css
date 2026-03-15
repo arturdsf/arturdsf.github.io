@@ -5,8 +5,12 @@
 }
 
 body {
-    font-family: 'Georgia', serif;
-    background: linear-gradient(135deg, #1e1e2e 0%, #2a1e3d 100%);
+    font-family: 'Comic Sans MS', cursive;
+    background-image: url('../assets/game2-assets/background.png');
+    background-size: cover;
+    background-attachment: fixed; /* Garante que o fundo cubra a tela e não role */
+    background-repeat: no-repeat;
+    background-position: center;
     color: #f8f8f2;
     min-height: 100vh;
     overflow-x: hidden;
@@ -21,58 +25,18 @@ body {
     flex-direction: column;
 }
 
-.art-section {
-    flex: 1;
-    min-height: 400px;
-    position: relative;
-    margin-bottom: 30px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    background: #000;
-}
-
-.art-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: #fff;
-    text-align: center;
-    position: relative;
-}
-
-.art-placeholder::before {
-    content: "INSIRA SUA ARTE AQUI";
-    font-size: 1.5rem;
-    font-weight: bold;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%,
-    100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-}
-
 .text-section {
-    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    background: rgba(210, 190, 160, 0.55); /* Tom de papel machê mais escuro com mais transparência */
     border-radius: 20px;
     padding: 40px;
     margin-bottom: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .story-text {
-    font-size: 1.8rem;
+    font-size: 1.5rem; /* Levemente reduzido para acomodar imagens */
     line-height: 1.6;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -83,11 +47,24 @@ body {
     white-space: pre-wrap;
 }
 
+/* NOVO: Classe para a imagem dentro do texto */
+.scene-inline-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 400px; /* Limita a altura para não empurrar os botões para fora da tela */
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 20px auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
 .choices-section {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
+    padding-bottom: 40px;
 }
 
 .choice-btn {
@@ -99,7 +76,8 @@ body {
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 15px;
     color: #fff;
-    font-size: 1.2rem;
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 1.1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -131,10 +109,6 @@ body {
     border-color: rgba(255, 255, 255, 0.6);
 }
 
-.choice-btn:active {
-    transform: translateY(-2px);
-}
-
 .stats-panel {
     position: fixed;
     top: 20px;
@@ -152,6 +126,7 @@ body {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
+    gap: 15px;
 }
 
 .stat-value {
@@ -182,38 +157,55 @@ body {
 .ending {
     text-align: center;
     font-size: 2rem;
-    color: #ffd700;
-    animation: glow 2s infinite alternate;
+    color: #fff;
     margin-bottom: 20px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    background: rgba(210, 190, 160, 0.863);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes glow {
-    from {
-        text-shadow: 0 0 10px #ffd700;
-    }
-    to {
-        text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700;
-    }
+.message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    text-align: center;
+    z-index: 1000;
+}
+
+@media (max-width: 1024px) {
+    .game-container { padding: 15px; }
+    .text-section { padding: 30px; }
+    .story-text { font-size: 1.4rem; }
+    .choice-btn { min-width: 250px; max-width: 300px; font-size: 1rem; }
+    .scene-inline-img { max-height: 350px; }
 }
 
 @media (max-width: 768px) {
-    .game-container {
-        padding: 10px;
-    }
-    .story-text {
-        font-size: 1.4rem;
-    }
-    .choice-btn {
-        min-width: 100%;
-        max-width: none;
-    }
-    .stats-panel {
-        position: static;
-        margin-bottom: 20px;
-    }
-    .restart-btn {
-        position: static;
-        margin: 20px auto;
-        display: block;
-    }
+    .game-container { padding: 10px; }
+    .text-section { padding: 25px; }
+    .story-text { font-size: 1.2rem; }
+    .choice-btn { min-width: 100%; max-width: none; font-size: 1rem; padding: 15px 20px; }
+    .scene-inline-img { max-height: 300px; }
+    .stats-panel { position: static; margin-bottom: 20px; }
+    .restart-btn { position: static; margin: 20px auto; display: block; }
+}
+
+@media (max-width: 480px) {
+    .game-container { padding: 5px; }
+    .text-section { padding: 20px; margin-bottom: 20px; }
+    .story-text { font-size: 1rem; line-height: 1.4; letter-spacing: 1px; }
+    .choice-btn { padding: 12px 15px; font-size: 0.9rem; }
+    .scene-inline-img { max-height: 250px; }
+    .choices-section { gap: 10px; }
+    .message { font-size: 1.2rem; padding: 15px; }
 }

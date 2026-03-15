@@ -16,12 +16,23 @@
       </main>
 
       <!-- CONTROLES MOBILE-->
-      <div id="mobile-controls">
-        <div id="btn-up" class="touch-btn" style="grid-area: up">▲</div>
-        <div id="btn-left" class="touch-btn" style="grid-area: left">◀</div>
-        <div id="btn-right" class="touch-btn" style="grid-area: right">▶</div>
-        <div id="btn-down" class="touch-btn" style="grid-area: down">▼</div>
+      <div id="orientation-warning">
+        <h1>Gire o celular! 📱➡️</h1>
+        <p>O jogo só funciona com a tela deitada.</p>
       </div>
+
+      <div id="mobile-controls">
+        <div id="d-pad">
+          <div id="btn-up" class="touch-btn">▲</div>
+          <div id="btn-left" class="touch-btn">◀</div>
+          <div id="d-pad-center"></div> <div id="btn-right" class="touch-btn">▶</div>
+          <div id="btn-down" class="touch-btn">▼</div>
+        </div>
+  
+  <div id="action-zone">
+    <div id="btn-interact" class="touch-btn interact-btn">E</div>
+  </div>
+</div>
     </div>
 
     <div id="minigame-container" style="display: none;">
@@ -29,6 +40,7 @@
         <div id="mg-header">
           <h2 id="mg-title">Minijogo</h2>
           <div class="hearts-box">
+            <span id="score-counter">0/3</span>
             <span id="counter">05</span>
           </div>
         </div>
@@ -70,7 +82,7 @@
     <div id="controls">
       <h2>Controles:</h2>
       <p><strong>WASD / Setas:</strong> Andar</p>
-      <p><strong>Espaço:</strong> Pausar, voltar ao jogo, iniciar o jogo, Reiniciar (ao perder)</p>
+      <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar (ao perder)</p>
       <p><strong>ESC:</strong> Pausar, voltar a jogar</p>
       <p><strong>F11:</strong> Tela cheia</p>
       <p><strong>E:</strong> Interagir</p>
@@ -86,7 +98,7 @@
     <div id="controls">
       <h2>Controles:</h2>
       <p><strong>WASD / Setas:</strong> Andar</p>
-      <p><strong>Espaço:</strong> Pausar, voltar ao jogo, iniciar o jogo, Reiniciar (ao perder)</p>
+      <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar (ao perder)</p>
       <p><strong>ESC:</strong> Pausar, voltar a jogar</p>
       <p><strong>F11:</strong> Tela cheia</p>
       <p><strong>E:</strong> Interagir</p>
@@ -97,14 +109,16 @@
     </div>
   </div>
 
-  <div id="game-over">
-    <div>Você perdeu!</div>
-    <div id="game-over-desc">As suas vidas acabaram!</div>
-    <div>Animais reunidos: <span id="score">0</span>.</div>
-    <button id="restart-btn" onclick="restartGame()">Tentar novamente</button>
+  <div id="game-complete">
+    <div><h1>Ufa!</h1></div>
+    <div>
+      <p>Você conseguiu encontrar o filhote e reunir toda a família! Ouvi dizer que a Mamãe Quero-Quero disse um muito obrigado...</p>
+    </div>
+    <div class="win-options">
+      <div onclick="backToIndex()">◀</div>
+      <div onclick="restartGame()">Jogar novamente</div>
+    </div>
   </div>
-
-  <div id="game-complete"></div>
 
   <!-- Área para scripts -->
   <script src="../scripts/game4.js"></script>

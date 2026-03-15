@@ -26,14 +26,22 @@
 
 * {
   box-sizing: border-box;
+
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100vh;
   overflow: hidden;
   background: var(--fog-bg);
   font-family: var(--primary-font-family);
+
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #viewport {
@@ -246,7 +254,6 @@ html, body {
   cursor: grabbing;
   opacity: 0.8;
   z-index: 25;
-  /* Reforça o clip-path no estado de drag */
   -webkit-clip-path: var(--current-mold) !important;
   clip-path: var(--current-mold) !important;
   pointer-events: none !important;
@@ -270,16 +277,55 @@ html, body {
   image-rendering: pixelated;
 }
 
+/* Catch */
+
+.mg-target-sprite {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.mg-target-sprite.sprite-C { background-image: url('../assets/graxaim_static.png') }
+.mg-target-sprite.sprite-c { background-image: url('../assets/filhoteperdido_scream.png') }
+
+.running-tremble {
+  animation: animalTremble 0.15s infinite
+}
+
+@keyframes animalTremble {
+  0% { margin-top: 0px }
+  25% { margin-top: -4px }
+  50% { margin-top: 0px }
+  75% { margin-top: 4px }
+  100% { margin-top: 0px }
+}
+
+.mg-obstacle {
+  position: absolute;
+  width: 230px;
+  height: 180px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  z-index: 20;
+  pointer-events: none;
+}
+
 /* Utilitários dos minijogos */
 
 #minigame-container {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
-  background: rgba(36, 54, 30, 0.9);
-  z-index: 5;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
   display: none;
   justify-content: center;
   align-items: center;
@@ -287,13 +333,13 @@ html, body {
 
 #minigame-box {
   background: #fdfbf7;
-  padding: 30px;
+  padding: 25px;
   border-radius: 15px;
-  width: 80%;
-  max-width: 600px;
+  width: auto;
+  max-width: 850px;
   text-align: center;
-  color: #333;
   border: 5px solid var(--basalto);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -323,6 +369,23 @@ html, body {
   margin: 0;
   text-align: left;
   flex-grow: 1;
+}
+
+.hearts-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#score-counter {
+  display: none;
+  background: #a3c4b6;
+  color: #2f3e36;
+  padding: 7px 15px;
+  margin-right: 5px;
+  border-radius: 8px;
+  font-size: 22px;
+  font-weight: bold;
 }
 
 #counter {
@@ -401,6 +464,7 @@ html, body {
   pointer-events: none;
   transform: translate(-30%, -60%);
   white-space: nowrap;
+  user-select: none;
 }
 
 #dialog-system {
@@ -409,7 +473,7 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   width: 90vw;
-  height: 160px; /* Altura fixa da caixa */
+  height: 160px;
   z-index: 5;
 }
 
@@ -422,11 +486,12 @@ html, body {
   border: 2px solid white;
   border-radius: 20px;
   overflow: visible;
+  user-select: none;
 }
 
 #dialog-ft {
   position: absolute;
-  bottom: 0; /* Alinhado à base da caixa */
+  bottom: 0;
   left: 20px;
   height: 220px;
   max-width: 200px;
@@ -481,6 +546,15 @@ html, body {
   display: flex;
 }
 
+@media screen and (max-width: 1024px) and (orientation: portrait) {
+  #orientation-warning {
+    display: flex !important;
+  }
+  #viewport, #main-menu, #ui, #pause-menu, #game-complete, #dialog-system {
+    display: none !important;
+  }
+}
+
 #main-menu {
   background-color: var(--menu-bg);
   color: #000;
@@ -500,9 +574,6 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 50;
-
-  /* Remover quando terminar o projeto 
-  display: none; */
 }
 
 #main-menu > h1 {
@@ -526,10 +597,11 @@ html, body {
 #main-menu > div > button:hover {
   background-color: var(--button-hover);
   transition-duration: .2s;
+  transform: translateY(-3px);
 }
 
 #main-menu > div > button#back-btn {
-  width: 50px;
+  width: 70px;
   border-radius: 10px;
   background-color: var(--button-base);
 }
@@ -537,6 +609,7 @@ html, body {
 #main-menu > div > button#back-btn:hover {
   background-color: var(--button-hover);
   transition-duration: .2s;
+  transform: translateY(-3px);
 }
 
 #ui {
@@ -594,22 +667,30 @@ html, body {
 }
 
 #pause-menu {
-  background-color: rgba(0, 0, 0, 0.473);
-  color: #fff;
+  background-color: var(--menu-bg);
+  color: #000;
+  border: 3px solid var(--menu-border);
+  border-radius: 20px;
+
   height: 500px;
   width: 700px;
   padding: 20px;
+
+  display: none; 
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 20px;
+  
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 50;
-  box-sizing: border-box;
-  display: none;
+}
+
+#pause-menu > div > h1 {
+  text-align: center;
+  margin: 40px 0;
 }
 
 .pause-options {
@@ -627,8 +708,9 @@ html, body {
 }
 
 .pause-options div {
-  background-color: lightblue;
-  color: #333;
+  background-color: var(--button-base);
+  transition-duration: .2s;
+
   width: 80px;
   height: 80px;
   display: flex;
@@ -645,73 +727,282 @@ html, body {
   padding: 10px 20px;
   width: 90%;
   border-radius: 15px;
+  text-align: left;
+}
+
+#controls p {
+  margin: 10px 0;
+}
+
+#controls h2 {
+  margin: 10px 0 20px 0;
 }
 
 .pause-options div:hover {
-  background-color: #3498db;
-  transform: translateY(-5px); /* Efeito visual de levante */
+  background-color: var(--button-hover);
+  transition-duration: .2s;
+  transform: translateY(-3px);
 }
 
-#game-over {
-  display: none;
+#game-complete {
+  background-color: var(--menu-bg);
+  color: #000;
+  border: 3px solid var(--menu-border);
+  border-radius: 20px;
+
+  height: 300px;
+  width: 700px;
+  padding: 20px;
+
+  display: none; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+#game-complete h1 {
+  margin-top: 40px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#game-complete p {
+  margin: 10px 0 30px 0;
+  padding: 0 40px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.win-options {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.win-options div {
+  background-color: var(--button-base);
+  color: var(--button-text);
+  
+  width: 300px; 
+  height: 75px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bolder;
+  user-select: none;
+  transition: 0.2s;
+}
+
+.win-options div:first-child {
+  width: 80px;
+  font-size: 30px;
+}
+
+.win-options div:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-3px);
 }
 
 /* Celulares */
 
+#orientation-warning {
+  display: none; /* Escondido por padrão */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--basalt);
+  color: white;
+  z-index: 999999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Se o celular estiver em pé, mostra o aviso e SOME com o jogo */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+  #orientation-warning {
+    display: flex;
+  }
+  #viewport, #main-menu, #ui, #pause-menu, #game-complete {
+    display: none !important; 
+  }
+}
+
+/* --- CONTROLES ESTILO MINECRAFT --- */
 #mobile-controls {
   position: fixed;
   bottom: 20px;
   left: 20px;
   right: 20px;
   display: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 100;
+  pointer-events: none;
+}
+
+#d-pad {
+  display: grid;
   grid-template-areas: 
     ". up ."
-    "left . right"
+    "left center right"
     ". down .";
   gap: 10px;
-  z-index: 100;
+  pointer-events: auto;
 }
+
+#d-pad-center {
+  grid-area: center;
+}
+
+#btn-up { grid-area: up; }
+#btn-left { grid-area: left; }
+#btn-right { grid-area: right; }
+#btn-down { grid-area: down; }
 
 .touch-btn {
   width: 60px;
   height: 60px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(5px);
-  border-radius: 10px;
-  border: 2px solid white;
+  border-radius: 12px;
+  border: 3px solid rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
+.touch-btn:active {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(0.9);
+}
+
+#mg-content, 
+.touch-btn, 
+.puzzle-piece-drag, 
+#game-board {
+  touch-action: none;
+}
+
+#action-zone {
+  pointer-events: auto;
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+.interact-btn {
+  width: 75px;
+  height: 75px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  color: #333;
+  font-size: 30px;
+}
+
+.interact-btn:active {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(0.9);
+}
+
 /* Media Queries */
 
-/* Apenas de um dos menus, se quiser manter, eu otimizo e termino eles quando pegar o projeto de volta, senão, pode retirar ou fazer por você mesmo.
-
-@media screen and (max-width: 992px) {
-  #main-menu {
-    max-width: 650px;
-    margin: 0px 30px;
-    transition: ease .2s;
+@media screen and (max-width: 1024px), screen and (max-height: 700px) {
+  #main-menu, #pause-menu, #game-complete {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  
+  #minigame-box {
+    transform: scale(0.8);
+  }
+  
+  #dialog-system {
+    bottom: 15px;
+    transform: translateX(-50%) scale(0.9);
   }
 }
 
-@media screen and (max-width: 768px) { 
-  #main-menu {
-    height: 700px;
-    min-width: 200px;
-    max-width: 600px;
-    margin: 0px;
-    transition: ease .2s;
+@media screen and (max-width: 850px), screen and (max-height: 500px) {
+  #main-menu, #pause-menu, #game-complete {
+    transform: translate(-50%, -50%) scale(0.55); 
+  }
+  
+  #minigame-container {
+    align-items: flex-start; 
+    padding-top: 5px;
   }
 
-  #main-menu > p > button {
-    width: 250px;
+  #minigame-box {
+    transform: scale(0.55); 
+    transform-origin: top center;
+    margin: 0;
   }
 
-  #main-menu > p > button#back-btn {
-    width: 60px;
+  #ui {
+    top: 5px;
+    left: 10px;
+    right: 10px;
   }
-}*/
+
+  #friends-counter, #hint, #pause-btn {
+    padding: 8px 12px;
+    font-size: 15px;
+  }
+
+  #hint > #ui-hint-img {
+    height: 50px;
+    width: 50px;
+  }
+
+  #dialog-system {
+    bottom: 5px;
+    transform: translateX(-50%) scale(0.7);
+    transform-origin: bottom center;
+  }
+
+  #mobile-controls {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+  }
+  
+  .touch-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .interact-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-height: 400px) {
+  #main-menu, #pause-menu, #game-complete {
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+  #minigame-box {
+    transform: scale(0.45);
+  }
+}

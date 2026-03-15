@@ -22,11 +22,11 @@ const UIManager = {
     if (!controls) return
 
     if (this.isTouchDevice) {
-        controls.style.display = 'grid'
-        console.log(`[UI] Modo ${this.deviceType} ativado.`)
+        controls.style.display = 'flex'
+        console.log("[UI] Controles Mobile (Flex) ativados.")
     } else {
         controls.style.display = 'none'
-        console.log("[UI] Modo Desktop ativado. Controles ocultos.")
+        console.log("[UI] Modo Desktop ativado.")
     }
   }
 }
@@ -520,20 +520,30 @@ function handleMove(dx, dy, newFacing) {
 /* LÓGICA DOS MINIJOGOS */
 
 function openMinigame(type, x, y, charArray) {
+  const bubble = document.getElementById('interaction-bubble')
+  console.log("Abrindo minijogo tipo:", type)
   pauseGame = true
+  
   const container = document.getElementById('minigame-container')
   const content = document.getElementById('mg-content')
   
-  if (container) container.style.display = 'flex'
-  if (content) content.innerHTML = ""
+  if (!container || !content) {
+    console.error("ERRO: Elementos do minijogo não encontrados no HTML!")
+    return
+  }
 
-  if (type === 'P' || type === 'p' || type === 'M' || type === 'm') {
+  container.style.display = 'flex'
+  content.innerHTML = ""
+
+  if (['P', 'p', 'M', 'm'].includes(type)) {
     playMemory(type, x, y, charArray)
-  } else if (type === 'O' || type === 'o' || type === 'Q' || type === 'q') {
+  } else if (['O', 'o', 'Q', 'q'].includes(type)) {
     playPuzzle(type, x, y, charArray)
-  } else if (type === 'C' || type === 'c') {
+  } else if (['C', 'c'].includes(type)) {
     playCatch(type, x, y, charArray)
   }
+
+  bubble.style.display = 'none'
 }
 
 function winMinigame(x, y, charArray) {
@@ -568,32 +578,75 @@ function winMinigame(x, y, charArray) {
 }
 
 function winGame() {
-  const winMenu = document.getElementById('game-complete')
-
-  dialogSystem.show('win_game')
   pauseGame = true
-  winMenu.style.display = 'flex'
+  
+  dialogSystem.show('win_game', function() {
+    document.getElementById('pause-menu').style.display = "none"
+    const winMenu = document.getElementById('game-complete')
+    if (winMenu) winMenu.style.display = 'flex'
+  })
+}
+
+function pause() {
+  const pauseMenu = document.getElementById('pause-menu')
+  const ui = document.getElementById('ui')
+  const dialogBox = document.getElementById('dialog-system')
+
+  if (pauseMenu) pauseMenu.style.display = 'flex'
+  if (ui) ui.style.display = 'none'
+  
+  if (dialogBox && dialogBox.style.display === 'block') {
+    dialogBox.style.display = 'none'
+    
+    dialogBox.dataset.wasOpen = 'true'
+  }
+
+  pauseGame = true
+}
+
+function play() {
+  const pauseMenu = document.getElementById('pause-menu')
+  const ui = document.getElementById('ui')
+  const dialogBox = document.getElementById('dialog-system')
+
+  if (pauseMenu) pauseMenu.style.display = 'none'
+  if (ui) ui.style.display = 'flex'
+  
+  if (dialogBox && dialogBox.dataset.wasOpen === 'true') {
+    dialogBox.style.display = 'block'
+    dialogBox.dataset.wasOpen = 'false'
+  }
+
+  pauseGame = false
 }
 
 /* Celulares e Interação */
 
 function setupMobileButtons() {
-    const btns = {
-        'btn-up': [0, -1, null],
-        'btn-down': [0, 1, null],
-        'btn-left': [-1, 0, "right"],
-        'btn-right': [1, 0, "left"]
-    }
+  const btns = {
+    'btn-up': [0, -1, null],
+    'btn-down': [0, 1, null],
+    'btn-left': [-1, 0, "left"],
+    'btn-right': [1, 0, "right"]
+  }
 
-    for (const [id, [dx, dy, dir]] of Object.entries(btns)) {
-        const el = document.getElementById(id)
-        if (el) {
-            el.addEventListener('touchstart', (e) => {
-                e.preventDefault()
-                handleMove(dx, dy, dir)
-            }, {passive: false})
-        }
+  for (const [id, [dx, dy, dir]] of Object.entries(btns)) {
+    const el = document.getElementById(id)
+    if (el) {
+      el.addEventListener('touchstart', (e) => {
+        e.preventDefault()
+        handleMove(dx, dy, dir)
+      }, {passive: false})
     }
+  }
+
+  const interactBtn = document.getElementById('btn-interact')
+  if (interactBtn) {
+    interactBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault()
+      interact()
+    }, {passive: false})
+  }
 }
 
 function interact() {
@@ -745,58 +798,159 @@ function updateHintUI() {
 /* MINIJOGOS */
 
 function playCatch(type, x, y, charArray) {
-    const config = minigameConfig[type]
-    document.getElementById('mg-title').innerText = config.title
-    document.getElementById('mg-desc').innerText = config.desc
-    
-    const content = document.getElementById('mg-content')
-    const timePanel = document.getElementById('counter')
-    const header = document.getElementById('mg-header')
-    const heartsBox = document.querySelector('.hearts-box')
+  const config = minigameConfig[type]
+  document.getElementById('mg-title').innerText = config.title
+  document.getElementById('mg-desc').innerText = config.desc
+  
+  const box = document.getElementById('minigame-box')
+  if (box) box.style.maxWidth = "850px"
 
-    header.insertBefore(timePanel, heartsBox)
+  const content = document.getElementById('mg-content')
+  const counterEl = document.getElementById('counter')
+  const scoreCounterEl = document.getElementById('score-counter')
+  
+  Object.assign(content.style, {
+    position: "relative",
+    width: "800px",
+    height: "500px",
+    backgroundImage: "url('../assets/game4-assets/catch_bg.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    borderRadius: "10px",
+    border: "3px solid #5b704c",
+    overflow: "hidden",
+    margin: "0 auto",
+    marginBottom: "20px",
+    display: "block"
+  })
+  
+  content.innerHTML = ""
 
-    timePanel.style.display = 'block'
-    let time = 5
-    timePanel.innerText = `Tempo: 0${time}s`
+  const goal = 3
+  let score = 0
 
-    const animal = document.createElement('div')
-    animal.className = 'mg-target'
-    animal.innerText = config.target
-    animal.style.fontSize = "50px"
-    animal.style.display = "flex"
-    animal.style.alignItems = "center"
-    animal.style.justifyContent = "center"
-    animal.style.userSelect = "none"
+  counterEl.style.display = 'block'
+  let timeLeft = 15
+  counterEl.innerText = timeLeft
 
-    // Limpa qualquer intervalo antigo antes de começar
-    if (activeInterval) clearInterval(activeInterval)
+  if (scoreCounterEl) {
+    scoreCounterEl.style.display = 'block'
+    scoreCounterEl.innerText = `${score}/${goal}`
+  }
 
-    activeInterval = setInterval(() => {
-        time--
-        timePanel.innerText = `Tempo: 0${time}s`
-
-        const posX = Math.random() * 200 - 100
-        const posY = Math.random() * 80 - 40
-        animal.style.transform = `translate(${posX}px, ${posY}px)`
-
-        if (time <= 0) {
-            clearInterval(activeInterval)
-            activeInterval = null
-            timePanel.style.display = 'none'
-            closeMinigame()
-        }
-    }, 1000)
-
-    animal.onclick = () => {
-        clearInterval(activeInterval)
-        activeInterval = null
-        animal.innerText = "😵"
-        timePanel.style.display = 'none'
-        setTimeout(() => winMinigame(x, y, charArray), 300)
+  if (activeInterval) clearInterval(activeInterval)
+  activeInterval = setInterval(() => {
+    timeLeft--
+    counterEl.innerText = timeLeft < 10 ? '0' + timeLeft : timeLeft
+    if (timeLeft <= 0) {
+      clearInterval(activeInterval)
+      closeMinigame()
     }
+  }, 1000)
 
-    content.appendChild(animal)
+  // Seus spots atuais
+  const spots = [
+    { left: '10%', top: '10%' },
+    { left: '60%', top: '10%' },
+    { left: '50%', top: '50%' },
+    { left: '15%', top: '65%' },
+    { left: '80%', top: '70%' }
+  ]
+
+  spots.forEach((spot) => {
+    const obs = document.createElement('div')
+    obs.className = 'mg-obstacle'
+    obs.style.backgroundImage = "url('../assets/game4-assets/moita.png')"
+    obs.style.left = spot.left
+    obs.style.top = spot.top
+    obs.style.transform = 'translate(-40px, -20px)' 
+    content.appendChild(obs)
+  })
+
+  let currentSpotIndex = -1
+  let isPeeking = false
+  let cycleTimeout = null
+
+  const animal = document.createElement('div')
+  animal.className = `mg-target-sprite sprite-${type}`
+  
+  Object.assign(animal.style, {
+    position: 'absolute',
+    width: '100px',
+    height: '100px',
+    cursor: 'pointer',
+    transition: 'all 0.4s ease',
+    zIndex: '10', 
+    pointerEvents: 'none'
+  })
+
+  const runCycle = () => {
+    if (!animal.parentElement) return
+
+    let nextIndex
+    do {
+      nextIndex = Math.floor(Math.random() * spots.length)
+    } while (nextIndex === currentSpotIndex)
+
+    currentSpotIndex = nextIndex
+    const spot = spots[currentSpotIndex]
+
+    isPeeking = false
+    animal.style.pointerEvents = 'none'
+    animal.classList.add('running-tremble')
+    
+    animal.style.left = spot.left
+    animal.style.top = spot.top
+    animal.style.transform = 'translateY(0px)'
+
+    cycleTimeout = setTimeout(() => {
+      if (!animal.parentElement) return
+      animal.classList.remove('running-tremble')
+
+      cycleTimeout = setTimeout(() => {
+        if (!animal.parentElement) return
+        isPeeking = true
+        animal.style.pointerEvents = 'auto'
+        animal.style.transform = 'translateY(-60px)' 
+
+        cycleTimeout = setTimeout(() => {
+          if (!animal.parentElement) return
+          isPeeking = false
+          animal.style.pointerEvents = 'none'
+          animal.style.transform = 'translateY(0px)'
+          
+          cycleTimeout = setTimeout(() => {
+            runCycle()
+          }, 400)
+        }, 1100)
+      }, 300)
+    }, 450)
+  }
+
+  animal.onclick = (e) => {
+    if (!isPeeking) return
+    e.stopPropagation()
+    
+    score++
+    if (scoreCounterEl) scoreCounterEl.innerText = `${score}/${goal}`
+    
+    animal.style.filter = "brightness(1.5) drop-shadow(0 0 15px white)"
+    
+    if (score >= goal) {
+      clearInterval(activeInterval)
+      animal.style.pointerEvents = 'none'
+      animal.innerHTML = "<span style='font-size: 40px; position: absolute; top: -40px; left: 30px;'>❤️</span>"
+      animal.style.transform = 'translateY(-60px)' 
+      setTimeout(() => winMinigame(x, y, charArray), 800)
+    } else {
+      clearTimeout(cycleTimeout)
+      animal.style.transform = 'translateY(0px)'
+      setTimeout(() => runCycle(), 200)
+    }
+  }
+
+  content.appendChild(animal)
+  runCycle()
 }
 
 function playMemory(type, x, y, charArray) {
@@ -846,8 +1000,7 @@ function playMemory(type, x, y, charArray) {
 }
 
 function playPuzzle(type, x, y, charArray) {
-  const config = minigameConfig[type] 
-  
+  const config = minigameConfig[type]
   document.getElementById('mg-title').innerText = config.title
   document.getElementById('mg-desc').innerText = config.desc
 
@@ -858,10 +1011,33 @@ function playPuzzle(type, x, y, charArray) {
   content.style.position = "relative"
   content.style.width = "800px" 
   content.style.height = "500px"
-  content.style.backgroundColor = "rgba(0,0,0,0.09)"
+  content.style.backgroundColor = "rgba(0,0,0,0.1)"
   content.style.borderRadius = "10px"
   content.style.overflow = "hidden"
+  content.style.display = "block"
   content.innerHTML = ""
+
+  content.ondragover = function(e) { e.preventDefault() }
+  content.ondrop = function(e) {
+    e.preventDefault()
+    const pieceId = e.dataTransfer.getData("text/plain")
+    const pieceEl = document.getElementById(pieceId)
+    
+    if (!pieceEl || pieceEl.classList.contains('placed')) return
+
+    const offX = parseInt(e.dataTransfer.getData("offsetX"))
+    const offY = parseInt(e.dataTransfer.getData("offsetY"))
+    const rect = content.getBoundingClientRect()
+    
+    let nL = e.clientX - rect.left - offX
+    let nT = e.clientY - rect.top - offY
+
+    nL = Math.max(0, Math.min(nL, content.offsetWidth - 120))
+    nT = Math.max(0, Math.min(nT, content.offsetHeight - 125))
+
+    pieceEl.style.left = nL + "px"
+    pieceEl.style.top = nT + "px"
+  }
 
   const pageRef = document.createElement('div')
   pageRef.id = "puzzle-page-ref"
@@ -869,75 +1045,43 @@ function playPuzzle(type, x, y, charArray) {
   pageRef.style.marginTop = "10px"
   pageRef.style.fontWeight = "bold"
   pageRef.style.color = "#5b704c"
-  pageRef.style.userSelect = "none"
-  pageRef.onmousedown = (e) => e.preventDefault() 
-
-  content.after(pageRef)
+  content.after(pageRef) 
 
   const GRID = 3
   const PIECE_W = 120
   const PIECE_H = 125
   const BOARD_W = PIECE_W * GRID
   const BOARD_H = PIECE_H * GRID
-  
   const IMG_URL = config.img
-
   const MOLD = "path('M30,0 C45,20 75,20 90,0 L120,0 L120,35 C100,50 100,75 120,90 L120,125 L85,125 C70,105 45,105 30,125 L0,125 L0,90 C20,75 20,50 0,35 L0,0 Z')"
 
   let placedCount = 0
 
   const board = document.createElement('div')
   board.id = 'puzzle-board-target'
-  board.style.width = `${BOARD_W}px`
-  board.style.height = `${BOARD_H}px`
-  board.style.backgroundImage = `url(${IMG_URL})`
-  board.style.backgroundSize = `${BOARD_W}px ${BOARD_H}px`
+  board.style.width = BOARD_W + "px"
+  board.style.height = BOARD_H + "px"
+  board.style.backgroundImage = "url(" + IMG_URL + ")"
+  board.style.backgroundSize = BOARD_W + "px " + BOARD_H + "px"
+  board.style.zIndex = "1"
   content.appendChild(board)
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    const pieceId = e.dataTransfer.getData("text/plain")
-    const pieceEl = document.getElementById(pieceId)
-    if (!pieceEl || pieceEl.classList.contains('placed')) return
-
-    const offsetX = parseInt(e.dataTransfer.getData("offsetX"))
-    const offsetY = parseInt(e.dataTransfer.getData("offsetY"))
-
-    const rect = content.getBoundingClientRect()
-    let newLeft = e.clientX - rect.left - offsetX
-    let newTop = e.clientY - rect.top - offsetY
-
-    newLeft = Math.max(0, Math.min(newLeft, content.offsetWidth - PIECE_W))
-    newTop = Math.max(0, Math.min(newTop, content.offsetHeight - PIECE_H))
-
-    pieceEl.style.left = `${newLeft}px`
-    pieceEl.style.top = `${newTop}px`
-    pieceEl.style.transform = "rotate(0deg)"
-  }
-
-  content.ondragover = (e) => e.preventDefault()
-  content.ondrop = handleDrop
-
-  box.ondragover = (e) => e.preventDefault()
-  box.ondrop = handleDrop
 
   for(let r = 0; r < GRID; r++) {
     for(let c = 0; c < GRID; c++) {
-      const id = `p-${r}-${c}`
+      const id = "p-" + r + "-" + c
       const slot = document.createElement('div')
       slot.className = 'puzzle-slot'
-      slot.style.width = `${PIECE_W}px`
-      slot.style.height = `${PIECE_H}px`
-      slot.style.left = `${c * PIECE_W}px`
-      slot.style.top = `${r * PIECE_H}px`
+      slot.style.width = PIECE_W + "px"
+      slot.style.height = PIECE_H + "px"
+      slot.style.left = (c * PIECE_W) + "px"
+      slot.style.top = (r * PIECE_H) + "px"
       slot.dataset.id = id
 
-      slot.ondragover = (e) => e.preventDefault()
-      slot.ondrop = (e) => {
+      slot.ondragover = function(e) { e.preventDefault() }
+      slot.ondrop = function(e) {
         const pieceId = e.dataTransfer.getData("text/plain")
         if (pieceId === slot.dataset.id) {
-          e.preventDefault()
-          e.stopPropagation()
+          e.stopPropagation() 
           const pieceEl = document.getElementById(pieceId)
           pieceEl.style.position = "absolute"
           pieceEl.style.left = "0"
@@ -947,10 +1091,7 @@ function playPuzzle(type, x, y, charArray) {
           pieceEl.classList.add('placed')
           slot.appendChild(pieceEl)
           placedCount++
-          if (placedCount === GRID * GRID) {
-            board.style.borderColor = "#2ecc71"
-            setTimeout(() => winMinigame(x, y, charArray), 1000)
-          }
+          if (placedCount === GRID * GRID) setTimeout(() => winMinigame(x, y, charArray), 600)
         }
       }
       board.appendChild(slot)
@@ -959,34 +1100,86 @@ function playPuzzle(type, x, y, charArray) {
       piece.id = id
       piece.className = 'puzzle-piece-drag'
       piece.draggable = true
-      piece.style.width = `${PIECE_W}px`
-      piece.style.height = `${PIECE_H}px`
-      piece.style.backgroundImage = `url(${IMG_URL})`
-      piece.style.backgroundSize = `${BOARD_W}px ${BOARD_H}px`
-      piece.style.backgroundPosition = `-${c * PIECE_W}px -${r * PIECE_H}px`
+      piece.style.width = PIECE_W + "px"
+      piece.style.height = PIECE_H + "px"
+      piece.style.backgroundImage = "url(" + IMG_URL + ")"
+      piece.style.backgroundSize = BOARD_W + "px " + BOARD_H + "px"
+      piece.style.backgroundPosition = "-" + (c * PIECE_W) + "px -" + (r * PIECE_H) + "px"
       piece.style.clipPath = MOLD
       piece.style.webkitClipPath = MOLD
+      piece.style.zIndex = "10"
 
-      const spawnSide = Math.random() > 0.5
-      let randX = spawnSide ? Math.random() * 150 : 600 + Math.random() * 50
+      const randX = Math.random() > 0.5 ? Math.random() * 100 : 600 + Math.random() * 50
       const randY = Math.random() * (content.offsetHeight - PIECE_H)
-      const randomRot = (Math.random() - 0.5) * 40
+      piece.style.left = randX + "px"
+      piece.style.top = randY + "px"
+      piece.style.transform = "rotate(" + ((Math.random() - 0.5) * 30) + "deg)"
 
-      piece.style.left = `${randX}px`
-      piece.style.top = `${randY}px`
-      piece.style.transform = `rotate(${randomRot}deg)`
-
-      piece.ondragstart = (e) => {
-        // EXTERMINADOR DE SELEÇÃO: Limpa qualquer texto fantasma antes de arrastar
-        window.getSelection().removeAllRanges()
-        
+      piece.ondragstart = function(e) {
         e.dataTransfer.setData("text/plain", piece.id)
         const rect = piece.getBoundingClientRect()
         e.dataTransfer.setData("offsetX", e.clientX - rect.left)
         e.dataTransfer.setData("offsetY", e.clientY - rect.top)
         setTimeout(() => piece.classList.add('dragging'), 0)
       }
-      piece.ondragend = () => piece.classList.remove('dragging')
+      piece.ondragend = function() { piece.classList.remove('dragging') }
+
+      let touchOffX = 0; let touchOffY = 0; let currentScale = 1;
+
+      piece.addEventListener('touchstart', function(e) {
+        if (piece.classList.contains('placed')) return
+        if (e.cancelable) e.preventDefault()
+        
+        const t = e.touches[0]
+        const cRect = content.getBoundingClientRect()
+        
+        currentScale = cRect.width / content.offsetWidth
+        
+        const pRect = piece.getBoundingClientRect()
+        
+        touchOffX = (t.clientX - pRect.left) / currentScale
+        touchOffY = (t.clientY - pRect.top) / currentScale
+        
+        piece.classList.add('dragging')
+        piece.style.zIndex = "100"
+        piece.style.transform = "rotate(0deg)"
+      }, {passive: false})
+
+      piece.addEventListener('touchmove', function(e) {
+        if (piece.classList.contains('placed')) return
+        if (e.cancelable) e.preventDefault()
+        
+        const t = e.touches[0]
+        const cRect = content.getBoundingClientRect()
+        
+        let nL = (t.clientX - cRect.left) / currentScale - touchOffX
+        let nT = (t.clientY - cRect.top) / currentScale - touchOffY
+        
+        nL = Math.max(0, Math.min(nL, content.offsetWidth - 120))
+        nT = Math.max(0, Math.min(nT, content.offsetHeight - 125))
+        
+        piece.style.left = nL + "px"
+        piece.style.top = nT + "px"
+      }, {passive: false})
+
+      piece.addEventListener('touchend', function() {
+        if (piece.classList.contains('placed')) return
+        piece.classList.remove('dragging')
+        piece.style.zIndex = "10"
+        
+        const sR = slot.getBoundingClientRect()
+        const pR = piece.getBoundingClientRect()
+        const pCX = pR.left + (pR.width / 2)
+        const pCY = pR.top + (pR.height / 2)
+
+        if (pCX >= sR.left && pCX <= sR.right && pCY >= sR.top && pCY <= sR.bottom) {
+          piece.style.left = "0"; piece.style.top = "0"; piece.draggable = false
+          piece.classList.add('placed'); slot.appendChild(piece)
+          placedCount++
+          if (placedCount === GRID * GRID) setTimeout(() => winMinigame(x, y, charArray), 600)
+        }
+      })
+
       content.appendChild(piece)
     }
   }
@@ -997,27 +1190,35 @@ function closeMinigame() {
   const box = document.getElementById('minigame-box')
   const content = document.getElementById('mg-content')
   const timePanel = document.getElementById('counter')
-  const pageRef = document.getElementById('puzzle-page-ref')
-  const interactBubble = document.getElementById('interaction-bubble')
+  const scorePanel = document.getElementById('score-counter')
 
-  if (pageRef) pageRef.remove()
-  
   if (activeInterval) {
     clearInterval(activeInterval)
     activeInterval = null
   }
 
+  if (container) container.style.display = 'none'
+
   if (box) box.style.maxWidth = "600px"
   if (content) {
-    content.style.width = "auto"
-    content.style.height = "auto"
-    content.style.backgroundColor = "transparent"
+    content.innerHTML = ""
+    Object.assign(content.style, {
+      width: "auto",
+      height: "auto",
+      backgroundImage: "none",
+      backgroundColor: "transparent",
+      border: "none",
+      display: "flex",
+      position: "static"
+    })
   }
 
   if (timePanel) timePanel.style.display = 'none'
-  if (container) container.style.display = 'none'
-  if (interactBubble) interactBubble.style.display = 'none'
+  if (scorePanel) scorePanel.style.display = 'none'
   
+  const pageRef = document.getElementById('puzzle-page-ref')
+  if (pageRef) pageRef.remove()
+
   pauseGame = false
 }
 
@@ -1025,76 +1226,113 @@ function closeMinigame() {
 
 document.addEventListener("keydown", (e) => {
   const key = e.key
-  const mainMenu = document.getElementById('main-menu')
-  const pauseMenu = document.getElementById('pause-menu')
-  const gameOverMenu = document.getElementById('game-over')
 
-  // Verifica se a tecla pressionada foi Espaço
   if (key === " " || key === "Spacebar") {
     e.preventDefault()
 
-    if (window.getComputedStyle(mainMenu).display !== 'none') {
+    const mainMenu = document.getElementById('main-menu')
+    const dialogBox = document.getElementById('dialog-system')
+    const mgContainer = document.getElementById('minigame-container')
+
+    if (mainMenu && window.getComputedStyle(mainMenu).display !== 'none') {
       startGame()
       return
     }
 
-    const mgContainer = document.getElementById('minigame-container')
-    if (mgContainer && mgContainer.style.display === 'flex') return
-
-    if (!pauseGame) {
-      pause()
-    } else if (window.getComputedStyle(pauseMenu).display !== 'none') {
-      play()
+    if (mgContainer && mgContainer.style.display === 'flex') {
+      return
     }
 
-    const dialogBox = document.getElementById('dialog-system')
-    if (dialogBox && dialogBox.style.display === 'block') {
+    const pauseMenu = document.getElementById('pause-menu')
+    const isPausedInMenu = pauseMenu && window.getComputedStyle(pauseMenu).display !== 'none'
+
+    if (dialogBox && dialogBox.style.display === 'block' && !isPausedInMenu) {
       dialogSystem.next()
       return
     }
+    
   }
   
   if (key === "Escape") {
-    if (!pauseGame) pause()
-    else if (pauseMenu.style.display === 'flex') play()
+    const pauseMenu = document.getElementById('pause-menu')
+    const dialogBox = document.getElementById('dialog-system')
+
+    if (dialogBox && dialogBox.style.display === 'block') {
+      return
+    }
+
+    if (!pauseGame) {
+      pause()
+    } else if (pauseMenu && pauseMenu.style.display === 'flex') {
+      play()
+    }
   }
 })
 
 function startGame() {
   const ui = document.getElementById('ui')
-  document.getElementById('main-menu').style.display = 'none'
-  document.getElementById('player').style.display = 'block'
-  ui.style.display = 'flex'
+  const mainMenu = document.getElementById('main-menu')
+  const playerDiv = document.getElementById('player')
+  
+  if (mainMenu) mainMenu.style.display = 'none'
+  if (playerDiv) playerDiv.style.display = 'block'
+  if (ui) ui.style.display = 'flex'
+
+  // FULLSCREEN APENAS MOBILE
+  if (UIManager.isTouchDevice) {
+    const el = document.documentElement
+    if (el.requestFullscreen) {
+      el.requestFullscreen().then(() => {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {})
+        }
+      }).catch(() => {})
+    }
+  }
 
   renderMap()
   updateHintUI()
-
   dialogSystem.show('intro_game')
 }
 
 function pause() {
   const pauseMenu = document.getElementById('pause-menu')
   const ui = document.getElementById('ui')
+  const dialogBox = document.getElementById('dialog-system')
 
-  pauseMenu.style.display = 'flex'
-  ui.style.display = 'none'
+  if (pauseMenu) pauseMenu.style.display = 'flex'
+  if (ui) ui.style.display = 'none'
+  
+  if (dialogBox && window.getComputedStyle(dialogBox).display === 'block') {
+    dialogBox.style.display = 'none'
+    dialogBox.dataset.wasOpen = 'true'
+  }
+
   pauseGame = true
 }
 
 function play() {
   const pauseMenu = document.getElementById('pause-menu')
   const ui = document.getElementById('ui')
+  const dialogBox = document.getElementById('dialog-system')
 
-  pauseMenu.style.display = 'none'
-  ui.style.display = 'flex'
+  if (pauseMenu) pauseMenu.style.display = 'none'
+  if (ui) ui.style.display = 'flex'
+  
+  if (dialogBox && dialogBox.dataset.wasOpen === 'true') {
+    dialogBox.style.display = 'block'
+    dialogBox.dataset.wasOpen = 'false'
+  }
+
   pauseGame = false
 }
 
 function togglePause() {
   const pauseMenu = document.getElementById('pause-menu')
-  const isPaused = window.getComputedStyle(pauseMenu).display === 'flex'
+  
+  const isVisible = pauseMenu && window.getComputedStyle(pauseMenu).display === 'flex'
 
-  if (isPaused) {
+  if (isVisible) {
     play()
   } else {
     pause()
@@ -1119,3 +1357,57 @@ window.onload = () => {
   setupMobileButtons()
   renderMap()
 }
+
+/* Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia! */
+
+/*
+(function createDebugButton() {
+  const btn = document.createElement('button')
+  btn.innerText = "Moggar o beta"
+  btn.id = "debug-win-btn"
+  btn.style.userSelect = "none"
+  
+  Object.assign(btn.style, {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    zIndex: '99999', 
+    padding: '20px',
+    background: '#ffcc00',
+    color: '#000',
+    border: '5px solid red', // Borda vermelha pra você achar ele no susto
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    display: 'block' // FORÇADO SEMPRE VISÍVEL
+  })
+
+  btn.onclick = () => {
+    // Tenta pegar o animal atual da história
+    const targetChar = storyOrder[currentStep]
+    if (!targetChar) {
+        alert("Fim da história ou erro no currentStep")
+        return
+    }
+    
+    // Procura o cara no mapa
+    for (let y = 0; y < map.length; y++) {
+      const x = map[y].indexOf(targetChar)
+      if (x !== -1) {
+        const charArray = map[y].split('')
+        console.log("Debug: Pulando minijogo de " + targetChar)
+        
+        // Se o minijogo estiver aberto, a gente fecha ele antes
+        closeMinigame() 
+        
+        // Dá a vitória
+        winMinigame(x, y, charArray)
+        break
+      }
+    }
+  }
+  
+  document.body.appendChild(btn)
+  console.log("Botão de Debug injetado no Body!")
+})()
+*/

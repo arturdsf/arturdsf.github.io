@@ -48,7 +48,6 @@ header>menu {
 menu>li {
     display: inline;
     margin: 0 15px;
-    /* Ajustado em mobile para evitar apertos */
     cursor: pointer;
 }
 

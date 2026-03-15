@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuga do Filhote</title>
+    <title>Voo do Filhote</title>
     <link rel="stylesheet" href="../style/game3.css">
     <!-- Preload críticos para menos flicker (arquivos detectados em assets/) -->
     <link rel="preload" href="../assets/player.png" as="image">
@@ -23,25 +23,25 @@
     <img id="fundo" src="../assets/game3-assets/fundo.png" style="display: none;" crossorigin>
 
     <div class="ui">
-        <div>Distância: <span id="score">0</span>m</div>
-        <div>Vidas: <span id="lives">3</span></div>
-        <div>Nível: <span id="level">1</span></div>
-        <div>Velocidade: <span id="speed">1.0x</span></div>
-        <div>Palavra: <span id="wordProgress">---</span></div>
+        <div>🚀 Distância: <span id="score">0</span>m</div>
+        <div>❤️ Vidas: <span id="lives">3</span></div>
+        <div>⭐ Nível: <span id="level">1</span></div>
+        <div>⚡ Velocidade: <span id="speed">1.0x</span></div>
+        <div>📝 Palavra: <span id="wordProgress">---</span></div>
     </div>
 
     
     <div id="gameOver" class="game-over">
-        <div>GAME OVER</div>
-        <div>Distância Final: <span id="finalScore">0</span>m</div>
-        <button class="restart-btn" onclick="restartGame()">Jogar Novamente</button>
+        <div>😢 GAME OVER</div>
+        <div>🚀 Distância Final: <span id="finalScore">0</span>m</div>
+        <button class="restart-btn" onclick="restartGame()">🔄 Jogar Novamente</button>
     </div>
 
     <div id="levelComplete" class="level-complete">
-        <div>NÍVEL <span id="completedLevel">1</span> CONCLUÍDO!</div>
-        <div>Próximo: <span id="nextTarget">200</span>m</div>
-        <button class="next-btn" id="nextLevelBtn" onclick="nextLevel()">Próximo Nível</button>
-        <button class="restart-btn" onclick="restartGame()">Reiniciar</button>
+        <div>🎉 NÍVEL <span id="completedLevel">1</span> CONCLUÍDO!</div>
+        <div>🚀 Próximo: <span id="nextTarget">200</span>m</div>
+        <button class="next-btn" id="nextLevelBtn" onclick="nextLevel()">➡️ Próximo Nível</button>
+        <button class="restart-btn" onclick="restartGame()">🔄 Reiniciar</button>
     </div>
 
     <canvas id="gameCanvas"></canvas>
