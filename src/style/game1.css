@@ -196,3 +196,140 @@ html,body{
         filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.9));
     }
 }
+
+/* Media Queries */
+
+@media (max-width: 768px) {
+    .player, .npc {
+        width: 40px;
+        height: 40px;
+    }
+
+    .npc.following {
+        width: 32px;
+        height: 32px;
+    }
+
+    #quest-box {
+        top: 10px;
+        padding: 8px 12px;
+        font-size: 16px;
+        width: 85%;
+    }
+
+    #dialogue-box {
+        width: 95%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #dialogue-hint {
+        font-size: 11px;
+        bottom: 6px;
+        right: 10px;
+    }
+
+    .arrow {
+        padding: 8px;
+        font-size: 18px;
+    }
+
+    .arrow-up { top: 60px; }
+    .arrow-down { bottom: 15px; }
+    .arrow-left { left: 15px; }
+    .arrow-right { right: 15px; }
+}
+
+@media (max-width: 480px) {
+    .player, .npc {
+        width: 35px;
+        height: 35px;
+    }
+
+    .npc.following {
+        width: 28px;
+        height: 28px;
+    }
+
+    #quest-box {
+        top: 5px;
+        padding: 6px 10px;
+        font-size: 14px;
+        width: 90%;
+    }
+
+    #dialogue-box {
+        width: 98%;
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    #dialogue-hint {
+        font-size: 10px;
+        bottom: 4px;
+        right: 8px;
+    }
+
+    .arrow {
+        padding: 6px;
+        font-size: 16px;
+    }
+
+    .arrow-up { top: 50px; }
+    .arrow-down { bottom: 10px; }
+    .arrow-left { left: 10px; }
+    .arrow-right { right: 10px; }
+}
+
+/* --- CONTROLES MOBILE --- */
+
+#joystick-zone {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 150px;
+    height: 150px;
+    z-index: 1000;
+    touch-action: none;
+}
+
+#joystick-base {
+    position: absolute;
+    bottom: 25px; 
+    left: 25px;
+    width: 100px; 
+    height: 100px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+}
+
+#joystick-stick {
+    position: absolute;
+    top: 25px; 
+    left: 25px;
+    width: 50px; 
+    height: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    transform: translate(0px, 0px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+#rotate-warning {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #000; color: #fff;
+    z-index: 9999;
+    align-items: center; justify-content: center;
+    font-size: 20px; text-align: center;
+    padding: 20px;
+}
+
+@media (orientation: portrait) {
+    body.is-touch #rotate-warning {
+        display: flex;
+    }
+}

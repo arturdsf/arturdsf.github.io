@@ -39,7 +39,6 @@ html, body {
   overflow: hidden;
   background: var(--fog-bg);
   font-family: var(--primary-font-family);
-
   user-select: none;
   -webkit-user-select: none;
 }
@@ -56,7 +55,7 @@ html, body {
   display: grid;
   width: 3200px;
   height: 2000px;
-  /* background-image: url(../assets/game4-assets/map.png); */
+  background-image: url(../assets/game4-assets/ceu.png);
   background-repeat: no-repeat;
   background-size: cover;
   
@@ -107,13 +106,18 @@ html, body {
   z-index: 2;
 }
 
-/* Modelos:
- Para ativar a grid desenhada, precisa ativar esses elementos aqui, se quiser
-*/
+/* Modelos 
+
 .water {
   background-color: var(--fog-bg); 
   opacity: 1 !important;
-}
+} 
+.tree {
+  background-color: var(--araucaria);
+  border-radius: 50% 50% 10% 10%;
+  transform: scale(0.8);
+  opacity: 1 !important;
+}*/
 .grass {
   background-image: url('../assets/game4-assets/floor_tile1.png');
   background-size: contain;
@@ -130,18 +134,14 @@ html, body {
   opacity: 1 !important;
 }
 .dirt {
-  background-color: var(--basalt);
-  border-radius: 5px;
-  transform: scale(0.95);
+  background-image: url('../assets/game4-assets/floor_trail.png');
   opacity: 1 !important;
 }
-.tree {
-  background-color: var(--araucaria);
-  border-radius: 50% 50% 10% 10%;
-  transform: scale(0.8);
+.dirt2 {
+  background-image: url('../assets/game4-assets/floor_trail.png');
+  transform: scaleX(-1);
   opacity: 1 !important;
 }
-
 .grass-tree {
   background-image: url('../assets/game4-assets/floor_tile1.png');
   background-size: contain;
@@ -151,9 +151,7 @@ html, body {
 }
 
 .dirt-block {
-  background-color: var(--basalt);
-  border-radius: 5px;
-  transform: scale(0.95);
+  background-image: url('../assets/game4-assets/floor_trail.png');
   opacity: 1 !important;
 }
 
@@ -503,7 +501,7 @@ html, body {
 }
 
 #dialog-text-container {
-  margin-left: 200px; /* Dá espaço para a foto */
+  margin-left: 200px;
   padding: 25px;
   text-align: left;
 }
@@ -522,7 +520,7 @@ html, body {
   position: absolute;
   right: 0;
   top: 0;
-  width: 30%; /* Lado direito da caixa */
+  width: 30%;
   height: 100%;
   cursor: pointer;
   display: flex;
@@ -642,7 +640,6 @@ html, body {
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-/* HP continua centralizado */
 #hint {
   color: #c0392b;
   background: rgba(255, 223, 223, 0.9) !important;
@@ -995,6 +992,10 @@ html, body {
     width: 65px;
     height: 65px;
     font-size: 24px;
+  }
+
+  #controls {
+    display: none !important;
   }
 }
 

@@ -1,101 +1,173 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protótipo de Site</title>
-    <link rel="stylesheet" href="../style/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
+  <title>Caguei nas calças e estou borrado</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style/index.css">
 </head>
 
 <body>
-    <header>
-        <menu>
-            <li><a href="#init-banner" target="_self">Início</a></li>
-            <li><a href="#about-section" target="_self">Sobre</a></li>
-            <li><a href="#game-section" target="_self">Jogos</a></li>
-            <li><a href="#contact-section" target="_self">Contatos</a></li>
-        </menu>
+  <!-- MENU -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#inicio">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#sobre">Sobre</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#livros">Livros</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#jogos">Jogos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contato">Contato</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-        <div id="init-banner">
-            <h1>Título</h1>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
+  <!-- HERO -->
+  <section id="inicio" class="hero text-center">
+    <div class="container">
+      <img src="../assets/janeEngel.png" class="autor-img">
+      <h1 class="mt-3">JANE ENGEL</h1>
+      <a href="#livros" class="btn btn-primary mt-2">Conheça os livros</a>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">Sobre o Autor</h2>
+      <p class="text-center">
+        Olá, sou Jane Engel.
+        Sou apaixonada por livros, especialmente pela literatura infantil e infantojuvenil. Acredito no poder transformador de uma história bem contada — capaz de encantar, formar leitores e marcar vidas, assim como as histórias que ouvi na infância marcaram a minha.
+        Sou professora e escritora, com quatro livros publicados. Criei a personagem Fada das Histórias, que dá vida à imaginação e aproxima as crianças do universo literário, e também manipulo o boneco Zé, tornando a contação ainda mais envolvente, lúdica e inesquecível.
+        Escrevo, conto e crio sempre com um propósito: despertar o gosto pela leitura, inspirar e tocar o coração de quem me lê e me ouve. Minha missão é formar leitores apaixonados por histórias — porque acredito que quem aprende a amar os livros descobre novos mundos e novas possibilidades.
+        Quer saber mais? Continue por aqui!
+      </p>
+    </div>
+  </section>
+
+  <!-- LIVROS -->
+  <section id="livros" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-5">Livros</h2>
+      <div class="row g-4">
+        <div class="col-md-3">
+          <img src="../assets/book1.png" class="livro-img" onclick='abrirSinopse("Esse tal de bicho-carpinteiro. Faixa etária: 4 a 10 anos.","A obra mantém um diálogo entre bisneta e bisavó recheado de ditados populares e é diversão na certa para leitores de todas as idades. Júlia está curiosa, ou melhor, com a \"pulga atrás da orelha\", porque Bisa Maria vive dizendo que o Bernardo, seu irmão, nasceu com o tal do \"Bicho-carpinteiro\". Sem entender nada , ela busca saber como é este bicho e os perigos deste bicho para toda a família e, nesta conversa, a menina ouve relatos surpreendentes das peripécias do irmão. Ao final do livro, os leitores podem cantar e dançar com a música tema repleta de movimento.")'>
         </div>
-    </header>
-    <main>
-        <section id="about-section">
-            <h2>Título</h2>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-            <h3>Título</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
 
-            <h2>Título</h2>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-            <h3>Título</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-        </section>
+        <div class="col-md-3">
+          <img src="../assets/book2.png" class="livro-img" onclick='abrirSinopse("Vó Dora e a Fada das Histórias. Faixa etária: 04 a 10 anos.","A obra aborda com sensibilidade o tema Alzheimer, mostrando que mesmo quando a memória falha, o amor e a imaginação mantêm as histórias vivas. Assim, \"Vó Dora e a Fada das Histórias\" é perfeito para crianças, famílias e professores. O livro abre portas para conversas significativas sobre memória, vínculos, amor em família e o poder das histórias, que, mesmo esquecidas, permanecem conosco. Prepare-se para abrir gavetas ao lado de Sofia, encontrar a Fada das Histórias e descobrir o valor das histórias que moram em nosso coração.")'>
+        </div>
 
-        <section id="game-section">
-            <a href="game1.html" target="_blank">
-                <article class="game-entry" id="game-1">
-                    <img src="" alt="" srcset="">
-                    <p>Jogo 1</p>
-                </article>
-            </a>
+        <div class="col-md-3">
+          <img src="../assets/book3.png" class="livro-img" onclick='abrirSinopse("A ilha dos gigantes de areia. Faixa etária: 10 a 14 anos.","Aninha está contando os dias para seu aniversário e para a chegada de sua irmãzinha. Ela tem grandes planos para a data especial, mas um acontecimento inesperado na família muda tudo, frustrando seus sonhos. Porém o que parece ser um aniversário arruinado se transforma numa jornada incrível. No próprio dia em que completa onze anos, Aninha é levada a uma aventura cheia de descobertas, emoções e perigos, tudo longe da segurança de sua casa. Agora, para conseguir voltar, ela a terá que fazer escolhas difíceis e talvez até renunciar a algo valioso. Será que Aninha fará a escolha certa?")'>
+        </div>
 
-            <a href="game2.html" target="_blank">
-                <article class="game-entry" id="game-2">
-                    <img src="" alt="" srcset="">
-                    <p>Jogo 2</p>
-                </article>
-            </a>
+        <div class="col-md-3">
+          <img src="../assets/book4.png" class="livro-img" onclick='abrirSinopse("Cadê meu quero-quero que tanto espero? Faixa etária: 4 a 10 anos.","Quando um filhote de quero-quero novinho se perde longe do ninho, o campo inteiro entra em movimento. Entre o frio, o medo e a esperança, uma mãe chama sem parar enquanto uma improvável rede de amigos se forma para ajudar na busca. Em versos cheios de ritmo e ternura, a história é contada em forma de um conto cumulativo e narra a amizade, o cuidado e a união, lembrando que ninguém caminha sozinho e que todo filhote precisa de amor para encontrar o caminho de volta. O livro vai além da leitura e propõe momentos de diversão e aprendizado com jogos online que ajudam os professores no trabalho pedagógico e, complementando, há uma música inspirada na história que conquista leitores e ouvintes.")'>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            <a href="game3.html" target="_blank">
-                <article class="game-entry" id="game-3">
-                    <img src="" alt="" srcset="">
-                    <p>Jogo 3</p>
-                </article>
-            </a>
-            <a href="game4.html" target="_blank">
-                <article class="game-entry" id="game-4">
-                    <img src="" alt="" srcset="">
-                    <p>Jogo 4</p>
-                </article>
-            </a>
-        </section>
+  <!-- JOGOS -->
+  <section id="jogos" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Jogos</h2>
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="card jogo-card">
+            <img src="../assets/game1.png">
+            <div class="card-body text-center">
+              <a href="../pages/game1.html" class="btn btn-success">Jogar</a>
+            </div>
+          </div>
+        </div>
 
-        <section id="contact-section">
-            <h2>Título</h2>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro?</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illo, corporis esse corrupti, blanditiis consequatur nihil, aperiam a quas qui odit voluptas! A consectetur, commodi quaerat et in impedit nisi ratione. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Veritatis, molestias in alias ad et eum, recusandae tempore accusantium ea pariatur neque excepturi autem sequi consectetur quaerat enim reiciendis. Nisi, doloribus. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Expedita delectus fuga eos dolorum aperiam maiores placeat nesciunt voluptatem, deleniti odio culpa quos ipsa tempora necessitatibus? Praesentium reprehenderit placeat consequatur porro? </p>
-        </section>
-    </main>
-    <footer>
-        <p>Todos os direitos reservados.</p>
-    </footer>
+        <div class="col-md-3">
+          <div class="card jogo-card">
+            <img src="../assets/game2.png">
+            <div class="card-body text-center">
+              <a href="../pages/game2.html" class="btn btn-success">Jogar</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card jogo-card">
+            <img src="../assets/game3.png">
+            <div class="card-body text-center">
+              <a href="../pages/game3.html" class="btn btn-success">Jogar</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card jogo-card">
+            <img src="../assets/game4.png">
+            <div class="card-body text-center">
+              <a href="../pages/game4.html" class="btn btn-success">Jogar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <footer id="contato" class="footer text-center">
+    <div class="d-flex justify-content-center flex-wrap gap-4 mb-3">
+      <a href="#" class="text-white text-decoration-none d-flex align-items-center">
+        <img src="../assets/instacon.png" class="icone-contato me-2" alt="Instagram"> @janeengel_
+      </a>
+      <a href="#" class="text-white text-decoration-none d-flex align-items-center">
+        <img src="../assets/mailcon.png" class="icone-contato me-2" alt="Email"> janecorrea.engel@gmail.com
+      </a> 
+      <a href="#" class="text-white text-decoration-none d-flex align-items-center">
+        <img src="../assets/zapicon.png" class="icone-contato me-2" alt="WhatsApp"> (51) 9 8413-7909
+      </a>
+    </div>
+    <p class="mb-0 opacity-75">© 2026 Jane Engel Corrêa</p>
+  </footer>
+
+  <!-- MODAL SINOPSE -->
+  <div class="modal fade" id="sinopseModal">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white border-secondary">
+
+        <div class="modal-header border-secondary">
+          <h5 id="tituloLivro" class="modal-title"></h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <p id="textoSinopse" style="font-size: 1.1rem; line-height: 1.6;"></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../scripts/index.js"></script>
 </body>
-
 </html>

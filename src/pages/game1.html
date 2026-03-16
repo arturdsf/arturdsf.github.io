@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>A Busca do Filhote</title>
+    <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../style/game1.css">
     <link rel="preload" href="../assets/game1-assets/wallpaper-normal.png" as="image">
     <link rel="preload" href="../assets/game1-assets/wallpaper-geada.png" as="image">
@@ -30,6 +31,16 @@
         <div class="arrow arrow-down">↓<span class="label"></span></div>
         <div class="arrow arrow-left">←<span class="label"></span></div>
         <div class="arrow arrow-right">→<span class="label"></span></div>
+    </div>
+
+    <div id="rotate-warning">
+        Por favor, deite o celular na horizontal para jogar.
+    </div>
+
+    <div id="joystick-zone">
+        <div id="joystick-base">
+            <div id="joystick-stick"></div>
+        </div>
     </div>
 
     <script src="../scripts/game1.js" defer></script>

@@ -18,15 +18,19 @@ const UIManager = {
   },
 
   applyInterface() {
-    const controls = document.getElementById('mobile-controls')
-    if (!controls) return
+    const mobileUI = document.getElementById('mobile-controls');
+    const desktopInstructions = document.querySelectorAll('#controls'); 
+
+    if (!mobileUI) return;
 
     if (this.isTouchDevice) {
-        controls.style.display = 'flex'
-        console.log("[UI] Controles Mobile (Flex) ativados.")
+        mobileUI.style.display = 'flex';
+        desktopInstructions.forEach(el => el.style.display = 'none'); 
+        console.log("[UI] Modo Touch: Escondendo instruções de teclado.");
     } else {
-        controls.style.display = 'none'
-        console.log("[UI] Modo Desktop ativado.")
+        mobileUI.style.display = 'none';
+        desktopInstructions.forEach(el => el.style.display = 'block');
+        console.log("[UI] Modo Desktop: Mostrando instruções de teclado.");
     }
   }
 }
@@ -55,21 +59,21 @@ const map = [
   "WWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAAAAA",
   "WWWWWWWWWWWWWWWWWWWaataaaaaaaaaaaaaaaaAA",
   "WWWWWWWWWWWWWWWWW,.,.T.,.,.,.,.,.,.,.aAA",
-  "WWWWWWWWWWWWWWW.,P,.,TTTTTTTTTT.,.,.,aAA",
-  "WWWWWWWWWWWWWW.,.,.,.,.,.,.,.,T,.,o,.aAA",
-  "WWWWTTT.,.p.,.,.,.,.,.,.,.,.,.T.,.,.,aAA",
-  "WW.,.T.,.,.,.,.,.,q,.,.,.,.,.,T,.,.,.aAA",
-  "WAa.,T,.,.,.,.,.,.,.,.,.,.,.,.T.,.,.,aAA",
-  "WAa,.TT,.,.,.,.,.,.,.,.,.,.,.,T,.,.,.aAA",
-  "AAa.,.TTTTTTTTTTTTTTTTTTTTTTTTT.,.,.,aAA",
+  "WWWWWWWWWWWWWWW.,P,.,TYTYTYTYTY.,.,.,aAA",
+  "WWWWWWWWWWWWWW.,.,.,.,.,.,.,.,Y,.,o,.aAA",
+  "WWWWYTY.,.p.,.,.,.,.,.,.,.,.,.Y.,.,.,aAA",
+  "WW.,.T.,.,.,.,.,.,q,.,.,.,.,.,Y,.,.,.aAA",
+  "WAa.,T,.,.,.,.,.,.,.,.,.,.,.,.Y.,.,.,aAA",
+  "WAa,.TY,.,.,.,.,.,.,.,.,.,.,.,Y,.,.,.aAA",
+  "AAa.,.YTYTYTYTYTYTYTYTYTYTYTYTY.,.,.,aAA",
   "AAa,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.aAA",
   "AAa.,.,.,C,.,.,.,.,.,.,.,.,.,.,.,.,.,aAA",
-  "AAa,.M.,.,.,.,.,.,.,.TTTT,.,.,.,.,.,.aAA",
-  "AAa.,.,.,.,.,.,.,.,.,T,.T.,.m.,.,.,.,aAA",
-  "AAa,.,.,.,.,.,.,.,.,.T.,T,.,.,.,.,.,.aAA",
-  "AAa.,.,.,.,.,.,.,.,.,T,.T.,.,.,.,.,.,aAA",
-  "AAa,.,.,.O.,.,.,.,.,.T.,T,.,.,.,c,.,aaAA",
-  "AAaaa.,.,.,.,.,.,.,.,T,.T.,.,.,.,.aaaAAA",
+  "AAa,.M.,.,.,.,.,.,.,.TYTY,.,.,.,.,.,.aAA",
+  "AAa.,.,.,.,.,.,.,.,.,T,.Y.,.m.,.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.,.,.T.,Y,.,.,.,.,.,.aAA",
+  "AAa.,.,.,.,.,.,.,.,.,T,.Y.,.,.,.,.,.,aAA",
+  "AAa,.,.,.O.,.,.,.,.,.T.,Y,.,.,.,c,.,aaAA",
+  "AAaaa.,.,.,.,.,.,.,.,T,.Y.,.,.,.,.aaaAAA",
   "AAAaaaaaa,.,.,.,.,.,.T.,Q,.,aaaaaaAAAAAA",
   "AAAAAaaaaaaaaaaaaaaaataaaaaaaaAAAAAAAAAA",
   "AAAAAAAAAaaaaaaaaaaaataaaaaAAAAAAAAAAAAA",
@@ -83,6 +87,7 @@ const moldes = {
   '.': createMold('grass'),
   ',': createMold('grass2'),
   'T': createMold('dirt'),
+  'Y': createMold('dirt2'),
   't': createMold('dirt-block'),
 
   'P': createMold('grass sprite-P'), 
@@ -804,7 +809,7 @@ function playCatch(type, x, y, charArray) {
   
   const box = document.getElementById('minigame-box')
   if (box) box.style.maxWidth = "850px"
-
+  
   const content = document.getElementById('mg-content')
   const counterEl = document.getElementById('counter')
   const scoreCounterEl = document.getElementById('score-counter')
@@ -1278,7 +1283,6 @@ function startGame() {
   if (playerDiv) playerDiv.style.display = 'block'
   if (ui) ui.style.display = 'flex'
 
-  // FULLSCREEN APENAS MOBILE
   if (UIManager.isTouchDevice) {
     const el = document.documentElement
     if (el.requestFullscreen) {

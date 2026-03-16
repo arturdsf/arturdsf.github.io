@@ -128,3 +128,64 @@ canvas {
         opacity: 1;
     }
 }
+
+/* Responsividade para celulares e tablets */
+@media (max-width: 768px) {
+    .ui {
+        font-size: clamp(11px, 2.5vw, 14px);
+        gap: 8px;
+        padding: 8px;
+        width: 98%;
+        top: 3px;
+        justify-content: space-around;
+    }
+    .controls {
+        display: none;
+    }
+    .restart-btn, .next-btn {
+        padding: 8px 16px;
+        font-size: clamp(12px, 2.5vh, 16px);
+    }
+}
+
+/* --- ADICIONE AO SEU CSS --- */
+
+/* Força modo landscape em dispositivos mini */
+@media screen and (orientation: portrait) {
+    body::after {
+        content: "🔄 Por favor, vire o celular para HORIZONTAL (Landscape) para jogar!";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-size: clamp(18px, 6vw, 32px);
+        text-align: center;
+        padding: 20px;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        flex-direction: column;
+        gap: 20px;
+    }
+    #gameCanvas, .ui { display: none !important; }
+}
+
+/* Melhorias extras para landscape móvel com altura pequena */
+@media screen and (orientation: landscape) and (max-height: 400px) {
+    .ui {
+        font-size: clamp(9px, 2vh, 12px);
+        gap: 6px;
+        padding: 4px;
+        top: 2px;
+    }
+    .game-over, .level-complete {
+        font-size: clamp(18px, 5vh, 28px);
+        padding: 15px;
+    }
+    .restart-btn, .next-btn {
+        padding: 6px 12px;
+        font-size: clamp(11px, 2.5vh, 14px);
+    }
+}

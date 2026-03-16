@@ -12,6 +12,10 @@
     const spacing = 15; 
     const minDistance = 3;
 
+    let playerSize = 50;
+    let npcSize = 50;
+    let playerSpeed = 200;
+
     const sequence = ['pai', 'filhote', 'capivara', 'cavalo', 'jacana', 'urutau', 'graxaim', 'carcara', 'filhote_final'];
     let nextIndex = 0;
 
@@ -43,7 +47,7 @@
     const npcs = [];
     let currentDialogNpc = null;
     let dialogIdx = 0;
-    const player = {worldX:0, worldY:0, speed:200, el: null};
+    const player = {worldX:0, worldY:0, speed: playerSpeed, el: null};
     let obstacles = [];
 
     function init(){
@@ -52,6 +56,7 @@
         generateObstacles();
         createNPCs();
         createPlayer();
+        initJoystick();
         updateQuest();
         window.addEventListener('keydown', e=>keys[e.code]=true);
         window.addEventListener('keyup', e=>keys[e.code]=false);
@@ -63,6 +68,20 @@
     function updateDimensions(){
         worldWidth = window.innerWidth * 2;
         worldHeight = window.innerHeight * 2;
+        if (window.innerWidth <= 480) {
+            playerSize = 35;
+            npcSize = 35;
+            playerSpeed = 150;
+        } else if (window.innerWidth <= 768) {
+            playerSize = 40;
+            npcSize = 40;
+            playerSpeed = 180;
+        } else {
+            playerSize = 50;
+            npcSize = 50;
+            playerSpeed = 200;
+        }
+        player.speed = playerSpeed;
     }
 
     function createEnvironments(){
@@ -89,31 +108,44 @@
     }
 
     function createNPCs(){
-        npcDefs.forEach(def=>{
-            const npc = Object.assign({}, def);
-            npc.worldX = def.envX * window.innerWidth + def.localX;
-            npc.worldY = def.envY * window.innerHeight + def.localY;
-            npc.following = false;
-            npc.talked = false;
-            npc.el = document.createElement('div');
-            npc.el.className='npc';
-            npc.el.id = def.id;
-            mapContainer.appendChild(npc.el);
-            npcs.push(npc);
-        });
-    }
+    npcDefs.forEach(def=>{
+        const npc = Object.assign({}, def);
+        const pctX = def.localX / 1000; 
+        const pctY = def.localY / 800;
+        npc.worldX = def.envX * window.innerWidth + (pctX * window.innerWidth);
+        npc.worldY = def.envY * window.innerHeight + (pctY * window.innerHeight);
+        npc.following = false;
+        npc.talked = false;
+        npc.el = document.createElement('div');
+        npc.el.className='npc';
+        npc.el.id = def.id;
+        mapContainer.appendChild(npc.el);
+        npcs.push(npc);
+    });
+}
 
     function updatePlayer(dt){
-        let dx=0, dy=0;
-        if(keys['ArrowUp']||keys['KeyW']) dy -= player.speed*dt;
-        if(keys['ArrowDown']||keys['KeyS']) dy += player.speed*dt;
-        if(keys['ArrowLeft']||keys['KeyA']) { dx -= player.speed*dt; facing = "left"; }
-        if(keys['ArrowRight']||keys['KeyD']) { dx += player.speed*dt; facing = "right"; }
+        let dx = 0, dy = 0;
+
+        if(keys['ArrowUp'] || keys['KeyW']) dy -= player.speed * dt;
+        if(keys['ArrowDown'] || keys['KeyS']) dy += player.speed * dt;
+        if(keys['ArrowLeft'] || keys['KeyA']) dx -= player.speed * dt;
+        if(keys['ArrowRight'] || keys['KeyD']) dx += player.speed * dt;
         
-        if(dx!==0 || dy!==0) {
-            attemptMove(dx,dy);
+        if(joystick.active) {
+            dx += joystick.x * player.speed * dt;
+            dy += joystick.y * player.speed * dt;
+        }
+
+        if (dx < -0.1) facing = "left";
+        else if (dx > 0.1) facing = "right";
+        
+        if(Math.abs(dx) > 0 || Math.abs(dy) > 0) {
+            attemptMove(dx, dy);
+            
             const lastPos = trail[0];
             const distMoved = Math.hypot(player.worldX - lastPos.x, player.worldY - lastPos.y);
+            
             if (distMoved >= minDistance) {
                 trail.unshift({x: player.worldX, y: player.worldY});
                 if(trail.length > 1000) trail.pop();
@@ -124,11 +156,11 @@
     function attemptMove(dx,dy){
         let nx = player.worldX + dx;
         let ny = player.worldY + dy;
-        nx = Math.max(0, Math.min(nx, worldWidth - 50));
-        ny = Math.max(0, Math.min(ny, worldHeight - 50));
+        nx = Math.max(0, Math.min(nx, worldWidth - playerSize));
+        ny = Math.max(0, Math.min(ny, worldHeight - playerSize));
         
         for(const obs of obstacles){
-            if(rectIntersect(nx+10, ny+10, 30, 30, obs.x, obs.y, obs.w, obs.h)) return;
+            if(rectIntersect(nx+10, ny+10, playerSize-20, playerSize-20, obs.x, obs.y, obs.w, obs.h)) return;
         }
         player.worldX = nx;
         player.worldY = ny;
@@ -151,59 +183,60 @@
 
     function updateNPCElements(){
         npcs.forEach(n => {
-        n.el.style.transform = `translate3d(${n.worldX}px, ${n.worldY}px, 0)`;
-        
-        if(n.following) n.el.classList.add('following');
-    });
+            n.el.style.transform = `translate3d(${n.worldX}px, ${n.worldY}px, 0)`;
+            if(n.following) n.el.classList.add('following');
+        });
     }
 
     function generateObstacles(){
-    const playerStartX = window.innerWidth/2;
-    const playerStartY = window.innerHeight * 1.5;
-    let created = 0;
-    
-    while(created < 30){
-        const ex = Math.floor(Math.random()*2);
-        const ey = Math.floor(Math.random()*2);
-        const x = ex*window.innerWidth + Math.random()* (window.innerWidth-80);
-        const y = ey*window.innerHeight + Math.random()* (window.innerHeight-80);
-        const w = 40 + Math.random()*40, h = 40 + Math.random()*40;
+        const playerStartX = window.innerWidth/2;
+        const playerStartY = window.innerHeight * 1.5;
+        let created = 0;
+        
+        while(created < 30){
+            const ex = Math.floor(Math.random()*2);
+            const ey = Math.floor(Math.random()*2);
+            const x = ex*window.innerWidth + Math.random()* (window.innerWidth-80);
+            const y = ey*window.innerHeight + Math.random()* (window.innerHeight-80);
+            const w = 40 + Math.random()*40, h = 40 + Math.random()*40;
 
-        const margin = 100;
-        if(Math.abs(x - window.innerWidth) < margin || Math.abs(y - window.innerHeight) < margin) continue;
+            const margin = 100;
+            if(Math.abs(x - window.innerWidth) < margin || Math.abs(y - window.innerHeight) < margin) continue;
 
-        const distToPlayer = Math.hypot(x - playerStartX, y - playerStartY);
-        let tooCloseNPC = npcDefs.some(n => Math.hypot(x - (n.envX*window.innerWidth+n.localX), y - (n.envY*window.innerHeight+n.localY)) < 120);
+            const distToPlayer = Math.hypot(x - playerStartX, y - playerStartY);
+            let tooCloseNPC = npcDefs.some(n => Math.hypot(x - (n.envX*window.innerWidth+n.localX), y - (n.envY*window.innerHeight+n.localY)) < 120);
 
-        if(distToPlayer > 150 && !tooCloseNPC){
-            obstacles.push({x,y,w,h});
-            const el = document.createElement('div');
-            el.className = 'obstacle';
-            
-            if (ex === 0 && ey === 0) {
-                el.classList.add('obs-pedra'); 
-            } else if (ex === 1 && ey === 0) {
-                el.classList.add('obs-arbusto');
-            } else if (ex === 1 && ey === 1) {
-                el.classList.add('obs-graveto');
-            } else {
-                const tipos = ['obs-pedra', 'obs-arbusto', 'obs-graveto'];
-                const sorteio = tipos[Math.floor(Math.random() * tipos.length)];
-                el.classList.add(sorteio);
+            if(distToPlayer > 150 && !tooCloseNPC){
+                const el = document.createElement('div');
+                el.className = 'obstacle';
+                
+                if (ex === 0 && ey === 0) {
+                    el.classList.add('obs-pedra'); 
+                } else if (ex === 1 && ey === 0) {
+                    el.classList.add('obs-arbusto');
+                } else if (ex === 1 && ey === 1) {
+                    el.classList.add('obs-graveto');
+                } else {
+                    const tipos = ['obs-pedra', 'obs-arbusto', 'obs-graveto'];
+                    const sorteio = tipos[Math.floor(Math.random() * tipos.length)];
+                    el.classList.add(sorteio);
+                }
+
+                // CORREÇÃO: Salva o elemento HTML dentro do objeto do obstáculo
+                obstacles.push({x, y, w, h, el: el});
+                
+                el.style.width=w+'px'; el.style.height=h+'px';
+                el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                mapContainer.appendChild(el);
+                created++;
             }
-
-            el.style.left=x+'px'; el.style.top=y+'px';
-            el.style.width=w+'px'; el.style.height=h+'px';
-            mapContainer.appendChild(el);
-            created++;
         }
     }
-}
 
     function checkCollisions(){
         npcs.forEach(n=>{
             const dist = Math.hypot(player.worldX - n.worldX, player.worldY - n.worldY);
-            if(dist < 50 && !n.talked && !dialogueActive){
+            if(dist < (playerSize + npcSize)/2 && !n.talked && !dialogueActive){
                 startDialogue(n);
             }
         });
@@ -245,7 +278,6 @@
     function updateQuest(){
         questTextEl.textContent = hints[nextIndex] || 'Missão cumprida!';
         
-        // Aplica o BRILHO no próximo NPC
         npcs.forEach(n => n.el.classList.remove('next-target'));
         const nextId = sequence[nextIndex];
         const nextNpc = npcs.find(n => n.id === nextId);
@@ -277,16 +309,16 @@
     function updateArrows(){
         document.querySelectorAll('.arrow').forEach(a => a.style.display = 'none');
         
-        if(envX === 0 && envY === 1){ // Campo (Baixo-Esq)
+        if(envX === 0 && envY === 1){ 
             showArrow('.arrow-up', 'Geada');
             showArrow('.arrow-right', 'Mato');
-        } else if(envX === 0 && envY === 0){ // Geada (Cima-Esq)
+        } else if(envX === 0 && envY === 0){ 
             showArrow('.arrow-down', 'Campo');
             showArrow('.arrow-right', 'Campo Aberto');
-        } else if(envX === 1 && envY === 0){ // Campo Aberto (Cima-Dir)
+        } else if(envX === 1 && envY === 0){ 
             showArrow('.arrow-left', 'Geada');
             showArrow('.arrow-down', 'Mato');
-        } else if(envX === 1 && envY === 1){ // Mato (Baixo-Dir)
+        } else if(envX === 1 && envY === 1){ 
             showArrow('.arrow-left', 'Campo');
             showArrow('.arrow-up', 'Campo Aberto');
         }
@@ -307,14 +339,46 @@
         if(newEnvX !== envX || newEnvY !== envY){
             envX = newEnvX;
             envY = newEnvY;
-        
             applyContainerTransform();
         }
     }
 
     function onResize(){
-            updateDimensions();
-            applyContainerTransform();
+        const oldW = worldWidth / 2;
+        const oldH = worldHeight / 2;
+
+        updateDimensions();
+
+        const newW = window.innerWidth;
+        const newH = window.innerHeight;
+
+        const scaleX = newW / oldW;
+        const scaleY = newH / oldH;
+
+        player.worldX *= scaleX;
+        player.worldY *= scaleY;
+
+        trail.forEach(pt => {
+            pt.x *= scaleX;
+            pt.y *= scaleY;
+        });
+
+        npcs.forEach(n => {
+            const def = npcDefs.find(d => d.id === n.id);
+            const pctX = def.localX / 1000;
+            const pctY = def.localY / 800;
+            
+            n.worldX = n.envX * newW + (pctX * newW);
+            n.worldY = n.envY * newH + (pctY * newH);
+        });
+
+        obstacles.forEach(obs => {
+            obs.x *= scaleX;
+            obs.y *= scaleY;
+            obs.el.style.transform = `translate3d(${obs.x}px, ${obs.y}px, 0)`;
+        });
+
+        applyContainerTransform();
     }
 
     function loop(ts){
@@ -337,6 +401,70 @@
         }
     
         requestAnimationFrame(loop);
+    }
+
+    // --- LÓGICA DO JOYSTICK ---
+    
+    let joystick = { x: 0, y: 0, active: false };
+    let stickEl, baseEl, zoneEl;
+
+    function initJoystick() {
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if (!isTouch) return;
+
+        document.body.classList.add('is-touch');
+        zoneEl = document.getElementById('joystick-zone');
+        baseEl = document.getElementById('joystick-base');
+        stickEl = document.getElementById('joystick-stick');
+        
+        zoneEl.style.display = 'block';
+
+        let centerX, centerY;
+        const maxDist = 40;
+
+        zoneEl.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const rect = baseEl.getBoundingClientRect();
+            centerX = rect.left + rect.width / 2;
+            centerY = rect.top + rect.height / 2;
+            joystick.active = true;
+            updateStick(e.touches[0]);
+        }, {passive: false});
+
+        zoneEl.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (joystick.active) updateStick(e.touches[0]);
+        }, {passive: false});
+
+        zoneEl.addEventListener('touchend', e => {
+            e.preventDefault();
+            joystick.active = false;
+            joystick.x = 0; 
+            joystick.y = 0;
+            stickEl.style.transform = `translate(0px, 0px)`;
+        });
+
+        function updateStick(touch) {
+            let dx = touch.clientX - centerX;
+            let dy = touch.clientY - centerY;
+            let dist = Math.hypot(dx, dy);
+
+            if (dist > maxDist) {
+                dx = (dx / dist) * maxDist;
+                dy = (dy / dist) * maxDist;
+            }
+
+            stickEl.style.transform = `translate(${dx}px, ${dy}px)`;
+
+            joystick.x = dx / maxDist;
+            joystick.y = dy / maxDist;
+        }
+
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(err => {
+                console.log("Não foi possível forçar a rotação automaticamente (requer tela cheia).");
+            });
+        }
     }
 
     init();
