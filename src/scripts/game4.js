@@ -19,7 +19,7 @@ const UIManager = {
 
   applyInterface() {
     const mobileUI = document.getElementById('mobile-controls');
-    const desktopInstructions = document.querySelectorAll('#controls'); 
+    const desktopInstructions = document.querySelectorAll('.controls-list');
 
     if (!mobileUI) return;
 
@@ -34,8 +34,6 @@ const UIManager = {
     }
   }
 }
-
-window.addEventListener('DOMContentLoaded', () => UIManager.init())
 
 const ROWS = 25
 const COLS = 40
@@ -52,31 +50,73 @@ let facing = "right"
 let pauseGame = true
 let activeInterval = null
 
+const soundGame4Win = new Audio('../assets/sounds/game4_SoundOfConclusion.mp3');
+const soundGame4Err = new Audio('../assets/sounds/game4_error.mp3');
+
+// --- SISTEMA DE PRELOAD ---
+function preloadGameAssets() {
+  console.log("[Core] Inicializando buffer de assets...");
+  
+  const imageAssets = [
+    "../assets/player.png",
+    "../assets/game4-assets/ceu.png",
+    "../assets/game4-assets/mold_forest.png",
+    "../assets/game4-assets/grass3-1.png",
+    "../assets/game4-assets/grass3-2.png",
+    "../assets/game4-assets/dirt-1.png",
+    "../assets/game4-assets/dirt-2.png",
+    "../assets/game4-assets/catch_bg.png",
+    "../assets/game4-assets/moita.png"
+  ];
+
+  Object.values(minigameConfig).forEach(conf => {
+    if(conf.img) imageAssets.push(conf.img);
+  });
+
+  Object.values(GameDialogues).forEach(sequence => {
+    sequence.forEach(line => {
+      if(line.portrait) imageAssets.push(line.portrait);
+    });
+  });
+
+  const uniqueImages = [...new Set(imageAssets)];
+
+  uniqueImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+
+  soundGame4Win.load();
+  soundGame4Err.load();
+
+  console.log(`[Core] ${uniqueImages.length} texturas e 2 áudios cacheados com sucesso.`);
+}
+
 const map = [
   "WWWWWWWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAA",
   "WWWWWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAA",
   "WWWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAAAA",
   "WWWWWWWWWWWWWWWWWWWAAAAAAAAAAAAAAAAAAAAA",
-  "WWWWWWWWWWWWWWWWWWWaataaaaaaaaaaaaaaaaAA",
-  "WWWWWWWWWWWWWWWWW,.,.T.,.,.,.,.,.,.,.aAA",
+  "WWWWWWWWWWWWWWWWWWWaftfafafafafafafafaAA",
+  "WWWWWWWWWWWWWWWWW,.,.Yc,.,.,.,.,.,.,.fAA",
   "WWWWWWWWWWWWWWW.,P,.,TYTYTYTYTY.,.,.,aAA",
-  "WWWWWWWWWWWWWW.,.,.,.,.,.,.,.,Y,.,o,.aAA",
-  "WWWWYTY.,.p.,.,.,.,.,.,.,.,.,.Y.,.,.,aAA",
-  "WW.,.T.,.,.,.,.,.,q,.,.,.,.,.,Y,.,.,.aAA",
-  "WAa.,T,.,.,.,.,.,.,.,.,.,.,.,.Y.,.,.,aAA",
-  "WAa,.TY,.,.,.,.,.,.,.,.,.,.,.,Y,.,.,.aAA",
-  "AAa.,.YTYTYTYTYTYTYTYTYTYTYTYTY.,.,.,aAA",
-  "AAa,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.aAA",
-  "AAa.,.,.,C,.,.,.,.,.,.,.,.,.,.,.,.,.,aAA",
-  "AAa,.M.,.,.,.,.,.,.,.TYTY,.,.,.,.,.,.aAA",
-  "AAa.,.,.,.,.,.,.,.,.,T,.Y.,.m.,.,.,.,aAA",
-  "AAa,.,.,.,.,.,.,.,.,.T.,Y,.,.,.,.,.,.aAA",
-  "AAa.,.,.,.,.,.,.,.,.,T,.Y.,.,.,.,.,.,aAA",
-  "AAa,.,.,.O.,.,.,.,.,.T.,Y,.,.,.,c,.,aaAA",
-  "AAaaa.,.,.,.,.,.,.,.,T,.Y.,.,.,.,.aaaAAA",
-  "AAAaaaaaa,.,.,.,.,.,.T.,Q,.,aaaaaaAAAAAA",
-  "AAAAAaaaaaaaaaaaaaaaataaaaaaaaAAAAAAAAAA",
-  "AAAAAAAAAaaaaaaaaaaaataaaaaAAAAAAAAAAAAA",
+  "WWWWWWWWWWWWWW.,.,.,.,.,.,.,.,T,.,o,.fAA",
+  "WWWWYTY.,.p.,.,.,.,.,q,.,.,.,.Y.,.,.,aAA",
+  "WW.,.Y.,.,.,.,.,.,.,.,.,.,.,.,T,.,.,.fAA",
+  "WAf.,T,.,.,.,.,.,.,.,.,.,.,.,.Y.,.,.,aAA",
+  "WAa,.YT,.,.,.M.,.,.,.,.,.,.,.,T,.,.,.fAA",
+  "AAf.,.YTYTYTYTYTYTYTYTYTYTYTYTY.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.fAA",
+  "AAf.,.,.,C,.,.,.,.,.,.,.,.,.,.,.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.,.,.TYTY,.,.,.,.,.,.fAA",
+  "AAf.,.,.,.,.,.,.,.,.,Y,.T.,.m.,.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.,.,.T.,Y,.,.,.,.,.,.fAA",
+  "AAf.,.,.,.,.,.,.,.,.,Y,.T.,.,.,.,.,.,aAA",
+  "AAa,.,.,.,.,.,.,.O.,.T.,Y,.,.,.,.,.,afAA",
+  "AAfaf.,.,.,.,.,.,.,.,Y,.T.,.,.,.,.fafAAA",
+  "AAAfafafa,.,.,.,.,.,.T.,Q,.,afafafAAAAAA",
+  "AAAAAafafafafafafafaftfafafafaAAAAAAAAAA",
+  "AAAAAAAAAfafafafafafatafafaAAAAAAAAAAAAA",
   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 ]
 
@@ -84,6 +124,7 @@ const moldes = {
   'W': createMold('water'),
   'A': createMold('tree'),
   'a': createMold('grass-tree'),
+  'f': createMold('grass-tree2'),
   '.': createMold('grass'),
   ',': createMold('grass2'),
   'T': createMold('dirt'),
@@ -506,7 +547,7 @@ function handleMove(dx, dy, newFacing) {
 
   if (newY >= 0 && newY < ROWS && newX >= 0 && newX < COLS) {
     const tile = map[newY][newX]
-    const blockers = ['W', 'A', 'a', 't', 'P', 'p', 'M', 'm', 'O', 'o', 'C', 'c', 'Q', 'q']
+    const blockers = ['W', 'A', 'a', 't', 'f', 'P', 'p', 'M', 'm', 'O', 'o', 'C', 'c', 'Q', 'q']
 
     if (!blockers.includes(tile)) {
       player.x = newX
@@ -567,6 +608,9 @@ function winMinigame(x, y, charArray) {
 
   const tileElement = document.getElementById(`tile-${x}-${y}`)
 
+  soundGame4Win.currentTime = 0;
+  soundGame4Win.play().catch(e=>console.log(e));
+
   closeMinigame()
 
   const winKey = tile + '_win'
@@ -575,6 +619,7 @@ function winMinigame(x, y, charArray) {
       tileElement.classList.remove(`sprite-${tile}`)
       tileElement.classList.add('collected')
     }
+
     pauseGame = false
     updateHintUI()
   })
@@ -590,39 +635,6 @@ function winGame() {
     const winMenu = document.getElementById('game-complete')
     if (winMenu) winMenu.style.display = 'flex'
   })
-}
-
-function pause() {
-  const pauseMenu = document.getElementById('pause-menu')
-  const ui = document.getElementById('ui')
-  const dialogBox = document.getElementById('dialog-system')
-
-  if (pauseMenu) pauseMenu.style.display = 'flex'
-  if (ui) ui.style.display = 'none'
-  
-  if (dialogBox && dialogBox.style.display === 'block') {
-    dialogBox.style.display = 'none'
-    
-    dialogBox.dataset.wasOpen = 'true'
-  }
-
-  pauseGame = true
-}
-
-function play() {
-  const pauseMenu = document.getElementById('pause-menu')
-  const ui = document.getElementById('ui')
-  const dialogBox = document.getElementById('dialog-system')
-
-  if (pauseMenu) pauseMenu.style.display = 'none'
-  if (ui) ui.style.display = 'flex'
-  
-  if (dialogBox && dialogBox.dataset.wasOpen === 'true') {
-    dialogBox.style.display = 'block'
-    dialogBox.dataset.wasOpen = 'false'
-  }
-
-  pauseGame = false
 }
 
 /* Celulares e Interação */
@@ -989,6 +1001,9 @@ function playMemory(type, x, y, charArray) {
           firstCard = null
           if (pairs === 3) setTimeout(() => winMinigame(x, y, charArray), 500)
         } else {
+          soundGame4Err.currentTime = 0;
+          soundGame4Err.play().catch(e=>console.log(e));
+
           canClick = false
           let prev = firstCard
           firstCard = null
@@ -1294,7 +1309,6 @@ function startGame() {
     }
   }
 
-  renderMap()
   updateHintUI()
   dialogSystem.show('intro_game')
 }
@@ -1356,10 +1370,11 @@ window.addEventListener('resize', () => {
 })
 
 window.onload = () => {
-  console.log(`Dispositivo: ${UIManager.deviceType}`)
-  UIManager.init()
-  setupMobileButtons()
-  renderMap()
+  console.log(`[Engine] Dispositivo detectado: ${UIManager.deviceType}`);
+  UIManager.init();
+  setupMobileButtons();
+  renderMap();
+  preloadGameAssets();
 }
 
 /* Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia! */

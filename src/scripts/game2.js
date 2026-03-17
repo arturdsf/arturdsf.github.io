@@ -9,7 +9,7 @@ let gameState = {
 const scenes = {
     start: {
         // Exemplo de como adicionar a imagem diretamente no texto. Basta colocar o caminho real.
-        inlineImage: "../assets/game2-assets/cena1.png", 
+        inlineImage: "../assets/game2-assets/cena1.png",
         text: `NUMA TRISTEZA SEM FIM,
             A MÃE COMEÇOU A GRITAR:
             — QUERO-QUERO, MEU FILHINHO,
@@ -174,7 +174,7 @@ const scenes = {
 
 
     carcaraFinal: {
-        inlineImage: "../assets/game2-assets/cena8.png",    
+        inlineImage: "../assets/game2-assets/cena8.png",
         text: `O CARACARÁ ESTICANDO O PENACHO,
             OLHOU LÁ EMBAIXO E SORRIU:
             — QUE COINCIDÊNCIA, MINHA AMIGA!
@@ -227,6 +227,10 @@ const scenes = {
     }
 };
 
+// Audios
+const soundChoiceWrong = new Audio('../assets/sounds/game2_errorSound.mp3');
+const soundGameWin = new Audio('../assets/sounds/game2_finalConclusion.mp3');
+
 function shuffleArray(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -240,6 +244,7 @@ function initGame() {
 
 function updateDisplay() {
     const currentScene = scenes[gameState.currentScene];
+    const btnTopLeft = document.getElementById('btn-return-topleft');
 
     // Arte superior
     document.getElementById('artContainer').style.cssText = currentScene.art || '';
@@ -251,7 +256,7 @@ function updateDisplay() {
         storyContent += `<img src="${currentScene.inlineImage}" class="scene-inline-img" alt="Ilustração da cena">`;
     }
     storyContent += currentScene.text;
-    
+
     // Substituído textContent por innerHTML para permitir renderizar a tag <img>
     document.getElementById('storyText').innerHTML = storyContent;
 
@@ -260,6 +265,7 @@ function updateDisplay() {
     choicesContainer.innerHTML = '';
 
     if (currentScene.choices && currentScene.choices.length > 0) {
+        if(btnTopLeft) btnTopLeft.style.display = 'block';
         const options = [...currentScene.choices];
         shuffleArray(options);
         options.forEach(choice => {
@@ -270,6 +276,11 @@ function updateDisplay() {
             choicesContainer.appendChild(btn);
         });
     } else {
+        if(btnTopLeft) btnTopLeft.style.display = 'none';
+        
+        soundGameWin.currentTime = 0;
+        soundGameWin.play().catch(e=>console.log(e));
+
         const congrats = document.createElement('div');
         congrats.className = 'ending';
         congrats.innerHTML = `<img src="../assets/game4-assets/mae_e_filhote.png" class="scene-inline-img" alt="Mãe e filhote" style="display: block; margin: 0 auto 20px auto;">PARABÉNS, VOCÊ CONCLUIU A HISTÓRIA!`;
@@ -279,7 +290,7 @@ function updateDisplay() {
         siteBtn.className = 'choice-btn';
         siteBtn.textContent = 'Voltar ao site principal';
         siteBtn.onclick = () => {
-            window.location.href = 'https://example.com';
+            window.location.href = 'index.html';
         };
         choicesContainer.appendChild(siteBtn);
 
@@ -304,11 +315,16 @@ function makeChoice(choice) {
     }
 
     if (choice.next === 'start') {
-        const messageEl = document.getElementById('message');
+        soundChoiceWrong.currentTime = 0;
+        soundChoiceWrong.play().catch(e=>console.log(e));
+
+        const messageEl = document.createElement('div');
+        messageEl.className = 'message';
         messageEl.textContent = 'Ops! Essa decisão não levou ao final feliz. Voltando ao início para tentar novamente!';
+        document.body.appendChild(messageEl);
         messageEl.style.display = 'block';
         setTimeout(() => {
-            messageEl.style.display = 'none';
+            messageEl.remove();
         }, 3000);
     }
 

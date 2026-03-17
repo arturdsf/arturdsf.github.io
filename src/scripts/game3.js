@@ -458,6 +458,11 @@ class Game {
         this.player = new Player(this.engine);
         this.entities = new EntityManager(this.engine);
 
+        // Audios
+        this.soundCollision = new Audio('../assets/sounds/game3_collision.mp3');
+        this.soundCollect = new Audio('../assets/sounds/game3_soundOfCollect.mp3');
+        this.soundLevelWin = new Audio('../assets/sounds/game3_levelConclusion.mp3');
+
         this.state = {
             status: 'menu',
             timeElapsed: 0,
@@ -477,6 +482,7 @@ class Game {
             hud: document.getElementById('hud'),
             gameOver: document.getElementById('game-over'),
             levelComplete: document.getElementById('level-complete'),
+            pauseMenu: document.getElementById('pause-menu'),
 
             score: null, // Removed
             timeElapsed: document.getElementById('timeElapsed'),
@@ -535,6 +541,13 @@ class Game {
         document.getElementById('btn-restart').addEventListener('click', () => this.startGame(true));
         document.getElementById('btn-restart-from-win').addEventListener('click', () => this.startGame(true));
         document.getElementById('btn-next-level').addEventListener('click', () => this.nextLevel());
+        
+        document.getElementById('btn-pause').addEventListener('click', () => this.togglePause());
+        document.getElementById('btn-resume').addEventListener('click', () => this.togglePause());
+        document.getElementById('btn-restart-pause').addEventListener('click', () => {
+            this.ui.pauseMenu.classList.add('hidden');
+            this.startGame(true);
+        });
 
         window.addEventListener('resize', () => {
             this.input.updateMobileState(this.engine.isMobile);
@@ -560,6 +573,7 @@ class Game {
         this.ui.menu.classList.add('hidden');
         this.ui.gameOver.classList.add('hidden');
         this.ui.levelComplete.classList.add('hidden');
+        this.ui.pauseMenu.classList.add('hidden');
         this.ui.hud.classList.remove('hidden');
         this.ui.hud.classList.add('flex'); // Because JS frameworks sometimes mess with layout
 
@@ -575,6 +589,16 @@ class Game {
         this.startGame(false);
     }
 
+    togglePause() {
+        if (this.state.status === 'playing') {
+            this.state.status = 'paused';
+            this.ui.pauseMenu.classList.remove('hidden');
+        } else if (this.state.status === 'paused') {
+            this.state.status = 'playing';
+            this.ui.pauseMenu.classList.add('hidden');
+        }
+    }
+
     endGame() {
         this.state.status = 'gameover';
         this.ui.finalTime.textContent = this.formatTime(this.state.timeElapsed);
@@ -588,7 +612,9 @@ class Game {
         this.state.status = 'levelcomplete';
         this.ui.completedLevel.textContent = this.state.level;
         this.ui.completedWordDisplay.textContent = this.state.currentWord;
-        // score assignment removed
+        
+        this.soundLevelWin.currentTime = 0;
+        this.soundLevelWin.play().catch(e=>console.log(e));
 
         this.ui.hud.classList.add('hidden');
         this.ui.hud.classList.remove('flex');
@@ -629,6 +655,10 @@ class Game {
                 if (this.entities.hitTest(pX, pY, pW, pH, o.x + o.width * 0.2, o.y + o.height * 0.2, o.width * 0.6, o.height * 0.6)) {
                     this.state.lives--;
                     this.player.invulnerableTime = CONFIG.PLAYER.INVULNERABLE_DURATION;
+
+                    this.soundCollision.currentTime = 0;
+                    this.soundCollision.play().catch(e=>console.log(e));
+
                     // Explosion color = berry red (danger)
                     this.entities.createExplosion(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2, '#b33939');
 
@@ -649,6 +679,10 @@ class Game {
             if (this.entities.hitTest(pX, pY, pW, pH, l.x, l.y, l.width, l.height)) {
                 if (l.char === this.state.currentWord[this.state.lettersCollected]) {
                     this.state.lettersCollected++;
+
+                    this.soundCollect.currentTime = 0;
+                    this.soundCollect.play().catch(e=>console.log(e));
+
                     // Explosion color = forest green (secondary)
                     this.entities.createExplosion(l.x + l.width / 2, l.y + l.height / 2, '#4f7942');
 

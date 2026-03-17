@@ -106,52 +106,55 @@ html, body {
   z-index: 2;
 }
 
-/* Modelos 
+/* Modelos */
 
-.water {
-  background-color: var(--fog-bg); 
-  opacity: 1 !important;
-} 
-.tree {
-  background-color: var(--araucaria);
-  border-radius: 50% 50% 10% 10%;
-  transform: scale(0.8);
-  opacity: 1 !important;
-}*/
 .grass {
-  background-image: url('../assets/game4-assets/floor_tile1.png');
+  background-image: url('../assets/game4-assets/grass3-1.png');
   background-size: contain;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   opacity: 1 !important;
 }
 .grass2 {
-  background-image: url('../assets/game4-assets/floor_tile1.png');
+  background-image: url('../assets/game4-assets/grass3-2.png');
   background-size: contain;
   background-repeat: no-repeat;
-  transform: scaleX(-1);
   image-rendering: pixelated;
   opacity: 1 !important;
 }
 .dirt {
-  background-image: url('../assets/game4-assets/floor_trail.png');
-  opacity: 1 !important;
-}
-.dirt2 {
-  background-image: url('../assets/game4-assets/floor_trail.png');
-  transform: scaleX(-1);
-  opacity: 1 !important;
-}
-.grass-tree {
-  background-image: url('../assets/game4-assets/floor_tile1.png');
+  background-image: url('../assets/game4-assets/dirt-1.png');
   background-size: contain;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   opacity: 1 !important;
 }
-
+.dirt2 {
+  background-image: url('../assets/game4-assets/dirt-2.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  opacity: 1 !important;
+}
+.grass-tree {
+  background-image: url('../assets/game4-assets/grass3-1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  opacity: 1 !important;
+}
+.grass-tree2 {
+  background-image: url('../assets/game4-assets/grass3-2.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  opacity: 1 !important;
+}
 .dirt-block {
-  background-image: url('../assets/game4-assets/floor_trail.png');
+  background-image: url('../assets/game4-assets/dirt-1.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
   opacity: 1 !important;
 }
 
@@ -336,7 +339,7 @@ html, body {
   width: auto;
   max-width: 850px;
   text-align: center;
-  border: 5px solid var(--basalto);
+  border: 5px solid var(--basalt);
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 
   -webkit-user-select: none;
@@ -424,7 +427,7 @@ html, body {
 .mg-card {
   width: 70px;
   height: 90px;
-  background: var(--basalto);
+  background: var(--basalt);
   color: white;
   display: flex;
   align-items: center;
@@ -719,7 +722,7 @@ html, body {
   user-select: none;
 }
 
-#controls {
+.controls-list {
   background-color: var(--menu-bg-2);
   padding: 10px 20px;
   width: 90%;
@@ -727,11 +730,11 @@ html, body {
   text-align: left;
 }
 
-#controls p {
+.controls-list p {
   margin: 10px 0;
 }
 
-#controls h2 {
+.controls-list h2 {
   margin: 10px 0 20px 0;
 }
 
@@ -994,7 +997,7 @@ html, body {
     font-size: 24px;
   }
 
-  #controls {
+  .controls-list {
     display: none !important;
   }
 }

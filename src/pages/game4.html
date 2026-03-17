@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="../assets/player.png" type="image/png">
   <title>O Grande Encontro</title>
-  <link rel="shortcut icon" href="../assets/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="../assets/iconOfSite.png" type="image/png">
   <link rel="stylesheet" href="../style/game4.css">
+
+  <link rel="preload" href="../assets/game4-assets/ceu.png" as="image">
+  <link rel="preload" href="../assets/game4-assets/mold_forest.png" as="image">
+  <link rel="preload" href="../assets/player.png" as="image">
 </head>
 <body>
     <div id="viewport">
@@ -80,7 +83,7 @@
 
   <div id="main-menu">
     <div><h1>O Grande Encontro</h1></div>
-    <div id="controls">
+    <div class="controls-list">
       <h2>Controles:</h2>
       <p><strong>WASD / Setas:</strong> Andar</p>
       <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar (ao perder)</p>
@@ -96,7 +99,7 @@
 
   <div id="pause-menu">
     <div><h1>Jogo Pausado!</h1></div>
-    <div id="controls">
+    <div class="controls-list">
       <h2>Controles:</h2>
       <p><strong>WASD / Setas:</strong> Andar</p>
       <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar (ao perder)</p>
