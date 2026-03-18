@@ -9,7 +9,7 @@ let gameState = {
 const scenes = {
     start: {
         // Exemplo de como adicionar a imagem diretamente no texto. Basta colocar o caminho real.
-        inlineImage: "../../assets/game2-assets/cena1.png",
+        inlineImage: "../assets/game2-assets/cena1.png",
         text: `O campo está gelado e o desespero toma conta. O pequeno Quero-Quero sumiu! 
         A mãe, exausta de tanto gritar e voar, não tem mais forças. 
         O pai e os outros dois filhotes seguem a busca, mas o horizonte é vasto demais. 
@@ -21,7 +21,7 @@ const scenes = {
         ]
     },
     capivaraAjuda: {
-        inlineImage: "../../assets/game2-assets/cena2.png",
+        inlineImage: "../assets/game2-assets/cena2.png",
         text: `A Capivara, sempre generosa, ouve o pranto da família. "Fique aqui, Mamãe Quero-Quero. Nós vamos encontrar seu pequeno!", diz ela. 
         O grupo começa a crescer, mas o rastro ainda é confuso. Um Cavalo pasta logo adiante, relinchando contra o vento frio da geada.`,
         choices: [
@@ -31,7 +31,7 @@ const scenes = {
         ]
     },
     cavaloPergunta: {
-        inlineImage: "../../assets/game2-assets/cena3.png",
+        inlineImage: "../assets/game2-assets/cena3.png",
         text: `O Cavalo bate os cascos, pronto para se abrigar do frio na cocheira. 
         "Não vi o filhote", diz ele, "mas a Jaçanã conhece cada centímetro dessas águas e juncos. Ela pode ter visto algo que eu perdi."`,
         choices: [
@@ -41,7 +41,7 @@ const scenes = {
         ]
     },
     jacanaUne: {
-        inlineImage: "../../assets/game2-assets/cena4.png",
+        inlineImage: "../assets/game2-assets/cena4.png",
         text: `A Jaçanã aceita o desafio na hora: "Comigo é agilidade e ação!". 
         Agora são seis amigos na trilha. De repente, um movimento sinuoso na grama faz todos pararem. 
         A Urutu surge em silêncio mortal, com seu olhar certeiro. O clima fica tenso.`,
@@ -52,7 +52,7 @@ const scenes = {
         ]
     },
     urutuConvida: {
-        inlineImage: "../../assets/game2-assets/cena5.png",
+        inlineImage: "../assets/game2-assets/cena5.png",
         text: `A Urutu, surpreendentemente sagaz, decide ajudar em vez de atacar. 
         Logo à frente, vocês encontram o Graxaim farejando o solo. 
         Ele teme que culpem sua fama de caçador pelo sumiço do filhote e quer provar sua inocência ajudando na busca.`,
@@ -63,7 +63,7 @@ const scenes = {
         ]
     },
     graxaimAjuda: {
-        inlineImage: "../../assets/game2-assets/cena6.png",
+        inlineImage: "../assets/game2-assets/cena6.png",
         text: `O grupo já é grande e a esperança se renova. 
         A Urutu recorda ter ouvido um Carcará rasgando o céu na madrugada. 
         No alto de um galho, o Bem-te-vi agita as asas: "Eu vi! Vi um ninho num pé de Umbu quando o sol nasceu!".`,
@@ -74,7 +74,7 @@ const scenes = {
         ]
     },
     bemteviAjuda: {
-        inlineImage: "../../assets/game2-assets/cena7.png",
+        inlineImage: "../assets/game2-assets/cena7.png",
         text: `Diante do imponente pé de Umbu, vocês encontram o Carcará. Ele observa o grupo de dez amigos com respeito. 
         No alto do ninho, um vulto pequeno e trêmulo aparece. O Carcará explica que o protegeu do frio, mas que o mundo exige cautela.`,
         choices: [
@@ -87,7 +87,7 @@ const scenes = {
 
 
     carcaraFinal: {
-        inlineImage: "../../assets/game2-assets/cena8.png",
+        inlineImage: "../assets/game2-assets/cena8.png",
         text: `Vitória! O Carcará entrega o pequeno aventureiro. O filhote volta para os braços da Mamãe Quero-Quero, que finalmente para de gritar de dor para cantar de alegria. 
         Dez amigos aprenderam que, no campo ou na vida, ninguém caminha sozinho. 
         A união transformou o medo em final feliz sob o céu claro do pampa.`,
@@ -96,8 +96,8 @@ const scenes = {
 };
 
 // Audios
-const soundChoiceWrong = new Audio('../../assets/sounds/game2_errorSound.mp3');
-const soundGameWin = new Audio('../../assets/sounds/game2_finalConclusion.mp3');
+const soundChoiceWrong = new Audio('../assets/sounds/game2_errorSound.mp3');
+const soundGameWin = new Audio('../assets/sounds/game2_finalConclusion.mp3');
 
 function shuffleArray(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -151,7 +151,7 @@ function updateDisplay() {
 
         const congrats = document.createElement('div');
         congrats.className = 'ending';
-        congrats.innerHTML = `<img src="../../assets/game4-assets/mae_e_filhote.png" class="scene-inline-img" alt="Mãe e filhote" style="display: block; margin: 0 auto 20px auto;">PARABÉNS, VOCÊ CONCLUIU A HISTÓRIA!`;
+        congrats.innerHTML = `<img src="../assets/game4-assets/mae_e_filhote.png" class="scene-inline-img" alt="Mãe e filhote" style="display: block; margin: 0 auto 20px auto;">PARABÉNS, VOCÊ CONCLUIU A HISTÓRIA!`;
         choicesContainer.appendChild(congrats);
 
         const siteBtn = document.createElement('button');
