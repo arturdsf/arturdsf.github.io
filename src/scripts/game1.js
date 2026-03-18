@@ -61,8 +61,8 @@
     let obstacles = [];
 
     // Audios
-    const soundCorrect = new Audio('../assets/sounds/game1_soundOfcolectedNPC.mp3');
-    const soundWrong = new Audio('../assets/sounds/game1_errorSound.mp3');
+    const soundCorrect = new Audio('../../assets/sounds/game1_soundOfcolectedNPC.mp3');
+    const soundWrong = new Audio('../../assets/sounds/game1_errorSound.mp3');
 
     function init() {
         updateDimensions();
@@ -95,7 +95,7 @@
         });
 
         btnVoltarIndex.addEventListener('click', () => {
-            window.location.href = '../pages/index.html';
+            window.location.href = '/';
         });
     }
 

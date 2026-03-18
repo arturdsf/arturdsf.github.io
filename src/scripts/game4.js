@@ -50,23 +50,23 @@ let facing = "right"
 let pauseGame = true
 let activeInterval = null
 
-const soundGame4Win = new Audio('../assets/sounds/game4_SoundOfConclusion.mp3');
-const soundGame4Err = new Audio('../assets/sounds/game4_error.mp3');
+const soundGame4Win = new Audio('../../assets/sounds/game4_SoundOfConclusion.mp3');
+const soundGame4Err = new Audio('../../assets/sounds/game4_error.mp3');
 
 // --- SISTEMA DE PRELOAD ---
 function preloadGameAssets() {
   console.log("[Core] Inicializando buffer de assets...");
   
   const imageAssets = [
-    "../assets/player.png",
-    "../assets/game4-assets/ceu.png",
-    "../assets/game4-assets/mold_forest.png",
-    "../assets/game4-assets/grass3-1.png",
-    "../assets/game4-assets/grass3-2.png",
-    "../assets/game4-assets/dirt-1.png",
-    "../assets/game4-assets/dirt-2.png",
-    "../assets/game4-assets/catch_bg.png",
-    "../assets/game4-assets/moita.png"
+    "../../assets/player.png",
+    "../../assets/game4-assets/ceu.png",
+    "../../assets/game4-assets/mold_forest.png",
+    "../../assets/game4-assets/grass3-1.png",
+    "../../assets/game4-assets/grass3-2.png",
+    "../../assets/game4-assets/dirt-1.png",
+    "../../assets/game4-assets/dirt-2.png",
+    "../../assets/game4-assets/catch_bg.png",
+    "../../assets/game4-assets/moita.png"
   ];
 
   Object.values(minigameConfig).forEach(conf => {
@@ -174,25 +174,25 @@ const minigameConfig = {
   'O': {
     title: "A Mamãe Quero-Quero",
     desc: "Monte o Quebra-cabeça!",
-    img: "../assets/game4-assets/mae_e_filhote.png",
+    img: "../../assets/game4-assets/mae_e_filhote.png",
     bookPage: "Página 29"
   },
   'o': {
     title: "O ataque do Urutu!",
     desc: "Monte o Quebra-cabeça!",
-    img: "../assets/game4-assets/urutu_attack.png",
+    img: "../../assets/game4-assets/urutu_attack.png",
     bookPage: "Página 15"
   },
   'Q': {
     title: "O papai chegou",
     desc: "Monte o Quebra-cabeça!",
-    img: "../assets/game4-assets/chegada_do_pai.png",
+    img: "../../assets/game4-assets/chegada_do_pai.png",
     bookPage: "Página 6"
   },
   'q': {
     title: "Deixe-o observar...",
     desc: "Monte o Quebra-cabeça!",
-    img: "../assets/game4-assets/carcara_watching.png",
+    img: "../../assets/game4-assets/carcara_watching.png",
     bookPage: "Página 41 \"Fim\""
   }
 }
@@ -203,7 +203,7 @@ const GameDialogues = {
     {
       name: "Mamãe Quero-Quero",
       text: "Quero-Quero meu filhinho, apareça ligeirinho!",
-      portrait: "../assets/maequeroquero_scream.png"
+      portrait: "../../assets/maequeroquero_scream.png"
     }
   ],
   
@@ -211,7 +211,7 @@ const GameDialogues = {
     {
       name: "Filhotes",
       text: "Papai, cadê o nosso maninho?",
-      portrait: "../assets/filhotes_static.png"
+      portrait: "../../assets/filhotes_static.png"
     }
   ],
 
@@ -219,12 +219,12 @@ const GameDialogues = {
     {
       name: "Pai Quero-Quero",
       text: "Olá Capivara, minha amiga.",
-      portrait: "../assets/paiqueroquero_static.png"
+      portrait: "../../assets/paiqueroquero_static.png"
     },
     {
       name: "Pai Quero-Quero",
       text: "O meu filhote desapareceu, não consigo encontrar ele.",
-      portrait: "../assets/paiqueroquero_static.png"
+      portrait: "../../assets/paiqueroquero_static.png"
     }
   ],
 
@@ -232,12 +232,12 @@ const GameDialogues = {
     {
       name: "Capivara",
       text: "Meu amigo Cavalo",
-      portrait: "../assets/capivara_walking.png"
+      portrait: "../../assets/capivara_walking.png"
     },
     {
       name: "Capivara",
       text: "Um filhote de Quero-Quero sumiu esta manhã, você viu ele?",
-      portrait: "../assets/capivara_static.png"
+      portrait: "../../assets/capivara_static.png"
     }
   ],
 
@@ -245,7 +245,7 @@ const GameDialogues = {
     {
       name: "Jaçanã",
       text: "Eu irei junto e o encontraremos já!",
-      portrait: "../assets/jacana_static.png"
+      portrait: "../../assets/jacana_static.png"
     }
   ],
 
@@ -253,17 +253,17 @@ const GameDialogues = {
     {
       name: "Urutu",
       text: "shhhh",
-      portrait: "../assets/urutu_walking.png"
+      portrait: "../../assets/urutu_walking.png"
     },
     {
       name: "Jaçanã",
       text: "Calma aí!\nNão queremos te machucar!",
-      portrait: "../assets/jacana_static.png"
+      portrait: "../../assets/jacana_static.png"
     },
     {
       name: "Urutu",
       text: "Claro que não era para vocês. Mas, o que causa os tanto alvoroço?",
-      portrait: "../assets/urutu_static.png"
+      portrait: "../../assets/urutu_static.png"
     }
   ],
 
@@ -271,7 +271,7 @@ const GameDialogues = {
     {
       name: "Pai Quero-Quero",
       text: "Graxaim, você viu um filhote de Quero-Quero passar por aqui?",
-      portrait: "../assets/paiqueroquero_flying_inv.png"
+      portrait: "../../assets/paiqueroquero_flying_inv.png"
     }
   ],
 
@@ -279,12 +279,12 @@ const GameDialogues = {
     {
       name: "Urutu",
       text: "Lembro de ter ouvido um Carcará passar por aqui esta noite.",
-      portrait: "../assets/urutu_walking.png"
+      portrait: "../../assets/urutu_walking.png"
     },
     {
       name: "Urutu",
       text: "Acho que o Bem-te-vi pode ter visto alguma coisa.\nQuem sabe o Carcará não contribua?",
-      portrait: "../assets/urutu_static.png"
+      portrait: "../../assets/urutu_static.png"
     }
   ],
 
@@ -292,12 +292,12 @@ const GameDialogues = {
     {
       name: "Capivara",
       text: "Carcará!\nAqui venho lhe explicar.",
-      portrait: "../assets/capivara_walking.png"
+      portrait: "../../assets/capivara_walking.png"
     },
     {
       name: "Capivara",
       text: "Estes pobres Quero-Queros estão procurando seu filhote perdido\nVocê pode nos ajudar a encontrar o coitadinho?",
-      portrait: "../assets/capivara_static.png"
+      portrait: "../../assets/capivara_static.png"
     }
   ],
 
@@ -306,14 +306,14 @@ const GameDialogues = {
     {
       name: "Mamãe Quero-Quero",
       text: "Eu não tenho forças para caminhar, o nosso filhote você precisa encontrar!",
-      portrait: "../assets/maequeroquero_scream.png" }
+      portrait: "../../assets/maequeroquero_scream.png" }
   ],
 
   'Q_win': [
     {
       name: "Pai Quero-Quero",
       text: "Vamos procurar eles.",
-      portrait: "../assets/paiqueroquero_static.png"
+      portrait: "../../assets/paiqueroquero_static.png"
     }
   ],
 
@@ -321,12 +321,12 @@ const GameDialogues = {
     {
       name: "Capivara",
       text: "Eu vou ajudar.",
-      portrait: "../assets/capivara_static.png"
+      portrait: "../../assets/capivara_static.png"
     },
     {
       name: "Capivara",
       text: "Mamãe Quero-Quero, pode esperar, logo logo o seu filhote irá voltar.",
-      portrait: "../assets/capivara_static.png"
+      portrait: "../../assets/capivara_static.png"
     }
   ],
 
@@ -334,7 +334,7 @@ const GameDialogues = {
     {
       name: "Cavalo",
       text: "Eu não vi nada, não.\nMas, que tal perguntar para a Jaçanã?",
-      portrait: "../assets/capivara_static.png"
+      portrait: "../../assets/capivara_static.png"
     }
   ],
 
@@ -342,12 +342,12 @@ const GameDialogues = {
     {
       name: "Capivara",
       text: "Você viu um filhote de Quero-Quero passar por aí?",
-      portrait: "../assets/capivara_static.png"
+      portrait: "../../assets/capivara_static.png"
     },
     {
       name: "Urutu",
       text: "Não vi nada não...\nMas vou com vocês ajudar.",
-      portrait: "../assets/urutu_static.png"
+      portrait: "../../assets/urutu_static.png"
     }
   ],
 
@@ -355,12 +355,12 @@ const GameDialogues = {
     {
       name: "Graxaim",
       text: "(Eles vão achar que a fui eu...)",
-      portrait: "../assets/graxaim_static.png"
+      portrait: "../../assets/graxaim_static.png"
     },
     {
       name: "Graxaim",
       text: "Claro que eu ajudo\nAntes da noite este filhote estará no seu ninho",
-      portrait: "../assets/graxaim_walking.png"
+      portrait: "../../assets/graxaim_walking.png"
     }
   ],
 
@@ -368,7 +368,7 @@ const GameDialogues = {
     {
       name: "Bem-te-vi",
       text: "Eu acho que posso indicar\nLembro que vi um ninho naquele pé de umbu antes do sol começar a despencar.",
-      portrait: "../assets/bemtevi_flying.png"
+      portrait: "../../assets/bemtevi_flying.png"
     }
   ],
 
@@ -376,17 +376,17 @@ const GameDialogues = {
     {
       name: "Carcará",
       text: "Que coincidência, minha amiga!\nUm filhote de Quero-Quero chegou aqui e me viu\nEle estava perdido, com medo e com frio.",
-      portrait: "../assets/carcara_static.png"
+      portrait: "../../assets/carcara_static.png"
     },
     {
       name: "Carcará",
       text: "Venha, suba e pegue teu filhote, tudo que eu falei era verdade, então me mantenha longe dos holofotes!",
-      portrait: "../assets/carcara_static.png"
+      portrait: "../../assets/carcara_static.png"
     },
     {
       name: "Carcará",
       text: "Estou preocupado com os meus, então vocês aí embaixo, tomem conta dos seus!",
-      portrait: "../assets/carcara_static.png"
+      portrait: "../../assets/carcara_static.png"
     }
   ],
 
@@ -406,12 +406,12 @@ const GameDialogues = {
     {
       name: "",
       text: `Eu não estou vendo nada por aqui...`,
-      portrait: "../assets/player.png"
+      portrait: "../../assets/player.png"
     },
     {
       name: "",
       text: `Eu devo estar imaginando coisas.`,
-      portrait: "../assets/player.png"
+      portrait: "../../assets/player.png"
     }
   ],
 
@@ -1359,10 +1359,6 @@ function togglePause() {
 
 function restartGame() {
   location.reload()
-}
-
-function backToIndex() {
-  window.location.href = 'index.html'
 }
 
 window.addEventListener('resize', () => {

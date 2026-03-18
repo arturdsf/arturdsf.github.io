@@ -459,9 +459,9 @@ class Game {
         this.entities = new EntityManager(this.engine);
 
         // Audios
-        this.soundCollision = new Audio('../assets/sounds/game3_collision.mp3');
-        this.soundCollect = new Audio('../assets/sounds/game3_soundOfCollect.mp3');
-        this.soundLevelWin = new Audio('../assets/sounds/game3_levelConclusion.mp3');
+        this.soundCollision = new Audio('../../assets/sounds/game3_collision.mp3');
+        this.soundCollect = new Audio('../../assets/sounds/game3_soundOfCollect.mp3');
+        this.soundLevelWin = new Audio('../../assets/sounds/game3_levelConclusion.mp3');
 
         this.state = {
             status: 'menu',
@@ -505,7 +505,7 @@ class Game {
 
     async loadDictionary() {
         try {
-            const res = await fetch('../assets/dicionario.txt');
+            const res = await fetch('../../assets/dicionario.txt');
             if (res.ok) {
                 const text = await res.text();
                 const words = text.split(/\r?\n/).map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
