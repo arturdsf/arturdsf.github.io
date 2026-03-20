@@ -392,7 +392,7 @@ const GameDialogues = {
     }
   ],
 
-  // Eventos aleatórios
+  // Eventos
   'intro_game': [
     {
       name: "",
@@ -541,25 +541,24 @@ const movementKeys = {
 }
 
 document.addEventListener("keydown", (e) => {
-  if (pauseGame) return;
-  const key = e.key.toLowerCase();
+  if (pauseGame) return
+  const key = e.key.toLowerCase()
 
   if (key === 'e') {
-    interact();
-    return;
+    interact()
+    return
   }
 
   if (movementKeys[key]) {
-    // Só inicia se a tecla não estiver no Set (evita o spam do Windows)
     if (!pressedKeys.has(key)) {
-      pressedKeys.add(key);
-      processMovement(); // Move instantaneamente no primeiro clique
+      pressedKeys.add(key)
+      processMovement()
       if (!gameLoopInterval) {
-        startGameLoop();
+        startGameLoop()
       }
     }
   }
-});
+})
 
 document.addEventListener("keyup", (e) => {
   const key = e.key.toLowerCase()
@@ -571,42 +570,42 @@ document.addEventListener("keyup", (e) => {
   }
 })
 
-let lastMoveTime = 0;
+let lastMoveTime = 0
 function processMovement() {
-  if (pauseGame || pressedKeys.size === 0) return;
+  if (pauseGame || pressedKeys.size === 0) return
 
-  const now = Date.now();
-  let moveX = 0;
-  let moveY = 0;
-  let newFacing = null;
+  const now = Date.now()
+  let moveX = 0
+  let moveY = 0
+  let newFacing = null
 
   pressedKeys.forEach(key => {
-    const dir = movementKeys[key];
+    const dir = movementKeys[key]
     if (dir) {
-      moveX += dir.dx;
-      moveY += dir.dy;
-      if (dir.face) newFacing = dir.face;
+      moveX += dir.dx
+      moveY += dir.dy
+      if (dir.face) newFacing = dir.face
     }
-  });
+  })
 
-  const finalDX = Math.max(-1, Math.min(1, moveX));
-  const finalDY = Math.max(-1, Math.min(1, moveY));
+  const finalDX = Math.max(-1, Math.min(1, moveX))
+  const finalDY = Math.max(-1, Math.min(1, moveY))
 
   if (finalDX !== 0 || finalDY !== 0) {
-    const isDiagonal = (finalDX !== 0 && finalDY !== 0);
-    const baseSpeed = 150;
-    const requiredDelay = isDiagonal ? baseSpeed * 1.41 : baseSpeed;
+    const isDiagonal = (finalDX !== 0 && finalDY !== 0)
+    const baseSpeed = 150
+    const requiredDelay = isDiagonal ? baseSpeed * 1.41 : baseSpeed
 
     if (now - lastMoveTime >= requiredDelay) {
-      handleMove(finalDX, finalDY, newFacing || facing);
-      lastMoveTime = now;
+      handleMove(finalDX, finalDY, newFacing || facing)
+      lastMoveTime = now
     }
   }
 }
 
 function startGameLoop() {
-  if (gameLoopInterval) clearInterval(gameLoopInterval);
-  gameLoopInterval = setInterval(processMovement, 10); 
+  if (gameLoopInterval) clearInterval(gameLoopInterval)
+  gameLoopInterval = setInterval(processMovement, 10)
 }
 
 function handleMove(dx, dy, newFacing) {
@@ -717,44 +716,44 @@ function setupMobileButtons() {
     'btn-down': 's',
     'btn-left': 'a',
     'btn-right': 'd'
-  };
+  }
 
   for (const [id, key] of Object.entries(btns)) {
-    const el = document.getElementById(id);
+    const el = document.getElementById(id)
     if (el) {
       el.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (pauseGame) return;
+        e.preventDefault()
+        if (pauseGame) return
         
         if (!pressedKeys.has(key)) {
-          pressedKeys.add(key);
-          processMovement(); // Movimento instantâneo ao tocar
+          pressedKeys.add(key)
+          processMovement()
           if (!gameLoopInterval) {
-            startGameLoop();
+            startGameLoop()
           }
         }
-      }, {passive: false});
+      }, {passive: false})
 
       const endTouch = (e) => {
-        e.preventDefault();
-        pressedKeys.delete(key);
+        e.preventDefault()
+        pressedKeys.delete(key)
         if (pressedKeys.size === 0 && gameLoopInterval) {
-          clearInterval(gameLoopInterval);
-          gameLoopInterval = null;
+          clearInterval(gameLoopInterval)
+          gameLoopInterval = null
         }
-      };
+      }
 
-      el.addEventListener('touchend', endTouch);
-      el.addEventListener('touchcancel', endTouch);
+      el.addEventListener('touchend', endTouch)
+      el.addEventListener('touchcancel', endTouch)
     }
   }
 
-  const interactBtn = document.getElementById('btn-interact');
+  const interactBtn = document.getElementById('btn-interact')
   if (interactBtn) {
     interactBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      interact();
-    }, {passive: false});
+      e.preventDefault()
+      interact()
+    }, {passive: false})
   }
 }
 
@@ -991,9 +990,8 @@ function playCatch(type, x, y, charArray) {
     cursor: 'pointer',
     zIndex: '10', 
     pointerEvents: 'none',
-    // TRANSIÇÃO GLOBAL: Cuida do deslize (left/top) e da subida (transform)
     transition: 'left 0.6s ease-in-out, top 0.6s ease-in-out, transform 0.3s ease-out',
-    left: spots[0].left, // Começa em algum lugar
+    left: spots[0].left,
     top: spots[0].top,
     transform: 'translateY(0px)',
     willChange: 'left, top, transform'
@@ -1049,7 +1047,6 @@ function playCatch(type, x, y, charArray) {
     score++
     if (scoreCounterEl) scoreCounterEl.innerText = `${score}/${goal}`
     
-    // BRILHO ORIGINAL: Feedback visual de impacto
     animal.style.filter = "brightness(1.8) drop-shadow(0 0 15px white)"
     setTimeout(() => { animal.style.filter = "none" }, 150)
     
@@ -1058,7 +1055,6 @@ function playCatch(type, x, y, charArray) {
       clearTimeout(activeCatchCycle)
       animal.style.pointerEvents = 'none'
       
-      // CORAÇÃO ORIGINAL (Sem animação extra)
       animal.innerHTML = "<span style='position: absolute; top: -40px; left: 30px; font-size: 40px;'>❤️</span>"
       animal.style.transform = 'translateY(-60px)'
       
@@ -1485,7 +1481,7 @@ window.onload = () => {
   preloadGameAssets()
 }
 
-/* Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia! */
+// Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia!
 
 /*
 (function createDebugButton() {

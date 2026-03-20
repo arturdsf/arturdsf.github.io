@@ -41,7 +41,6 @@ html,body{
     background: url("../assets/player.png") center/contain no-repeat;
     pointer-events: none;
     will-change: transform;
-    z-index: 10;
 }
 
 .npc {
@@ -53,7 +52,6 @@ html,body{
     background-position: center;
     pointer-events: none;
     will-change: transform;
-    z-index: 8;
 }
 
 .npc.following{
@@ -64,7 +62,6 @@ html,body{
 .npc.next-target {
     box-shadow: 0 0 15px 5px rgba(255, 255, 0, 0.5);
     animation: pulsarBrilho 2s infinite ease-in-out;
-    z-index: 10; 
 }
 
 @keyframes pulsarBrilho {
@@ -94,7 +91,6 @@ html,body{
     background-repeat: no-repeat;
     background-position: center;
     will-change: transform;
-    z-index: 5;
 }
 
 .obs-pedra {

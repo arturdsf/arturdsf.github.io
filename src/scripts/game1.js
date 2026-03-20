@@ -1,4 +1,24 @@
 (function () {
+    function enterFullscreen() {
+  const el = document.documentElement;
+  const requestMethod = el.requestFullscreen || 
+    el.webkitRequestFullscreen || 
+    el.mozRequestFullScreen || 
+    el.msRequestFullscreen;
+
+    if (requestMethod) {
+        requestMethod.call(el).then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(err => {
+                    console.log("A orientação não pôde ser travada:", err);
+                });
+            }
+        }).catch(err => {
+            console.log("Erro ao tentar entrar em tela cheia:", err);
+        });
+    }
+    }
+
     const mapContainer = document.getElementById('map-container');
     const questTextEl = document.getElementById('quest-text');
     const dialogueBox = document.getElementById('dialogue-box');
@@ -78,6 +98,8 @@
         dialogueBox.addEventListener('click', advanceDialogue);
         window.addEventListener('resize', onResize);
         requestAnimationFrame(loop);
+
+        // jogar a função de tela cheia em algum lugar aqui
     }
 
     function initMenu() {
@@ -234,54 +256,62 @@
     function updateNPCElements() {
         npcs.forEach(n => {
             n.el.style.transform = `translate3d(${n.worldX}px, ${n.worldY}px, 0)`;
+            n.el.style.zIndex = Math.floor(n.worldY + npcSize);
             if (n.following) n.el.classList.add('following');
         });
     }
 
     function generateObstacles() {
-        const playerStartX = window.innerWidth / 2;
-        const playerStartY = window.innerHeight * 1.5;
-        let created = 0;
+    const playerStartX = window.innerWidth / 2;
+    const playerStartY = window.innerHeight * 1.5;
+    let created = 0;
+    let attempts = 0;
 
-        while (created < 30) {
-            const ex = Math.floor(Math.random() * 2);
-            const ey = Math.floor(Math.random() * 2);
-            const x = ex * window.innerWidth + Math.random() * (window.innerWidth - 80);
-            const y = ey * window.innerHeight + Math.random() * (window.innerHeight - 80);
-            const w = 40 + Math.random() * 40, h = 40 + Math.random() * 40;
+    while (created < 30 && attempts < 1000) {
+        attempts++; 
+        
+        const ex = Math.floor(Math.random() * 2);
+        const ey = Math.floor(Math.random() * 2);
+        const x = ex * window.innerWidth + Math.random() * (window.innerWidth - 80);
+        const y = ey * window.innerHeight + Math.random() * (window.innerHeight - 80);
+        const w = 40 + Math.random() * 40;
+        const h = 40 + Math.random() * 40;
 
-            const margin = 100;
-            if (Math.abs(x - window.innerWidth) < margin || Math.abs(y - window.innerHeight) < margin) continue;
+        const margin = 100;
+        if (Math.abs(x - window.innerWidth) < margin || Math.abs(y - window.innerHeight) < margin) continue;
 
-            const distToPlayer = Math.hypot(x - playerStartX, y - playerStartY);
-            let tooCloseNPC = npcDefs.some(n => Math.hypot(x - (n.envX * window.innerWidth + n.localX), y - (n.envY * window.innerHeight + n.localY)) < 120);
+        const distToPlayer = Math.hypot(x - playerStartX, y - playerStartY);
+        
+        let tooCloseNPC = npcDefs.some(n => {
+            const pctX = n.localX / 1000;
+            const pctY = n.localY / 800;
+            const npcTargetX = n.envX * window.innerWidth + (pctX * window.innerWidth);
+            const npcTargetY = n.envY * window.innerHeight + (pctY * window.innerHeight);
+            return Math.hypot(x - npcTargetX, y - npcTargetY) < 120;
+        });
 
-            if (distToPlayer > 150 && !tooCloseNPC) {
-                const el = document.createElement('div');
-                el.className = 'obstacle';
+        if (distToPlayer > 150 && !tooCloseNPC) {
+            const el = document.createElement('div');
+            el.className = 'obstacle';
 
-                if (ex === 0 && ey === 0) {
-                    el.classList.add('obs-pedra');
-                } else if (ex === 1 && ey === 0) {
-                    el.classList.add('obs-arbusto');
-                } else if (ex === 1 && ey === 1) {
-                    el.classList.add('obs-graveto');
-                } else {
-                    const tipos = ['obs-pedra', 'obs-arbusto', 'obs-graveto'];
-                    const sorteio = tipos[Math.floor(Math.random() * tipos.length)];
-                    el.classList.add(sorteio);
-                }
-
-                // CORREÇÃO: Salva o elemento HTML dentro do objeto do obstáculo
-                obstacles.push({ x, y, w, h, el: el });
-
-                el.style.width = w + 'px'; el.style.height = h + 'px';
-                el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-                mapContainer.appendChild(el);
-                created++;
+            if (ex === 0 && ey === 0) el.classList.add('obs-pedra');
+            else if (ex === 1 && ey === 0) el.classList.add('obs-arbusto');
+            else if (ex === 1 && ey === 1) el.classList.add('obs-graveto');
+            else {
+                const tipos = ['obs-pedra', 'obs-arbusto', 'obs-graveto'];
+                el.classList.add(tipos[Math.floor(Math.random() * tipos.length)]);
             }
+
+            obstacles.push({ x, y, w, h, el: el });
+            el.style.width = w + 'px'; 
+            el.style.height = h + 'px';
+            el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            el.style.zIndex = Math.floor(y + h);
+            mapContainer.appendChild(el);
+            created++;
         }
     }
+}
 
     function checkCollisions() {
         npcs.forEach(n => {
@@ -355,14 +385,22 @@
         player.worldY = window.innerHeight * 1.5;
         envX = 0; envY = 1;
         applyContainerTransform();
+        
         trail = [];
         for (let i = 0; i < 1000; i++) trail.push({ x: player.worldX, y: player.worldY });
+        
         nextIndex = 0;
+        
         npcs.forEach(n => {
             n.following = false;
             n.talked = false;
-            n.worldX = n.envX * window.innerWidth + n.localX;
-            n.worldY = n.envY * window.innerHeight + n.localY;
+            n.el.classList.remove('following');
+            const def = npcDefs.find(d => d.id === n.id);
+            const pctX = def.localX / 1000;
+            const pctY = def.localY / 800;
+            
+            n.worldX = def.envX * window.innerWidth + (pctX * window.innerWidth);
+            n.worldY = def.envY * window.innerHeight + (pctY * window.innerHeight);
         });
         updateQuest();
     }
@@ -464,6 +502,7 @@
         if (player.el) {
             const scale = facing === "left" ? -1 : 1;
             player.el.style.transform = `translate3d(${player.worldX}px, ${player.worldY}px, 0) scaleX(${scale})`;
+            player.el.style.zIndex = Math.floor(player.worldY + playerSize); // Y-SORTING DO PLAYER
         }
 
         requestAnimationFrame(loop);
