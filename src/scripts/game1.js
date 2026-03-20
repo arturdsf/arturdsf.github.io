@@ -1,28 +1,28 @@
 (function () {
-    function enterFullscreen() {
-  const el = document.documentElement;
-  const requestMethod = el.requestFullscreen || 
-    el.webkitRequestFullscreen || 
-    el.mozRequestFullScreen || 
-    el.msRequestFullscreen;
+    const isMobileDevice = /Mobi|Android|iPhone/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 0);
 
-    if (requestMethod) {
-        requestMethod.call(el).then(() => {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => {
-                    console.log("A orientação não pôde ser travada:", err);
-                });
-            }
-        }).catch(err => {
-            console.log("Erro ao tentar entrar em tela cheia:", err);
-        });
-    }
+    function enterFullscreen() {
+        const el = document.documentElement;
+        const requestMethod = el.requestFullscreen || 
+            el.webkitRequestFullscreen || 
+            el.mozRequestFullScreen || 
+            el.msRequestFullscreen;
+
+        if (requestMethod) {
+            requestMethod.call(el).then(() => {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(err => console.log(err));
+                }
+            }).catch(err => console.log(err));
+        }
     }
 
     const mapContainer = document.getElementById('map-container');
     const questTextEl = document.getElementById('quest-text');
     const dialogueBox = document.getElementById('dialogue-box');
     const dialogueText = document.getElementById('dialogue-text');
+    const startOverlay = document.getElementById('start-menu-overlay');
+    const btnStart = document.getElementById('btn-start-game');
 
     // Menu logic
     const persistentMenuBtn = document.getElementById('persistent-menu-btn');
@@ -39,7 +39,7 @@
     let trail = [];
     const spacing = 15;
     const minDistance = 3;
-    let isPaused = false;
+    let isPaused = true;
     let isGameOver = false;
 
     let playerSize = 50;
@@ -92,28 +92,42 @@
         createPlayer();
         initJoystick();
         initMenu();
+        
+        if (btnStart) {
+            btnStart.addEventListener('click', () => {
+                if (isMobileDevice) {
+                    enterFullscreen();
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    }
+                } else {
+                    console.log("[Engine] Desktop detectado: Ignorando pedido de Fullscreen.");
+                }
+                startOverlay.style.display = 'none';
+                isPaused = false;
+
+                setTimeout(() => {
+                    updateDimensions();
+                    onResize();
+                }, 300);
+            });
+        }
+
         updateQuest();
         window.addEventListener('keydown', e => keys[e.code] = true);
         window.addEventListener('keyup', e => keys[e.code] = false);
         dialogueBox.addEventListener('click', advanceDialogue);
-        window.addEventListener('resize', () => {
-            updateDimensions();
-            createNPCs();
-            applyContainerTransform();
-        });
+        window.addEventListener('resize', onResize);
+        
         requestAnimationFrame(loop);
-
-        // jogar a função de tela cheia em algum lugar aqui
     }
 
     function initMenu() {
         persistentMenuBtn.addEventListener('click', () => {
-            enterFullscreen();
             if (!isGameOver) openMenu('Pausado');
         });
 
         btnContinuar.addEventListener('click', () => {
-            enterFullscreen();
             closeMenu();
         });
 
@@ -561,6 +575,25 @@
                 console.log("Não foi possível forçar a rotação automaticamente (requer tela cheia).");
             });
         }
+    }
+
+    function setupStartButton() {
+        if (!btnStart) return;
+
+        btnStart.addEventListener('click', () => {
+            enterFullscreen();
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
+            }
+
+            startOverlay.style.display = 'none';
+            isPaused = false;
+            
+            setTimeout(() => {
+                updateDimensions();
+                onResize();
+            }, 300);
+        });
     }
 
     init();

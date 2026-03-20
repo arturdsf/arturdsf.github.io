@@ -330,6 +330,10 @@ html,body{
     padding: 20px;
 }
 
+body.is-touch #joystick-zone {
+    display: block; /* Só mostra se o JS detectar toque e adicionar a classe no body */
+}
+
 /* --- OVERLAYS E MENU PERSISTENTE --- */
 #persistent-menu-btn {
     position: fixed;
@@ -435,4 +439,60 @@ html,body{
     body.is-touch #rotate-warning {
         display: flex;
     }
+}
+
+#map-container, #joystick-zone, .npc, .player {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#start-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background: #0000007c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    color: #000;
+    text-align: center;
+}
+
+.menu-content {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 20px;
+    border: 2px solid #666;
+}
+
+.menu-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.menu-content p {
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+#btn-start-game {
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    background: #ffcc00;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 5px 0 #cca300;
+    transition: transform 0.1s;
+}
+
+#btn-start-game:active {
+    transform: translateY(5px);
+    box-shadow: none;
 }
