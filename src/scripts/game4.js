@@ -1483,10 +1483,10 @@ window.onload = () => {
 
 // Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia!
 
-
+/*
 (function createDebugButton() {
   const btn = document.createElement('button')
-  btn.innerText = "Moggar o beta"
+  btn.innerText = "Pular Um"
   btn.id = "debug-win-btn"
   btn.style.userSelect = "none"
   
@@ -1528,4 +1528,4 @@ window.onload = () => {
   document.body.appendChild(btn)
   console.log("Botão de Debug injetado no Body!")
 })()
-
+*/
