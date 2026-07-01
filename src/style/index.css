@@ -1,3 +1,7 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
+
 html {
 scroll-behavior: smooth;
 }
@@ -59,4 +63,14 @@ h1, h2 {
 .modal-content {
   border: 1px solid #444;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.game-title {
+  font-size: large;
+}
+
+@media screen and (max-width: 767px) {
+  .game-title {
+    font-size: x-large;
+  }
 }

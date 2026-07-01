@@ -1,18 +1,19 @@
 // ==========================================
 // 1. CONFIGURATION
 // ==========================================
+
 const CONFIG = {
     PLAYER: {
         BASE_WIDTH: 100,
         BASE_HEIGHT: 100,
-        SPEED_DESKTOP: 400, // pixels per second
-        SPEED_MOBILE: 5, // drag multiplier
-        INVULNERABLE_DURATION: 1.5, // seconds
+        SPEED_DESKTOP: 400,
+        SPEED_MOBILE: 5,
+        INVULNERABLE_DURATION: 1.5,
     },
     OBSTACLES: {
-        BASE_SPEED: 250, // pixels per second
-        SPAWN_RATE_MIN: 0.8, // seconds
-        SPAWN_RATE_MAX: 2.5, // seconds
+        BASE_SPEED: 250,
+        SPAWN_RATE_MIN: 0.8,
+        SPAWN_RATE_MAX: 2.5,
         TYPES: [
             { type: 'normal', chance: 0.6, width: 80, height: 80 },
             { type: 'fast', chance: 0.25, width: 70, height: 70, speedMult: 1.5 },
@@ -21,13 +22,13 @@ const CONFIG = {
         ]
     },
     LETTERS: {
-        BASE_SPEED: 150, // slower than obstacles
+        BASE_SPEED: 150,
         SPAWN_RATE_MIN: 2.0,
         SPAWN_RATE_MAX: 4.0,
         SIZE: 40
     },
     GAME: {
-        METERS_UNIT: 100, // pixels = 1 meter
+        METERS_UNIT: 100,
         STARTING_LIVES: 3,
         PARALLAX_SPEED: 100,
     }
@@ -56,6 +57,7 @@ const ASSETS = {
 // ==========================================
 // 2. ENGINE & INPUT
 // ==========================================
+
 class Engine {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
@@ -74,9 +76,15 @@ class Engine {
     resize() {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        // Adjusted mobile detection to treat anything below 768px as mobile logic
+        const dpr = window.devicePixelRatio || 1;
+
+        this.canvas.width = this.width * dpr;
+        this.canvas.height = this.height * dpr;
+
+        this.canvas.style.width = `${this.width}px`;
+        this.canvas.style.height = `${this.height}px`;
+
+        this.ctx.scale(dpr, dpr);
         this.isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || this.width < 768;
     }
 
@@ -98,7 +106,6 @@ class Engine {
         let dt = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
 
-        // Cap dt to prevent huge jumps if tab was inactive
         if (dt > 0.1) dt = 0.1;
 
         if (this.updateFn) this.updateFn(dt);
@@ -124,7 +131,6 @@ class InputManager {
         }, { passive: false });
 
         canvas.addEventListener('touchmove', e => {
-            // Prevent default zooming/scrolling on mobile
             e.preventDefault();
             this.touch.x = e.touches[0].clientX;
             this.touch.y = e.touches[0].clientY;
@@ -143,10 +149,11 @@ class InputManager {
 // ==========================================
 // 3. ENTITIES (Player, Obstacles, Letters)
 // ==========================================
+
 class Player {
     constructor(engine) {
         this.engine = engine;
-        this.facingRight = true; // Faces right by default (from left to right)
+        this.facingRight = true;
         this.reset();
     }
 
@@ -181,7 +188,6 @@ class Player {
             const dx = input.touch.x - (this.x + this.width / 2);
             const dy = input.touch.y - (this.y + this.height / 2);
 
-            // Apply smooth linear interpolation to follow the finger to remove the jitter/flick
             this.x += dx * 5 * dt;
             this.y += dy * 5 * dt;
 
@@ -189,11 +195,9 @@ class Player {
             if (dx > 5) movedRight = true;
         }
 
-        // Logic for flipping scale based on movement direction
         if (movedRight) this.facingRight = true;
         else if (movedLeft) this.facingRight = false;
 
-        // Clamp to screen
         this.x = Math.max(0, Math.min(this.engine.width - this.width, this.x));
         this.y = Math.max(0, Math.min(this.engine.height - this.height, this.y));
     }
@@ -206,16 +210,10 @@ class Player {
 
         ctx.save();
 
-        // Translate to the player's position
-        // If facingRight is true, flip horizontally since the original asset might be facing left
-        // Wait, "jogador deve andar para a esquerda e virar (scaleX(-1)) quando for para o outro lado"
-        // Let's assume asset faces left by default. If it faces right by default, we just flip the logic.
-        // We'll translate to center, scale conditionally, then draw.
         const centerX = this.x + this.width / 2;
         const centerY = this.y + this.height / 2;
         ctx.translate(centerX, centerY);
 
-        // Adjust facing scale properly (since native asset faces right, scale(1) is right)
         ctx.scale(this.facingRight ? 1 : -1, 1);
 
         if (img && img.complete) {
@@ -308,7 +306,7 @@ class EntityManager {
     spawnLetter(targetChar, gameSpeedMult) {
         const scale = this.engine.isMobile ? 0.6 : 1;
         let l = this.pools.letters.pop() || {};
-        l.x = -100 - (CONFIG.LETTERS.SIZE * scale); // Changed logic to rely on the size correctly before applying l.width
+        l.x = -100 - (CONFIG.LETTERS.SIZE * scale);
         l.y = 50 + Math.random() * (this.engine.height - 100);
         l.width = CONFIG.LETTERS.SIZE * scale;
         l.height = CONFIG.LETTERS.SIZE * scale;
@@ -346,7 +344,6 @@ class EntityManager {
             this.obstacleTimer = 0;
         }
 
-        // Letters
         if (currentTargetChar) {
             this.letterTimer += dt;
             if (this.letters.length === 0 && this.letterTimer > 1.5) {
@@ -355,7 +352,6 @@ class EntityManager {
             }
         }
 
-        // Move
         for (let i = this.obstacles.length - 1; i >= 0; i--) {
             let o = this.obstacles[i];
             o.x += o.speedX * dt;
@@ -388,7 +384,6 @@ class EntityManager {
             }
         }
 
-        // Parallax BG
         this.stars.forEach(s => {
             s.x += s.speed * CONFIG.GAME.PARALLAX_SPEED * gameSpeedMult * dt;
             if (s.x > this.engine.width + 100) {
@@ -399,7 +394,6 @@ class EntityManager {
     }
 
     draw(ctx) {
-        // Draw Stars
         ctx.fillStyle = '#ffffff';
         this.stars.forEach(s => {
             ctx.globalAlpha = s.alpha;
@@ -407,9 +401,8 @@ class EntityManager {
         });
         ctx.globalAlpha = 1.0;
 
-        // Draw Letters
         this.letters.forEach(l => {
-            ctx.fillStyle = `rgba(166, 124, 82, ${0.7 + Math.sin(l.pulse) * 0.3})`; // primary color (brown)
+            ctx.fillStyle = `rgba(166, 124, 82, ${0.7 + Math.sin(l.pulse) * 0.3})`;
             ctx.beginPath();
             ctx.roundRect(l.x, l.y, l.width, l.height, 8);
             ctx.fill();
@@ -421,18 +414,16 @@ class EntityManager {
             ctx.fillText(l.char, l.x + l.width / 2, l.y + l.height / 2);
         });
 
-        // Draw Obstacles
         this.obstacles.forEach(o => {
             const img = ASSETS.getObstacleImage(o.type);
             if (img && img.complete) {
                 ctx.drawImage(img, o.x, o.y, o.width, o.height);
             } else {
-                ctx.fillStyle = '#b33939'; // danger color
+                ctx.fillStyle = '#b33939';
                 ctx.fillRect(o.x, o.y, o.width, o.height);
             }
         });
 
-        // Draw Particles
         this.particles.forEach(p => {
             ctx.fillStyle = p.color;
             ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
@@ -451,6 +442,7 @@ class EntityManager {
 // ==========================================
 // 4. MAIN GAME MANAGER
 // ==========================================
+
 class Game {
     constructor() {
         this.engine = new Engine();
@@ -484,7 +476,7 @@ class Game {
             levelComplete: document.getElementById('level-complete'),
             pauseMenu: document.getElementById('pause-menu'),
 
-            score: null, // Removed
+            score: null,
             timeElapsed: document.getElementById('timeElapsed'),
             lives: document.getElementById('lives'),
             level: document.getElementById('level'),
@@ -517,10 +509,6 @@ class Game {
     }
 
     pickWordForLevel() {
-        // Levels 1-2: words up to 5 chars
-        // Levels 3-4: words up to 7 chars
-        // Level 5+: any words
-
         let pool = this.dictionary;
 
         if (this.state.level <= 2) {
@@ -531,7 +519,7 @@ class Game {
             pool = this.dictionary.filter(w => w.length >= 6);
         }
 
-        if (pool.length === 0) pool = this.dictionary; // fallback
+        if (pool.length === 0) pool = this.dictionary;
 
         return pool[Math.floor(Math.random() * pool.length)];
     }
@@ -575,7 +563,7 @@ class Game {
         this.ui.levelComplete.classList.add('hidden');
         this.ui.pauseMenu.classList.add('hidden');
         this.ui.hud.classList.remove('hidden');
-        this.ui.hud.classList.add('flex'); // Because JS frameworks sometimes mess with layout
+        this.ui.hud.classList.add('flex');
 
         this.updateHUD();
         this.state.status = 'playing';
@@ -584,7 +572,6 @@ class Game {
     nextLevel() {
         this.state.level++;
         if (this.state.level > this.state.maxLevelReached) this.state.maxLevelReached = this.state.level;
-        // Increase speed for difficulty
         this.state.gameSpeedMult = Math.min(3.0, 1.0 + (this.state.level - 1) * 0.25);
         this.startGame(false);
     }
@@ -623,7 +610,6 @@ class Game {
 
     updateWordProgress() {
         const word = this.state.currentWord;
-        // e.g. "C H I _ _ _"
         const progress = word.split('').map((c, i) => i < this.state.lettersCollected ? c : '_').join(' ');
         this.ui.wordProgress.textContent = progress;
     }
@@ -659,7 +645,6 @@ class Game {
                     this.soundCollision.currentTime = 0;
                     this.soundCollision.play().catch(e=>console.log(e));
 
-                    // Explosion color = berry red (danger)
                     this.entities.createExplosion(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2, '#b33939');
 
                     this.entities.pools.obstacles.push(this.entities.obstacles.splice(i, 1)[0]);
@@ -683,10 +668,8 @@ class Game {
                     this.soundCollect.currentTime = 0;
                     this.soundCollect.play().catch(e=>console.log(e));
 
-                    // Explosion color = forest green (secondary)
                     this.entities.createExplosion(l.x + l.width / 2, l.y + l.height / 2, '#4f7942');
 
-                    // Add some value for getting a letter if desired, removed score usage
                     this.updateHUD();
 
                     this.entities.pools.letters.push(this.entities.letters.splice(i, 1)[0]);
@@ -697,7 +680,6 @@ class Game {
 
     update(dt) {
         if (this.state.status !== 'playing') {
-            // Stars still scroll slowly
             this.entities.stars.forEach(s => {
                 s.x += s.speed * CONFIG.GAME.PARALLAX_SPEED * 0.5 * dt;
                 if (s.x > this.engine.width + 100) s.x = -100;
@@ -718,10 +700,8 @@ class Game {
         this.state.timeElapsed += dt;
         this.state.scrollX += (CONFIG.GAME.METERS_UNIT / 2) * this.state.gameSpeedMult * dt;
 
-        // Update time dynamically every frame in HUD
         this.ui.timeElapsed.textContent = this.formatTime(this.state.timeElapsed);
 
-        // Win Condition: Word Completed
         if (this.state.lettersCollected >= this.state.currentWord.length) {
             this.winLevel();
         }
@@ -736,13 +716,11 @@ class Game {
             const w = bg.naturalWidth * scale;
             const h = bg.naturalHeight * scale;
 
-            // Scroll moving logically against the player, background goes right
             const parallaxX = (this.state.scrollX) % w;
 
             ctx.drawImage(bg, parallaxX, 0, w, h);
             ctx.drawImage(bg, parallaxX - w, 0, w, h);
         } else {
-            // Fill an earthy fallback background
             ctx.fillStyle = '#1c1510';
             ctx.fillRect(0, 0, this.engine.width, this.engine.height);
         }

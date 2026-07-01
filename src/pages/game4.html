@@ -11,66 +11,67 @@
   <link rel="preload" href="../assets/game4-assets/mold_forest.png" as="image">
   <link rel="preload" href="../assets/player.png" as="image">
 </head>
-<body>
-    <div id="viewport">
-      <main id="game-board">
-        <div id="player"></div>
-        <div id="foreground-layer"></div>
-        <div id="interaction-bubble" class="interaction-bubble" style="display: none;">Aperte "E"</div>
-      </main>
-
-      <!-- CONTROLES MOBILE-->
-      <div id="orientation-warning">
-        <h1>Gire o celular! 📱➡️</h1>
-        <p>O jogo só funciona com a tela deitada.</p>
-      </div>
-
-      <div id="mobile-controls">
-        <div id="d-pad">
-          <div id="btn-up" class="touch-btn">▲</div>
-          <div id="btn-left" class="touch-btn">◀</div>
-          <div id="d-pad-center"></div> <div id="btn-right" class="touch-btn">▶</div>
-          <div id="btn-down" class="touch-btn">▼</div>
-        </div>
-  
-  <div id="action-zone">
-    <div id="btn-interact" class="touch-btn interact-btn">E</div>
+<body oncontextmenu="return false">
+  <div id="orientation-warning">
+    <div class="phone-icon">📱</div>
+    <h1>Gire o seu celular</h1>
+    <p>Para uma melhor experiência, jogue em modo paisagem (deitado).</p>
   </div>
-</div>
-    </div>
 
-    <div id="minigame-container" style="display: none;">
-      <div id="minigame-box">
-        <div id="mg-header">
-          <h2 id="mg-title">Minijogo</h2>
-          <div class="hearts-box">
-            <span id="score-counter">0/3</span>
-            <span id="counter">05</span>
-          </div>
-        </div>
-        <p id="mg-desc">Instruções</p>
-        <div id="mg-content"></div>
-        <button id="mg-close" onclick="closeMinigame()">Fugir</button>
+  <div id="viewport">
+    <main id="game-board">
+      <div id="player"></div>
+      <div id="foreground-layer"></div>
+      <div id="interaction-bubble" class="interaction-bubble" style="display: none;">Aperte "E"</div>
+    </main>
+
+    <!-- CONTROLES MOBILE-->
+    <div id="mobile-controls">
+      <div id="d-pad">
+        <div id="btn-up" class="touch-btn">▲</div>
+        <div id="btn-left" class="touch-btn">◀</div>
+        <div id="d-pad-center"></div> <div id="btn-right" class="touch-btn">▶</div>
+        <div id="btn-down" class="touch-btn">▼</div>
+      </div>
+
+      <div id="action-zone">
+        <div id="btn-interact" class="touch-btn interact-btn">E</div>
       </div>
     </div>
+  </div>
 
-    <div id="dialog-system" style="display: none;">
-      <div id="dialog-box">
-        <img id="dialog-ft" src="" alt="Animal">
-
-        <div id="dialog-text-container">
-          <h3 id="dialog-name">Nome</h3>
-          <div id="dialog-text">Texto do diálogo...</div>
-        </div>
-
-        <div id="dialog-next-zone" onclick="dialogSystem.next()">
-          <span>Continuar ▼</span>
+  <div id="minigame-container" style="display: none;">
+    <div id="minigame-box">
+      <div id="mg-header">
+        <h2 id="mg-title">Minijogo</h2>
+        <div class="hearts-box">
+          <span id="score-counter">0/3</span>
+          <span id="counter">05</span>
         </div>
       </div>
+      <p id="mg-desc">Instruções</p>
+      <div id="mg-content"></div>
+      <button id="mg-close" onclick="closeMinigame()">Fugir</button>
     </div>
+  </div>
+
+  <div id="dialog-system" style="display: none;">
+    <div id="dialog-box">
+      <img id="dialog-ft" src="" alt="Animal">
+
+      <div id="dialog-text-container">
+        <h3 id="dialog-name">Nome</h3>
+        <div id="dialog-text">Texto do diálogo...</div>
+      </div>
+
+      <div id="dialog-next-zone" onclick="dialogSystem.next()">
+        <span>Continuar ▼</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Daqui para baixo são elementos de UI ou menus -->
-   
+
   <div id="ui">
     <div id="friends-counter">Amigos <span id="prog">0/10</span></div>
 
@@ -86,7 +87,7 @@
     <div class="controls-list">
       <h2>Controles:</h2>
       <p><strong>WASD / Setas:</strong> Andar</p>
-      <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar (ao perder)</p>
+      <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar</p>
       <p><strong>ESC:</strong> Pausar, voltar a jogar</p>
       <p><strong>F11:</strong> Tela cheia</p>
       <p><strong>E:</strong> Interagir</p>
@@ -102,7 +103,7 @@
     <div class="controls-list">
       <h2>Controles:</h2>
       <p><strong>WASD / Setas:</strong> Andar</p>
-      <p><strong>Espaço:</strong> Iniciar o jogo, reiniciar (ao perder)</p>
+      <p><strong>Espaço:</strong> Iniciar o jogo, avançar o diálogo</p>
       <p><strong>ESC:</strong> Pausar, voltar a jogar</p>
       <p><strong>F11:</strong> Tela cheia</p>
       <p><strong>E:</strong> Interagir</p>

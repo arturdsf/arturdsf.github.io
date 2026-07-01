@@ -10,120 +10,63 @@ const scenes = {
     start: {
         // Exemplo de como adicionar a imagem diretamente no texto. Basta colocar o caminho real.
         inlineImage: "../assets/game2-assets/cena1.png",
-        text: `NUMA TRISTEZA SEM FIM,
-            A MÃE COMEÇOU A GRITAR:
-            — QUERO-QUERO, MEU FILHINHO,
-            APAREÇA LIGEIRINHO.
-            DE TÃO NERVOSA E CANSADA,
-            NÃO CONSEGUIU MAIS CAMINHAR,
-            NEM MAIS ASAS TINHA PARA O VOO,
-            NEM FORÇA PARA PROCURAR.
-            O PAI, COM MAIS DOIS FILHOTINHOS,
-            AGORA ERAM TRÊS QUERO-QUEROS A ANDAR,
-            TRISTES, SEGUIAM PELO CAMPO,
-            SEM SABER ONDE PROCURAR.
-            PEDIRAM AJUDA A QUEM PASSAVA
-            —CAPIVARA, AMIGA QUERIDA,
-            MEU FILHINHO SUMIU NO CAMINHO,
-            ESTÁ SOZINHO NESTA VIDA!`,
+        text: `O campo está gelado e o desespero toma conta. O pequeno Quero-Quero sumiu! 
+        A mãe, exausta de tanto gritar e voar, não tem mais forças. 
+        O pai e os outros dois filhotes seguem a busca, mas o horizonte é vasto demais. 
+        Ao longe, vocês avistam vultos conhecidos perto do banhado.`,
         choices: [
-            { text: "PERGUNTE À CAPIVARA", next: 'capivaraAjuda', effect: { characters: ['Capivara'] } },
-            { text: "IGNORE A PEDIDO E SIGA CAMINHO", next: 'start' },
-            { text: "PROCURE SÓ PELO SEU FILHOTE", next: 'start' }
+            { text: "PEÇA AJUDA À CAPIVARA", next: 'capivaraAjuda', effect: { characters: ['Capivara'] } },
+            { text: "IGNORE E SIGA CAMINHO", next: 'start' },
+            { text: "PROCURE SOZINHO PELO SEU FILHOTE", next: 'start' }
         ]
     },
     capivaraAjuda: {
         inlineImage: "../assets/game2-assets/cena2.png",
-        text: `— AMIGO, VOU AJUDAR,
-            DISSE A CAPIVARA, SEM HESITAR.
-            À MAMÃE, RESOLVEU ACONSELHAR:
-            — MAMÃE QUERO-QUERO, FIQUE AÍ A ESPERAR;
-            LOGO, LOGO, TEU FILHOTE IRÁ VOLTAR.
-            ALI FICOU A MAMÃE, SEM PARAR DE CHAMAR:
-            —CADÊ MEU QUERO-QUERO, QUE TANTO ESPERO?
-            SAÍRAM, ENTÃO, QUATRO AMIGOS
-            PELO CAMPO AFORA A ANDAR.
-            LOGO AVISTARAM UM CAVALO,
-            PASTANDO À BEIRA DO RIO E A RELINCHAR.
-            A GEADA ESTAVA FORTE,
-            O FRIO ERA DE ARREPIAR
-            E O CAVALO, BEM LIGEIRO,
-            PRA COCHEIRA IRIA RETORNAR.`,
+        text: `A Capivara, sempre generosa, ouve o pranto da família. "Fique aqui, Mamãe Quero-Quero. Nós vamos encontrar seu pequeno!", diz ela. 
+        O grupo começa a crescer, mas o rastro ainda é confuso. Um Cavalo pasta logo adiante, relinchando contra o vento frio da geada.`,
         choices: [
-            { text: "PERGUNTE AO CAVALO PELO QUERO-QUERO", next: 'cavaloPergunta', effect: { characters: ['Cavalo'] } },
+            { text: "PERGUNTE AO CAVALO PELO FILHOTE", next: 'cavaloPergunta', effect: { characters: ['Cavalo'] } },
             { text: "NÃO PERGUNTE, SÓ SIGA EM FRENTE", next: 'start' },
             { text: "ESQUEÇA E VOLTE A CASA", next: 'start' }
         ]
     },
     cavaloPergunta: {
         inlineImage: "../assets/game2-assets/cena3.png",
-        text: `— AMIGO CAVALO! —DISSE A CAPIVARA COM ATENÇÃO.
-            — UM FILHOTE DE QUERO-QUERO SUMIU ESTA MANHÃ.
-            — NÃO VI NADA, NÃO... —RESPONDEU O CAVALO,
-            COM PRONTIDÃO.
-            — MAS, QUEM SABE, VAMOS PERGUNTAR PARA A JAÇANÃ?
-            AGORA ERAM CINCO AMIGOS,
-            SEGUINDO NA MESMA MISSÃO.`,
+        text: `O Cavalo bate os cascos, pronto para se abrigar do frio na cocheira. 
+        "Não vi o filhote", diz ele, "mas a Jaçanã conhece cada centímetro dessas águas e juncos. Ela pode ter visto algo que eu perdi."`,
         choices: [
-            { text: "SIGA A JAÇANÃ, ELA PODE SABER", next: 'jacanaUne', effect: { characters: ['Jaçanã'] } },
-            { text: "PROSSEGUIR SEM PERGUNTAR A NINGUÉM", next: 'start' },
-            { text: "RETORNAR COM O GRUPO", next: 'start' }
+            { text: "VÁ ATRÁS DA JAÇANÃ", next: 'jacanaUne', effect: { characters: ['Jaçanã'] } },
+            { text: "IGONRE A IDEIA DO CAVALO", next: 'start' },
+            { text: "VOLTE PARA CASA COM O GRUPO", next: 'start' }
         ]
     },
     jacanaUne: {
         inlineImage: "../assets/game2-assets/cena4.png",
-        text: `JAÇANÃ OUVIU A HISTÓRIA
-            E TOMOU A FIRME DECISÃO:
-            — IREI JUNTO E TEREMOS A VITÓRIA.
-            — COMIGO É AGILIDADE E AÇÃO.
-            FORAM ENTÃO SEIS AMIGOS EM BUSCA DO QUERO-QUERO
-            SEM DEMORA, SEM ESPERA E NEM LERO-LERO
-            A URUTU APARECEU NUM SILÊNCIO FATAL,
-            PRONTA, CERTEIRA, PARA O BOTE FINAL.`,
+        text: `A Jaçanã aceita o desafio na hora: "Comigo é agilidade e ação!". 
+        Agora são seis amigos na trilha. De repente, um movimento sinuoso na grama faz todos pararem. 
+        A Urutu surge em silêncio mortal, com seu olhar certeiro. O clima fica tenso.`,
         choices: [
-            { text: "CONVITE URUTU A SE JUNTAR", next: 'urutuConvida', effect: { characters: ['Urutu'] } },
-            { text: "IGNORAR A URUTU E SE APRESSAR", next: 'start' },
-            { text: "DETÊ-LA E VOLTAR PARA TRÁS", next: 'start' }
+            { text: "CONVIDE A URUTU A SE JUNTAR", next: 'urutuConvida', effect: { characters: ['Urutu'] } },
+            { text: "NÃO DÊ OUVIDOS À URUTU", next: 'start' },
+            { text: "PASSAR RETO", next: 'start' }
         ]
     },
     urutuConvida: {
         inlineImage: "../assets/game2-assets/cena5.png",
-        text: `— CALMA AÍ! — GRITOU JAÇANÃ — NINGUÉM QUER TEU MAL!
-            — NÃO ERA PARA VOCÊS... BEM CAPAZ.
-            DISSE A COBRA, MUITO SAGAZ.
-            — MAS, DIGAM LOGO, MEUS AMIGOS:
-            — QUE PROCURA É ESTA TÃO AUDAZ?
-            A CAPIVARA EXPLICOU:
-            — AMIGA URUTU, VIU POR AÍ
-            UM QUERO-QUERO FILHOTE PASSAR?
-            — NÃO SEI DE NADA, NÃO... — RESPONDEU A COBRA.
-            MAS VOU COM VOCÊS AJUDAR!
-            AGORA ERAM SETE AMIGOS,
-            SEGUINDO FIRMES PELO CAMINHO,`,
+        text: `A Urutu, surpreendentemente sagaz, decide ajudar em vez de atacar. 
+        Logo à frente, vocês encontram o Graxaim farejando o solo. 
+        Ele teme que culpem sua fama de caçador pelo sumiço do filhote e quer provar sua inocência ajudando na busca.`,
         choices: [
-            { text: "CONVITE GRAXAIM PARA AJUDAR", next: 'graxaimAjuda', effect: { characters: ['Graxaim'] } }, /* Corrigido de Graxim para Graxaim */
+            { text: "CONVIDE O GRAXAIM A SE JUNTAR", next: 'graxaimAjuda', effect: { characters: ['Graxaim'] } }, /* Corrigido de Graxim para Graxaim */
             { text: "SUSPEITE DA COBRA E VÁ EMBORA", next: 'start' },
             { text: "TENTE CAMINHO ALTERNATIVO", next: 'start' }
         ]
     },
     graxaimAjuda: {
         inlineImage: "../assets/game2-assets/cena6.png",
-        text: `AO OUVIR TODA A HISTÓRIA,
-            PENSOU LOGO EM SUA FAMA:
-            —VÃO ACHAR QUE FUI EU...
-            —PRECISO MUDAR ESTE PANORAMA.
-            ENTÃO, FALOU COM CONVICÇÃO:
-            — EU AJUDO, SIM, E É DE CORAÇÃO!
-            — ATÉ ANTES DA NOITE ESSE FILHOTE
-            VOLTARÁ PARA O NINHO, SEM DISCUSSÃO.
-            DITO ISTO, ERAM OITO AMIGOS,
-            PREOCUPADOS E PROCURANDO A SOLUÇÃO.
-            SEGUINDO JUNTOS, PASSO A PASSO,
-            COM ESPERANÇA E DETERMINAÇÃO.
-            DE REPENTE, A URUTU LEMBROU:
-            — AINDA NA MADRUGADA, OUVI CANTAR
-            UM CARCARÁ QUE AQUI PASSOU,
-            RASGANDO O CÉU DESTE LUGAR.`,
+        text: `O grupo já é grande e a esperança se renova. 
+        A Urutu recorda ter ouvido um Carcará rasgando o céu na madrugada. 
+        No alto de um galho, o Bem-te-vi agita as asas: "Eu vi! Vi um ninho num pé de Umbu quando o sol nasceu!".`,
         choices: [
             { text: "SIGA A PISTA DO BEM-TE-VI", next: 'bemteviAjuda', effect: { characters: ['Bem-te-vi', 'Carcará'] } },
             { text: "DESISTIR DA BUSCA", next: 'start' },
@@ -132,42 +75,12 @@ const scenes = {
     },
     bemteviAjuda: {
         inlineImage: "../assets/game2-assets/cena7.png",
-        text: `— O BEM-TE-VI ANIMADO, RESPONDEU:
-            — SEI SIM, POSSO INDICAR!
-            VI UM NINHO NUM PÉ DE UMBU,
-            QUANDO O SOL COMEÇOU A DESPONTAR.
-            COM O ACEITE DO BEM-TE-VI,
-            AGORA ERAM NOVE AMIGOS A CAMINHAR,
-            PELOS CAMPOS, PELAS TRILHAS,
-            SEM PARAR DE PROCURAR.
-            — SEI QUE SABEM DA FAMA.
-            DISSE O BEM-TE-VI COM CAUTELA.
-            — SERIA UMA TRISTEZA..., MAS
-            NÃO VOU JULGAR SEM SABER DA NOVELA.
-            A CAPIVARA ENTÃO FALOU:
-            — NÃO VAMOS PARAR, NEM DESISTIR!
-            — A NOITE AINDA NÃO CHEGOU,
-            A ALEGRIA NESTES PAGOS IRÁ RESSURGIR.
-            SEGUIRAM TODOS COM CUIDADO,
-            NUMA ANDANÇA SILENCIOSA,
-            CONFIANTES NA CAPIVARA,
-            CORAJOSA E GENEROSA.
-            CAPIVARA SABIA BEM
-            O TAMANHO DA MISSÃO:
-            LEVAR O FILHOTE SÃO E SALVO
-            ENSINANDO A TODOS A COMPAIXÃO.
-            AO AVISTAR O CARCARÁ,
-            FALOU FIRME, COM EDUCAÇÃO:
-            — CARO AMIGO, VENHO EXPLICAR
-            PORQUE ESTAMOS EM TRIBULAÇÃO:
-            — ESTES POBRES QUERO-QUEROS
-            PROCURAM UM FILHOTE PERDIDO.
-            SERÁ QUE PODE NOS AJUDAR,
-            A ENCONTRAR O DESPROTEGIDO?`,
+        text: `Diante do imponente pé de Umbu, vocês encontram o Carcará. Ele observa o grupo de dez amigos com respeito. 
+        No alto do ninho, um vulto pequeno e trêmulo aparece. O Carcará explica que o protegeu do frio, mas que o mundo exige cautela.`,
         choices: [
             { text: "PEÇA AJUDA AO CARCARÁ", next: 'carcaraFinal', effect: { characters: ['Carcará'] } },
             { text: "NÃO PEÇA AJUDA, SIGA PROCURANDO", next: 'start' },
-            { text: "RETORNAR PARA CASA", next: 'start' }
+            { text: "RETORNAR PARA CASA TRISTE", next: 'start' }
         ]
     },
 
@@ -175,54 +88,9 @@ const scenes = {
 
     carcaraFinal: {
         inlineImage: "../assets/game2-assets/cena8.png",
-        text: `O CARACARÁ ESTICANDO O PENACHO,
-            OLHOU LÁ EMBAIXO E SORRIU:
-            — QUE COINCIDÊNCIA, MINHA AMIGA!
-            O FILHOTE CHEGOU AQUI E ME VIU.
-            ESTAVA PERDIDO, COM MEDO E COM FRIO.
-            — TREMENDO, O COITADINHO,
-            SEM SABER O QUE FAZER,
-            RESOLVI TRAZÊ-LO PARA O NINHO
-            PARA CUIDAR, PROTEGER E AQUECER.
-            E CONTINUOU, EM TOM CERTEIRO:
-            — ENTREGO AGORA O AVENTUREIRO,
-            MAS QUE SIRVA DE LIÇÃO:
-            O MUNDO FORA DO NINHO,
-            EXIGE CUIDADO E ATENÇÃO.
-            — MELHOR É SER SEMPRE CAUTELOSO,
-            DO QUE SER VALENTE E NÃO PENSAR.
-            — VIVE MAIS QUEM OBSERVA
-            E SABE A HORA DE ESPERAR.
-            — DITO ISTO, VENHA AQUI, AMIGO QUERO-QUERO.
-            — SUBA E PEGUE TEU FILHOTE.
-            — TUDO O QUE FALEI É SINCERO
-            E AGORA ME DEIXE LONGE DOS HOLOFOTES.
-            — MINHA PREOCUPAÇÃO É COM OS MEUS,
-            HÁ MUITOS PREDADORES POR AÍ.
-            — E VOCÊS, AÍ EMBAIXO, CUIDEM DOS SEUS.
-            — BOA COMIDA E AFETO TEM PARA OS MEUS AQUI.
-            O FILHOTE FOI ENTÃO LEVADO
-            DE VOLTA AO NINHO, COM A MAMÃE.
-            SEGURO, QUENTINHO E AMADO.
-            E ASSIM, DEZ BONS AMIGOS
-            APRENDERAM NAQUELE DIA:
-            QUE AMIZADE É ESTENDER A PATA,
-            A ASA, A VOZ COM ALEGRIA.
-            NO CAMPO, NO CÉU, NO CHÃO,
-            NINGUÉM CAMINHA SOZINHO,
-            QUANDO HÁ CUIDADO E UNIÃO,
-            TODO FILHOTE ENCONTRA O CAMINHO.
-            QUANDO O FILHOTE VOLTOU,
-            A MAMÃE PAROU DE CHAMAR.
-            — CADÊ MEU QUERO-QUERO QUE TANTO ESPERO?
-            O CAMPO FICOU MAIS CALMO,
-            O CÉU VOLTOU A CLAREAR.
-            MAS, EM OUTROS CAMPOS, POR AÍ,
-            QUANDO O DIA COMEÇA A CLAREAR,
-            UM QUERO-QUERO VOA AFLITO,
-            SEM SABER ONDE POUSAR.
-            E A MAMÃE CLAMA AO MUNDO INTEIRO:
-            — CADÊ MEU QUERO-QUERO, QUE TANTO ESPERO?`,
+        text: `Vitória! O Carcará entrega o pequeno aventureiro. O filhote volta para os braços da Mamãe Quero-Quero, que finalmente para de gritar de dor para cantar de alegria. 
+        Dez amigos aprenderam que, no campo ou na vida, ninguém caminha sozinho. 
+        A união transformou o medo em final feliz sob o céu claro do pampa.`,
         choices: []
     }
 };
@@ -265,7 +133,7 @@ function updateDisplay() {
     choicesContainer.innerHTML = '';
 
     if (currentScene.choices && currentScene.choices.length > 0) {
-        if(btnTopLeft) btnTopLeft.style.display = 'block';
+        if (btnTopLeft) btnTopLeft.style.display = 'block';
         const options = [...currentScene.choices];
         shuffleArray(options);
         options.forEach(choice => {
@@ -276,10 +144,10 @@ function updateDisplay() {
             choicesContainer.appendChild(btn);
         });
     } else {
-        if(btnTopLeft) btnTopLeft.style.display = 'none';
-        
+        if (btnTopLeft) btnTopLeft.style.display = 'none';
+
         soundGameWin.currentTime = 0;
-        soundGameWin.play().catch(e=>console.log(e));
+        soundGameWin.play().catch(e => console.log(e));
 
         const congrats = document.createElement('div');
         congrats.className = 'ending';
@@ -290,7 +158,7 @@ function updateDisplay() {
         siteBtn.className = 'choice-btn';
         siteBtn.textContent = 'Voltar ao site principal';
         siteBtn.onclick = () => {
-            window.location.href = 'index.html';
+            window.location.href = '/';
         };
         choicesContainer.appendChild(siteBtn);
 
@@ -316,7 +184,7 @@ function makeChoice(choice) {
 
     if (choice.next === 'start') {
         soundChoiceWrong.currentTime = 0;
-        soundChoiceWrong.play().catch(e=>console.log(e));
+        soundChoiceWrong.play().catch(e => console.log(e));
 
         const messageEl = document.createElement('div');
         messageEl.className = 'message';

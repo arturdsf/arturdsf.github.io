@@ -1,3 +1,7 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,10 +9,10 @@
 }
 
 body {
-    font-family: 'Comic Sans MS', cursive;
+    font-family: 'Itim', cursive;
     background-image: url('../assets/game2-assets/background.png');
     background-size: cover;
-    background-attachment: fixed; /* Garante que o fundo cubra a tela e não role */
+    background-attachment: fixed;
     background-repeat: no-repeat;
     background-position: center;
     color: #f8f8f2;
@@ -30,6 +34,7 @@ body {
     z-index: 1000;
     font-weight: bold;
     transition: background 0.3s;
+    user-select: none;
 }
 
 #btn-return-topleft:hover {
@@ -50,8 +55,8 @@ body {
 }
 
 .text-section {
-    backdrop-filter: blur(10px);
-    background: rgba(210, 190, 160, 0.55); /* Tom de papel machê mais escuro com mais transparência */
+    backdrop-filter: blur(20px);
+    background: rgba(100, 88, 69, 0.55);
     border-radius: 20px;
     padding: 40px;
     margin-bottom: 40px;
@@ -60,7 +65,7 @@ body {
 }
 
 .story-text {
-    font-size: 1.5rem; /* Levemente reduzido para acomodar imagens */
+    font-size: 1.5rem;
     line-height: 1.6;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -71,16 +76,17 @@ body {
     white-space: pre-wrap;
 }
 
-/* NOVO: Classe para a imagem dentro do texto */
 .scene-inline-img {
     max-width: 100%;
     height: auto;
-    max-height: 400px; /* Limita a altura para não empurrar os botões para fora da tela */
+    max-height: 400px;
     object-fit: contain;
     display: block;
     margin: 0 auto 20px auto;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    user-select: none !important;
+    pointer-events: none;
 }
 
 .choices-section {
@@ -96,20 +102,21 @@ body {
     min-width: 280px;
     max-width: 350px;
     padding: 20px 30px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    background: linear-gradient(145deg, rgba(63, 63, 63, 0.281), rgba(0, 0, 0, 0.05));
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 15px;
     color: #fff;
-    font-family: 'Comic Sans MS', cursive;
+    font-family: 'Itim', cursive;
     font-size: 1.1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
+    user-select: none;
 }
 
 .choice-btn::before {
@@ -185,7 +192,7 @@ body {
     margin-bottom: 20px;
     width: 100%;
     backdrop-filter: blur(10px);
-    background: rgba(210, 190, 160, 0.863);
+    background: rgba(100, 88, 69, 0.55);
     border-radius: 20px;
     padding: 40px;
     border: 1px solid rgba(255, 255, 255, 0.35);

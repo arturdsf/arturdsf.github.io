@@ -18,19 +18,19 @@ const UIManager = {
   },
 
   applyInterface() {
-    const mobileUI = document.getElementById('mobile-controls');
-    const desktopInstructions = document.querySelectorAll('.controls-list');
+    const mobileUI = document.getElementById('mobile-controls')
+    const desktopInstructions = document.querySelectorAll('.controls-list')
 
-    if (!mobileUI) return;
+    if (!mobileUI) return
 
     if (this.isTouchDevice) {
-        mobileUI.style.display = 'flex';
-        desktopInstructions.forEach(el => el.style.display = 'none'); 
-        console.log("[UI] Modo Touch: Escondendo instruções de teclado.");
+        mobileUI.style.display = 'flex'
+        desktopInstructions.forEach(el => el.style.display = 'none')
+        console.log("[UI] Modo Touch: Escondendo instruções de teclado.")
     } else {
-        mobileUI.style.display = 'none';
-        desktopInstructions.forEach(el => el.style.display = 'block');
-        console.log("[UI] Modo Desktop: Mostrando instruções de teclado.");
+        mobileUI.style.display = 'none'
+        desktopInstructions.forEach(el => el.style.display = 'block')
+        console.log("[UI] Modo Desktop: Mostrando instruções de teclado.")
     }
   }
 }
@@ -50,12 +50,14 @@ let facing = "right"
 let pauseGame = true
 let activeInterval = null
 
-const soundGame4Win = new Audio('../assets/sounds/game4_SoundOfConclusion.mp3');
-const soundGame4Err = new Audio('../assets/sounds/game4_error.mp3');
+// let currentKey = null
+
+const soundGame4Win = new Audio('../assets/sounds/game4_SoundOfConclusion.mp3')
+const soundGame4Err = new Audio('../assets/sounds/game4_error.mp3')
 
 // --- SISTEMA DE PRELOAD ---
 function preloadGameAssets() {
-  console.log("[Core] Inicializando buffer de assets...");
+  console.log("[Core] Inicializando buffer de assets...")
   
   const imageAssets = [
     "../assets/player.png",
@@ -67,29 +69,29 @@ function preloadGameAssets() {
     "../assets/game4-assets/dirt-2.png",
     "../assets/game4-assets/catch_bg.png",
     "../assets/game4-assets/moita.png"
-  ];
+  ]
 
   Object.values(minigameConfig).forEach(conf => {
-    if(conf.img) imageAssets.push(conf.img);
-  });
+    if(conf.img) imageAssets.push(conf.img)
+  })
 
   Object.values(GameDialogues).forEach(sequence => {
     sequence.forEach(line => {
-      if(line.portrait) imageAssets.push(line.portrait);
-    });
-  });
+      if(line.portrait) imageAssets.push(line.portrait)
+    })
+  })
 
-  const uniqueImages = [...new Set(imageAssets)];
+  const uniqueImages = [...new Set(imageAssets)]
 
   uniqueImages.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
+    const img = new Image()
+    img.src = src
+  })
 
-  soundGame4Win.load();
-  soundGame4Err.load();
+  soundGame4Win.load()
+  soundGame4Err.load()
 
-  console.log(`[Core] ${uniqueImages.length} texturas e 2 áudios cacheados com sucesso.`);
+  console.log(`[Core] ${uniqueImages.length} texturas e 2 áudios cacheados com sucesso.`)
 }
 
 const map = [
@@ -149,9 +151,9 @@ const characterData = {
   'm': { name: "Capivara", action: "Fale com a " },
   'P': { name: "Cavalo", action: "Fale com o " },
   'M': { name: "Jaçanã", action: "Fale com a " },
-  'o': { name: "Urutu", action: "Fale com o " },
+  'o': { name: "Urutu", action: "Fale com a " },
   'C': { name: "Graxaim", action: "Fale com o " },
-  'p': { name: "Bem-te-vi", action: "Fale com o" },
+  'p': { name: "Bem-te-vi", action: "Fale com o " },
   'q': { name: "Carcará", action: "Fale com o " },
   'c': { name: "Filhote", action: "Resgate o " }
 }
@@ -390,7 +392,7 @@ const GameDialogues = {
     }
   ],
 
-  // Eventos aleatórios
+  // Eventos
   'intro_game': [
     {
       name: "",
@@ -433,11 +435,11 @@ const GameDialogues = {
       text: "E a mamãe grita:\n\"Cadê meu Quero-Quero, que tanto espero?\""
     }
   ],
-};
+}
 
 Object.entries(characterData).forEach(([key, info]) => {
-  GameDialogues[`${key}_hint`] = [{ text: `${info.action} ${info.name}!` }];
-});
+  GameDialogues[`${key}_hint`] = [{ text: `${info.action} ${info.name}!` }]
+})
 
 function createMold(classe) {
   const div = document.createElement('div')
@@ -525,17 +527,86 @@ function updateCamera(isResizing = false) {
   playerDiv.style.transform = `translate(${playerWorldX}px, ${playerWorldY}px) translate(-50%, -50%) scaleX(${scale})`
 }
 
+const pressedKeys = new Set()
+let gameLoopInterval = null
+const movementKeys = {
+  'w': { dx: 0, dy: -1, face: null },
+  'arrowup': { dx: 0, dy: -1, face: null },
+  's': { dx: 0, dy: 1, face: null },
+  'arrowdown': { dx: 0, dy: 1, face: null },
+  'a': { dx: -1, dy: 0, face: "left" },
+  'arrowleft': { dx: -1, dy: 0, face: "left" },
+  'd': { dx: 1, dy: 0, face: "right" },
+  'arrowright': { dx: 1, dy: 0, face: "right" }
+}
+
 document.addEventListener("keydown", (e) => {
   if (pauseGame) return
-
   const key = e.key.toLowerCase()
-  if (key === 'arrowup' || key === 'w') handleMove(0, -1)
-  if (key === 'arrowdown' || key === 's') handleMove(0, 1)
-  if (key === 'arrowleft' || key === 'a') handleMove(-1, 0, "left")
-  if (key === 'arrowright' || key === 'd') handleMove(1, 0, "right")
-  
-  if (key === 'e') interact()
+
+  if (key === 'e') {
+    interact()
+    return
+  }
+
+  if (movementKeys[key]) {
+    if (!pressedKeys.has(key)) {
+      pressedKeys.add(key)
+      processMovement()
+      if (!gameLoopInterval) {
+        startGameLoop()
+      }
+    }
+  }
 })
+
+document.addEventListener("keyup", (e) => {
+  const key = e.key.toLowerCase()
+  pressedKeys.delete(key)
+
+  if (pressedKeys.size === 0 && gameLoopInterval) {
+    clearInterval(gameLoopInterval)
+    gameLoopInterval = null
+  }
+})
+
+let lastMoveTime = 0
+function processMovement() {
+  if (pauseGame || pressedKeys.size === 0) return
+
+  const now = Date.now()
+  let moveX = 0
+  let moveY = 0
+  let newFacing = null
+
+  pressedKeys.forEach(key => {
+    const dir = movementKeys[key]
+    if (dir) {
+      moveX += dir.dx
+      moveY += dir.dy
+      if (dir.face) newFacing = dir.face
+    }
+  })
+
+  const finalDX = Math.max(-1, Math.min(1, moveX))
+  const finalDY = Math.max(-1, Math.min(1, moveY))
+
+  if (finalDX !== 0 || finalDY !== 0) {
+    const isDiagonal = (finalDX !== 0 && finalDY !== 0)
+    const baseSpeed = 150
+    const requiredDelay = isDiagonal ? baseSpeed * 1.41 : baseSpeed
+
+    if (now - lastMoveTime >= requiredDelay) {
+      handleMove(finalDX, finalDY, newFacing || facing)
+      lastMoveTime = now
+    }
+  }
+}
+
+function startGameLoop() {
+  if (gameLoopInterval) clearInterval(gameLoopInterval)
+  gameLoopInterval = setInterval(processMovement, 10)
+}
 
 function handleMove(dx, dy, newFacing) {
   if (pauseGame) return
@@ -543,7 +614,7 @@ function handleMove(dx, dy, newFacing) {
   const newX = player.x + dx
   const newY = player.y + dy
 
-  if (newFacing) facing = newFacing;
+  if (newFacing) facing = newFacing
 
   if (newY >= 0 && newY < ROWS && newX >= 0 && newX < COLS) {
     const tile = map[newY][newX]
@@ -593,11 +664,11 @@ function openMinigame(type, x, y, charArray) {
 }
 
 function winMinigame(x, y, charArray) {
-  const tile = map[y][x];
+  const tile = map[y][x]
   player.friends++
   currentStep++
 
-  const progEl = document.getElementById('prog');
+  const progEl = document.getElementById('prog')
   if (progEl) progEl.innerText = `${player.friends}/10`
 
   const correctGrass = ((x + y) % 2 === 0) ? ',' : '.'
@@ -608,8 +679,8 @@ function winMinigame(x, y, charArray) {
 
   const tileElement = document.getElementById(`tile-${x}-${y}`)
 
-  soundGame4Win.currentTime = 0;
-  soundGame4Win.play().catch(e=>console.log(e));
+  soundGame4Win.currentTime = 0
+  soundGame4Win.play().catch(e=>console.log(e))
 
   closeMinigame()
 
@@ -641,19 +712,39 @@ function winGame() {
 
 function setupMobileButtons() {
   const btns = {
-    'btn-up': [0, -1, null],
-    'btn-down': [0, 1, null],
-    'btn-left': [-1, 0, "left"],
-    'btn-right': [1, 0, "right"]
+    'btn-up': 'w',
+    'btn-down': 's',
+    'btn-left': 'a',
+    'btn-right': 'd'
   }
 
-  for (const [id, [dx, dy, dir]] of Object.entries(btns)) {
+  for (const [id, key] of Object.entries(btns)) {
     const el = document.getElementById(id)
     if (el) {
       el.addEventListener('touchstart', (e) => {
         e.preventDefault()
-        handleMove(dx, dy, dir)
+        if (pauseGame) return
+        
+        if (!pressedKeys.has(key)) {
+          pressedKeys.add(key)
+          processMovement()
+          if (!gameLoopInterval) {
+            startGameLoop()
+          }
+        }
       }, {passive: false})
+
+      const endTouch = (e) => {
+        e.preventDefault()
+        pressedKeys.delete(key)
+        if (pressedKeys.size === 0 && gameLoopInterval) {
+          clearInterval(gameLoopInterval)
+          gameLoopInterval = null
+        }
+      }
+
+      el.addEventListener('touchend', endTouch)
+      el.addEventListener('touchcancel', endTouch)
     }
   }
 
@@ -690,8 +781,8 @@ function interact() {
         if (tile === storyOrder[currentStep]) {
           const charArray = map[ny].split('')
           dialogSystem.show(tile, () => {
-            openMinigame(tile, nx, ny, charArray);
-          });
+            openMinigame(tile, nx, ny, charArray)
+          })
         } else {
           dialogSystem.show('not_ts_time_honey')
         }
@@ -768,16 +859,16 @@ const dialogSystem = {
 
   render() {
     const line = this.currentSequence[this.currentIndex]
-    document.getElementById('dialog-name').innerText = line.name || "";
-    document.getElementById('dialog-text').innerText = line.text;
+    document.getElementById('dialog-name').innerText = line.name || ""
+    document.getElementById('dialog-text').innerText = line.text
     const portraitImg = document.getElementById('dialog-ft')
 
     if (line.portrait) {
-      portraitImg.src = line.portrait;
-      portraitImg.style.display = 'block';
+      portraitImg.src = line.portrait
+      portraitImg.style.display = 'block'
     } else {
-      portraitImg.src = "";
-      portraitImg.style.display = 'none';
+      portraitImg.src = ""
+      portraitImg.style.display = 'none'
     }
   },
 
@@ -792,27 +883,29 @@ const dialogSystem = {
 
   close() {
     document.getElementById('dialog-system').style.display = 'none'
-    const tempCallback = this.callback;
-    this.callback = null;
+    const tempCallback = this.callback
+    this.callback = null
 
     if (tempCallback) {
-      tempCallback();
+      tempCallback()
     } else {
-      pauseGame = false;
+      pauseGame = false
     }
   }
 }
 
 function updateHintUI() {
-  const nextChar = storyOrder[currentStep];
-  const hint = document.getElementById('ui-hint-text');
+  const nextChar = storyOrder[currentStep]
+  const hint = document.getElementById('ui-hint-text')
   
   if (nextChar && GameDialogues[`${nextChar}_hint`]) {
-    hint.innerText = GameDialogues[`${nextChar}_hint`][0].text;
+    hint.innerText = GameDialogues[`${nextChar}_hint`][0].text
   }
 }
 
 /* MINIJOGOS */
+
+let activeCatchCycle = null
 
 function playCatch(type, x, y, charArray) {
   const config = minigameConfig[type]
@@ -845,9 +938,9 @@ function playCatch(type, x, y, charArray) {
 
   const goal = 3
   let score = 0
+  let timeLeft = 15
 
   counterEl.style.display = 'block'
-  let timeLeft = 15
   counterEl.innerText = timeLeft
 
   if (scoreCounterEl) {
@@ -861,11 +954,11 @@ function playCatch(type, x, y, charArray) {
     counterEl.innerText = timeLeft < 10 ? '0' + timeLeft : timeLeft
     if (timeLeft <= 0) {
       clearInterval(activeInterval)
+      clearTimeout(activeCatchCycle)
       closeMinigame()
     }
   }, 1000)
 
-  // Seus spots atuais
   const spots = [
     { left: '10%', top: '10%' },
     { left: '60%', top: '10%' },
@@ -880,13 +973,12 @@ function playCatch(type, x, y, charArray) {
     obs.style.backgroundImage = "url('../assets/game4-assets/moita.png')"
     obs.style.left = spot.left
     obs.style.top = spot.top
-    obs.style.transform = 'translate(-40px, -20px)' 
+    obs.style.transform = 'translate(-40px, -20px)'
     content.appendChild(obs)
   })
 
   let currentSpotIndex = -1
   let isPeeking = false
-  let cycleTimeout = null
 
   const animal = document.createElement('div')
   animal.className = `mg-target-sprite sprite-${type}`
@@ -896,10 +988,16 @@ function playCatch(type, x, y, charArray) {
     width: '100px',
     height: '100px',
     cursor: 'pointer',
-    transition: 'all 0.4s ease',
     zIndex: '10', 
-    pointerEvents: 'none'
+    pointerEvents: 'none',
+    transition: 'left 0.6s ease-in-out, top 0.6s ease-in-out, transform 0.3s ease-out',
+    left: spots[0].left,
+    top: spots[0].top,
+    transform: 'translateY(0px)',
+    willChange: 'left, top, transform'
   })
+  
+  content.appendChild(animal)
 
   const runCycle = () => {
     if (!animal.parentElement) return
@@ -914,34 +1012,32 @@ function playCatch(type, x, y, charArray) {
 
     isPeeking = false
     animal.style.pointerEvents = 'none'
-    animal.classList.add('running-tremble')
     
+    animal.classList.add('running-tremble')
+    animal.style.transform = 'translateY(0px)'
     animal.style.left = spot.left
     animal.style.top = spot.top
-    animal.style.transform = 'translateY(0px)'
 
-    cycleTimeout = setTimeout(() => {
+    activeCatchCycle = setTimeout(() => {
       if (!animal.parentElement) return
       animal.classList.remove('running-tremble')
 
-      cycleTimeout = setTimeout(() => {
+      activeCatchCycle = setTimeout(() => {
         if (!animal.parentElement) return
         isPeeking = true
         animal.style.pointerEvents = 'auto'
-        animal.style.transform = 'translateY(-60px)' 
+        animal.style.transform = 'translateY(-60px)'
 
-        cycleTimeout = setTimeout(() => {
+        activeCatchCycle = setTimeout(() => {
           if (!animal.parentElement) return
           isPeeking = false
           animal.style.pointerEvents = 'none'
           animal.style.transform = 'translateY(0px)'
           
-          cycleTimeout = setTimeout(() => {
-            runCycle()
-          }, 400)
+          activeCatchCycle = setTimeout(runCycle, 400)
         }, 1100)
-      }, 300)
-    }, 450)
+      }, 200)
+    }, 600)
   }
 
   animal.onclick = (e) => {
@@ -951,23 +1047,26 @@ function playCatch(type, x, y, charArray) {
     score++
     if (scoreCounterEl) scoreCounterEl.innerText = `${score}/${goal}`
     
-    animal.style.filter = "brightness(1.5) drop-shadow(0 0 15px white)"
+    animal.style.filter = "brightness(1.8) drop-shadow(0 0 15px white)"
+    setTimeout(() => { animal.style.filter = "none" }, 150)
     
     if (score >= goal) {
       clearInterval(activeInterval)
+      clearTimeout(activeCatchCycle)
       animal.style.pointerEvents = 'none'
-      animal.innerHTML = "<span style='font-size: 40px; position: absolute; top: -40px; left: 30px;'>❤️</span>"
-      animal.style.transform = 'translateY(-60px)' 
-      setTimeout(() => winMinigame(x, y, charArray), 800)
+      
+      animal.innerHTML = "<span style='position: absolute; top: -40px; left: 30px; font-size: 40px;'>❤️</span>"
+      animal.style.transform = 'translateY(-60px)'
+      
+      setTimeout(() => winMinigame(x, y, charArray), 1000)
     } else {
-      clearTimeout(cycleTimeout)
+      clearTimeout(activeCatchCycle)
       animal.style.transform = 'translateY(0px)'
-      setTimeout(() => runCycle(), 200)
+      setTimeout(runCycle, 300)
     }
   }
 
-  content.appendChild(animal)
-  runCycle()
+  setTimeout(runCycle, 500)
 }
 
 function playMemory(type, x, y, charArray) {
@@ -1001,8 +1100,8 @@ function playMemory(type, x, y, charArray) {
           firstCard = null
           if (pairs === 3) setTimeout(() => winMinigame(x, y, charArray), 500)
         } else {
-          soundGame4Err.currentTime = 0;
-          soundGame4Err.play().catch(e=>console.log(e));
+          soundGame4Err.currentTime = 0
+          soundGame4Err.play().catch(e=>console.log(e))
 
           canClick = false
           let prev = firstCard
@@ -1144,7 +1243,9 @@ function playPuzzle(type, x, y, charArray) {
       }
       piece.ondragend = function() { piece.classList.remove('dragging') }
 
-      let touchOffX = 0; let touchOffY = 0; let currentScale = 1;
+      let touchOffX = 0
+      let touchOffY = 0
+      let currentScale = 1
 
       piece.addEventListener('touchstart', function(e) {
         if (piece.classList.contains('placed')) return
@@ -1193,8 +1294,11 @@ function playPuzzle(type, x, y, charArray) {
         const pCY = pR.top + (pR.height / 2)
 
         if (pCX >= sR.left && pCX <= sR.right && pCY >= sR.top && pCY <= sR.bottom) {
-          piece.style.left = "0"; piece.style.top = "0"; piece.draggable = false
-          piece.classList.add('placed'); slot.appendChild(piece)
+          piece.style.left = "0"
+          piece.style.top = "0"
+          piece.draggable = false
+          piece.classList.add('placed')
+          slot.appendChild(piece)
           placedCount++
           if (placedCount === GRID * GRID) setTimeout(() => winMinigame(x, y, charArray), 600)
         }
@@ -1362,7 +1466,7 @@ function restartGame() {
 }
 
 function backToIndex() {
-  window.location.href = 'index.html'
+  window.location.href = '/'
 }
 
 window.addEventListener('resize', () => {
@@ -1370,19 +1474,19 @@ window.addEventListener('resize', () => {
 })
 
 window.onload = () => {
-  console.log(`[Engine] Dispositivo detectado: ${UIManager.deviceType}`);
-  UIManager.init();
-  setupMobileButtons();
-  renderMap();
-  preloadGameAssets();
+  console.log(`[Engine] Dispositivo detectado: ${UIManager.deviceType}`)
+  UIManager.init()
+  setupMobileButtons()
+  renderMap()
+  preloadGameAssets()
 }
 
-/* Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia! */
+// Easter Egg, deixei pra galera de plantão aí, isso aí eu usei pra testar minigames mais distantes, ele tem a função de pular o minigame, usem ai, só não saiam espalhando a notícia!
 
 /*
 (function createDebugButton() {
   const btn = document.createElement('button')
-  btn.innerText = "Moggar o beta"
+  btn.innerText = "Pular Um"
   btn.id = "debug-win-btn"
   btn.style.userSelect = "none"
   
@@ -1394,32 +1498,27 @@ window.onload = () => {
     padding: '20px',
     background: '#ffcc00',
     color: '#000',
-    border: '5px solid red', // Borda vermelha pra você achar ele no susto
+    border: '5px solid red',
     borderRadius: '10px',
     cursor: 'pointer',
     fontWeight: 'bold',
-    display: 'block' // FORÇADO SEMPRE VISÍVEL
+    display: 'block'
   })
 
   btn.onclick = () => {
-    // Tenta pegar o animal atual da história
     const targetChar = storyOrder[currentStep]
     if (!targetChar) {
         alert("Fim da história ou erro no currentStep")
         return
     }
     
-    // Procura o cara no mapa
     for (let y = 0; y < map.length; y++) {
       const x = map[y].indexOf(targetChar)
       if (x !== -1) {
         const charArray = map[y].split('')
         console.log("Debug: Pulando minijogo de " + targetChar)
         
-        // Se o minijogo estiver aberto, a gente fecha ele antes
         closeMinigame() 
-        
-        // Dá a vitória
         winMinigame(x, y, charArray)
         break
       }

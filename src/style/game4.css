@@ -295,15 +295,18 @@ html, body {
 .mg-target-sprite.sprite-c { background-image: url('../assets/filhoteperdido_scream.png') }
 
 .running-tremble {
-  animation: animalTremble 0.15s infinite
+  animation: animalTremble 0.15s infinite;
 }
 
 @keyframes animalTremble {
-  0% { margin-top: 0px }
-  25% { margin-top: -4px }
-  50% { margin-top: 0px }
-  75% { margin-top: 4px }
-  100% { margin-top: 0px }
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.mg-target-sprite {
+  will-change: transform;
+  overflow: visible !important;
 }
 
 .mg-obstacle {
@@ -315,6 +318,16 @@ html, body {
   background-position: bottom center;
   z-index: 20;
   pointer-events: none;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.mg-target-sprite, .mg-obstacle {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+  transform: translateZ(0); 
 }
 
 /* Utilitários dos minijogos */
@@ -816,19 +829,55 @@ html, body {
 /* Celulares */
 
 #orientation-warning {
-  display: none; /* Escondido por padrão */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: var(--basalt);
+  background-color: #0078d7;
   color: white;
-  z-index: 999999;
+  z-index: 1000000;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 20px;
+}
+
+.phone-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: rotatePhone 2s ease-in-out infinite;
+}
+
+#orientation-warning h1 {
+  font-size: 28px;
+  margin: 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+#orientation-warning p {
+  font-size: 18px;
+  opacity: 0.9;
+  max-width: 300px;
+}
+
+@media screen and (orientation: portrait) {
+  #orientation-warning {
+    display: flex;
+  }
+  #viewport, #main-menu, #ui, #minigame-container {
+    display: none !important;
+  }
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  30% { transform: rotate(-90deg); }
+  70% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
 }
 
 /* Se o celular estiver em pé, mostra o aviso e SOME com o jogo */
@@ -892,7 +941,8 @@ html, body {
 
 .touch-btn:active {
   background: rgba(255, 255, 255, 0.8);
-  transform: scale(0.9);
+  transform: scale(0.95);
+  transition: transform 0.05s;
 }
 
 #mg-content, 

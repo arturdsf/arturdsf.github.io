@@ -1,8 +1,28 @@
 (function () {
+    const isMobileDevice = /Mobi|Android|iPhone/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 0);
+
+    function enterFullscreen() {
+        const el = document.documentElement;
+        const requestMethod = el.requestFullscreen || 
+            el.webkitRequestFullscreen || 
+            el.mozRequestFullScreen || 
+            el.msRequestFullscreen;
+
+        if (requestMethod) {
+            requestMethod.call(el).then(() => {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(err => console.log(err));
+                }
+            }).catch(err => console.log(err));
+        }
+    }
+
     const mapContainer = document.getElementById('map-container');
     const questTextEl = document.getElementById('quest-text');
     const dialogueBox = document.getElementById('dialogue-box');
     const dialogueText = document.getElementById('dialogue-text');
+    const startOverlay = document.getElementById('start-menu-overlay');
+    const btnStart = document.getElementById('btn-start-game');
 
     // Menu logic
     const persistentMenuBtn = document.getElementById('persistent-menu-btn');
@@ -19,7 +39,7 @@
     let trail = [];
     const spacing = 15;
     const minDistance = 3;
-    let isPaused = false;
+    let isPaused = true;
     let isGameOver = false;
 
     let playerSize = 50;
@@ -43,7 +63,7 @@
 
     const npcDefs = [
         { id: 'pai', envX: 0, envY: 1, localX: 300, localY: 150, dialog: ['Eu sou a Mamãe Quero-Quero.'] },
-        { id: 'filhote', envX: 0, envY: 1, localX: 240, localY: 200, dialog: ['Somos os filhtes Quero-Quero.'] },
+        { id: 'filhote', envX: 0, envY: 1, localX: 240, localY: 200, dialog: ['Somos os filhotes Quero-Quero.'] },
         { id: 'capivara', envX: 0, envY: 1, localX: 400, localY: 300, dialog: ['Eu sou a Capivara.'] },
         { id: 'cavalo', envX: 0, envY: 0, localX: 300, localY: 400, dialog: ['~ Relincho ~ Sou o cavalo.'] },
         { id: 'jacana', envX: 1, envY: 0, localX: 200, localY: 200, dialog: ['Eu sou a Jaçanã.'] },
@@ -72,11 +92,33 @@
         createPlayer();
         initJoystick();
         initMenu();
+        
+        if (btnStart) {
+            btnStart.addEventListener('click', () => {
+                if (isMobileDevice) {
+                    enterFullscreen();
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    }
+                } else {
+                    console.log("[Engine] Desktop detectado: Ignorando pedido de Fullscreen.");
+                }
+                startOverlay.style.display = 'none';
+                isPaused = false;
+
+                setTimeout(() => {
+                    updateDimensions();
+                    onResize();
+                }, 300);
+            });
+        }
+
         updateQuest();
         window.addEventListener('keydown', e => keys[e.code] = true);
         window.addEventListener('keyup', e => keys[e.code] = false);
         dialogueBox.addEventListener('click', advanceDialogue);
         window.addEventListener('resize', onResize);
+        
         requestAnimationFrame(loop);
     }
 
@@ -95,7 +137,7 @@
         });
 
         btnVoltarIndex.addEventListener('click', () => {
-            window.location.href = '../pages/index.html';
+            window.location.href = '/';
         });
     }
 
@@ -157,23 +199,34 @@
         for (let i = 0; i < 1000; i++) trail.push({ x: player.worldX, y: player.worldY });
     }
 
+    const REF_W = 1000; 
+    const REF_H = 800;
+
     function createNPCs() {
+        npcs.length = 0;
         npcDefs.forEach(def => {
             const npc = Object.assign({}, def);
-            const pctX = def.localX / 1000;
-            const pctY = def.localY / 800;
-            npc.worldX = def.envX * window.innerWidth + (pctX * window.innerWidth);
-            npc.worldY = def.envY * window.innerHeight + (pctY * window.innerHeight);
+            
+            const pctX = def.localX / REF_W;
+            const pctY = def.localY / REF_H;
+
+            npc.worldX = (def.envX * window.innerWidth) + (pctX * window.innerWidth);
+            npc.worldY = (def.envY * window.innerHeight) + (pctY * window.innerHeight);
+            
             npc.following = false;
             npc.talked = false;
-            npc.el = document.createElement('div');
-            npc.el.className = 'npc';
-            npc.el.id = def.id;
-            mapContainer.appendChild(npc.el);
+            
+            let el = document.getElementById(def.id);
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'npc';
+                el.id = def.id;
+                mapContainer.appendChild(el);
+            }
+            npc.el = el;
             npcs.push(npc);
         });
     }
-
     function updatePlayer(dt) {
         let dx = 0, dy = 0;
 
@@ -234,54 +287,62 @@
     function updateNPCElements() {
         npcs.forEach(n => {
             n.el.style.transform = `translate3d(${n.worldX}px, ${n.worldY}px, 0)`;
+            n.el.style.zIndex = Math.floor(n.worldY + npcSize);
             if (n.following) n.el.classList.add('following');
         });
     }
 
     function generateObstacles() {
-        const playerStartX = window.innerWidth / 2;
-        const playerStartY = window.innerHeight * 1.5;
-        let created = 0;
+    const playerStartX = window.innerWidth / 2;
+    const playerStartY = window.innerHeight * 1.5;
+    let created = 0;
+    let attempts = 0;
 
-        while (created < 30) {
-            const ex = Math.floor(Math.random() * 2);
-            const ey = Math.floor(Math.random() * 2);
-            const x = ex * window.innerWidth + Math.random() * (window.innerWidth - 80);
-            const y = ey * window.innerHeight + Math.random() * (window.innerHeight - 80);
-            const w = 40 + Math.random() * 40, h = 40 + Math.random() * 40;
+    while (created < 30 && attempts < 1000) {
+        attempts++; 
+        
+        const ex = Math.floor(Math.random() * 2);
+        const ey = Math.floor(Math.random() * 2);
+        const x = ex * window.innerWidth + Math.random() * (window.innerWidth - 80);
+        const y = ey * window.innerHeight + Math.random() * (window.innerHeight - 80);
+        const w = 40 + Math.random() * 40;
+        const h = 40 + Math.random() * 40;
 
-            const margin = 100;
-            if (Math.abs(x - window.innerWidth) < margin || Math.abs(y - window.innerHeight) < margin) continue;
+        const margin = 100;
+        if (Math.abs(x - window.innerWidth) < margin || Math.abs(y - window.innerHeight) < margin) continue;
 
-            const distToPlayer = Math.hypot(x - playerStartX, y - playerStartY);
-            let tooCloseNPC = npcDefs.some(n => Math.hypot(x - (n.envX * window.innerWidth + n.localX), y - (n.envY * window.innerHeight + n.localY)) < 120);
+        const distToPlayer = Math.hypot(x - playerStartX, y - playerStartY);
+        
+        let tooCloseNPC = npcDefs.some(n => {
+            const pctX = n.localX / 1000;
+            const pctY = n.localY / 800;
+            const npcTargetX = n.envX * window.innerWidth + (pctX * window.innerWidth);
+            const npcTargetY = n.envY * window.innerHeight + (pctY * window.innerHeight);
+            return Math.hypot(x - npcTargetX, y - npcTargetY) < 120;
+        });
 
-            if (distToPlayer > 150 && !tooCloseNPC) {
-                const el = document.createElement('div');
-                el.className = 'obstacle';
+        if (distToPlayer > 150 && !tooCloseNPC) {
+            const el = document.createElement('div');
+            el.className = 'obstacle';
 
-                if (ex === 0 && ey === 0) {
-                    el.classList.add('obs-pedra');
-                } else if (ex === 1 && ey === 0) {
-                    el.classList.add('obs-arbusto');
-                } else if (ex === 1 && ey === 1) {
-                    el.classList.add('obs-graveto');
-                } else {
-                    const tipos = ['obs-pedra', 'obs-arbusto', 'obs-graveto'];
-                    const sorteio = tipos[Math.floor(Math.random() * tipos.length)];
-                    el.classList.add(sorteio);
-                }
-
-                // CORREÇÃO: Salva o elemento HTML dentro do objeto do obstáculo
-                obstacles.push({ x, y, w, h, el: el });
-
-                el.style.width = w + 'px'; el.style.height = h + 'px';
-                el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-                mapContainer.appendChild(el);
-                created++;
+            if (ex === 0 && ey === 0) el.classList.add('obs-pedra');
+            else if (ex === 1 && ey === 0) el.classList.add('obs-arbusto');
+            else if (ex === 1 && ey === 1) el.classList.add('obs-graveto');
+            else {
+                const tipos = ['obs-pedra', 'obs-arbusto', 'obs-graveto'];
+                el.classList.add(tipos[Math.floor(Math.random() * tipos.length)]);
             }
+
+            obstacles.push({ x, y, w, h, el: el });
+            el.style.width = w + 'px'; 
+            el.style.height = h + 'px';
+            el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            el.style.zIndex = Math.floor(y + h);
+            mapContainer.appendChild(el);
+            created++;
         }
     }
+}
 
     function checkCollisions() {
         npcs.forEach(n => {
@@ -309,11 +370,14 @@
     }
 
     function endDialogue() {
-        dialogueBox.style.display = 'none';
-        dialogueActive = false;
-        handleNpcTalk(currentDialogNpc);
-        currentDialogNpc.talked = true;
+    dialogueBox.style.display = 'none';
+    dialogueActive = false;
+    const n = currentDialogNpc;
+    handleNpcTalk(n);
+    if (sequence[nextIndex - 1] === n.id) {
+        n.talked = true;
     }
+}
 
     function handleNpcTalk(n) {
         if (sequence[nextIndex] === n.id) {
@@ -355,14 +419,18 @@
         player.worldY = window.innerHeight * 1.5;
         envX = 0; envY = 1;
         applyContainerTransform();
+        
         trail = [];
         for (let i = 0; i < 1000; i++) trail.push({ x: player.worldX, y: player.worldY });
+        
         nextIndex = 0;
+        
         npcs.forEach(n => {
             n.following = false;
             n.talked = false;
-            n.worldX = n.envX * window.innerWidth + n.localX;
-            n.worldY = n.envY * window.innerHeight + n.localY;
+            const def = npcDefs.find(d => d.id === n.id);
+            n.worldX = def.envX * window.innerWidth + (def.localX / 1000 * window.innerWidth);
+            n.worldY = def.envY * window.innerHeight + (def.localY / 800 * window.innerHeight);
         });
         updateQuest();
     }
@@ -410,40 +478,36 @@
     }
 
     function onResize() {
-        const oldW = worldWidth / 2;
-        const oldH = worldHeight / 2;
+        const oldWorldW = worldWidth;
+        const oldWorldH = worldHeight;
 
         updateDimensions();
 
-        const newW = window.innerWidth;
-        const newH = window.innerHeight;
+        const ratiopX = player.worldX / oldWorldW;
+        const ratiopY = player.worldY / oldWorldH;
 
-        const scaleX = newW / oldW;
-        const scaleY = newH / oldH;
-
-        player.worldX *= scaleX;
-        player.worldY *= scaleY;
-
-        trail.forEach(pt => {
-            pt.x *= scaleX;
-            pt.y *= scaleY;
-        });
-
-        npcs.forEach(n => {
-            const def = npcDefs.find(d => d.id === n.id);
-            const pctX = def.localX / 1000;
-            const pctY = def.localY / 800;
-
-            n.worldX = n.envX * newW + (pctX * newW);
-            n.worldY = n.envY * newH + (pctY * newH);
-        });
+        player.worldX = ratiopX * worldWidth;
+        player.worldY = ratiopY * worldHeight;
 
         obstacles.forEach(obs => {
-            obs.x *= scaleX;
-            obs.y *= scaleY;
+            const ratiooX = obs.x / oldWorldW;
+            const ratiooY = obs.y / oldWorldH;
+            obs.x = ratiooX * worldWidth;
+            obs.y = ratiooY * worldHeight;
             obs.el.style.transform = `translate3d(${obs.x}px, ${obs.y}px, 0)`;
+        })
+
+        updateDimensions();
+        npcs.forEach(n => {
+            const def = npcDefs.find(d => d.id === n.id);
+            const pctX = def.localX / REF_W;
+            const pctY = def.localY / REF_H;
+
+            n.worldX = (n.envX * window.innerWidth) + (pctX * window.innerWidth);
+            n.worldY = (n.envY * window.innerHeight) + (pctY * window.innerHeight);
         });
 
+        updateContainer();
         applyContainerTransform();
     }
 
@@ -464,6 +528,7 @@
         if (player.el) {
             const scale = facing === "left" ? -1 : 1;
             player.el.style.transform = `translate3d(${player.worldX}px, ${player.worldY}px, 0) scaleX(${scale})`;
+            player.el.style.zIndex = Math.floor(player.worldY + playerSize); // Y-SORTING DO PLAYER
         }
 
         requestAnimationFrame(loop);
@@ -531,6 +596,25 @@
                 console.log("Não foi possível forçar a rotação automaticamente (requer tela cheia).");
             });
         }
+    }
+
+    function setupStartButton() {
+        if (!btnStart) return;
+
+        btnStart.addEventListener('click', () => {
+            enterFullscreen();
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
+            }
+
+            startOverlay.style.display = 'none';
+            isPaused = false;
+            
+            setTimeout(() => {
+                updateDimensions();
+                onResize();
+            }, 300);
+        });
     }
 
     init();

@@ -23,7 +23,7 @@
     <link rel="preload" href="../assets/filhoteperdido_scream.png" as="image">
 </head>
 
-<body>
+<body oncontextmenu="return false">
     <div id="quest-box">
         <span id="quest-title">Dica:</span>
         <span id="quest-text"></span>
@@ -53,7 +53,14 @@
         </div>
     </div>
 
-    <!-- Menu Persistente e Modal -->
+    <div id="start-menu-overlay">
+        <div class="menu-content">
+            <h1>A Busca do Filhote</h1>
+            <p>Ajude a família Quero-Quero a se reunir!</p>
+            <button id="btn-start-game">INICIAR JOGO</button>
+        </div>
+    </div>
+
     <div id="persistent-menu-btn" title="Menu">☰</div>
 
     <div id="game-menu-overlay" style="display: none;">
@@ -61,7 +68,7 @@
             <h2 id="menu-title">Pausado</h2>
             <button id="btn-continuar" class="menu-btn">Continuar</button>
             <button id="btn-reiniciar" class="menu-btn">Reiniciar Jogo</button>
-            <button id="btn-voltar-index" class="menu-btn">Voltar ao site principal</button>
+            <button id="btn-voltar-index" class="menu-btn" onclick="window.location.href='/'">Voltar ao site principal</button>
         </div>
     </div>
 
