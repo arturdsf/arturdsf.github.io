@@ -62,11 +62,6 @@ function preloadGameAssets() {
   const imageAssets = [
     "../assets/player.png",
     "../assets/game4-assets/ceu.png",
-    "../assets/game4-assets/mold_forest.png",
-    "../assets/game4-assets/grass3-1.png",
-    "../assets/game4-assets/grass3-2.png",
-    "../assets/game4-assets/dirt-1.png",
-    "../assets/game4-assets/dirt-2.png",
     "../assets/game4-assets/catch_bg.png",
     "../assets/game4-assets/moita.png"
   ]
