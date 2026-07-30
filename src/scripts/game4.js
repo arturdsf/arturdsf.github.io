@@ -42,8 +42,7 @@ const TILE_SIZE = 80
 let player = {
   x: 14,
   y: 15,
-  friends: 0,
-  followers: 0
+  friends: 0
 }
 
 let facing = "right"
